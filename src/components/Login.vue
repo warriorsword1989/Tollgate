@@ -17,8 +17,8 @@
             }
             return {
                 bgDivStyle: {
-                    heightStyle : `970 * ${widthPercent}px`,
-                    widthStyle : `1920 * ${widthPercent}px`,
+                    height : `970 * ${widthPercent}px`,
+                    width : `1920 * ${widthPercent}px`,
                     position : 'fixed'
                 }
             }
