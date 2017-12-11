@@ -21,16 +21,8 @@
             <input class="inputText" v-bind:style="inputText" type="password" v-model="password"  name="userpassword" maxlength="32"
                    placeholder="请输入密码"/>
           </div>
-          <div class="checkBoxDiv" v-bind:style="checkBoxDiv">
-            <label style=" float: right; margin-bottom: 0;" v-on:click="changeForgetMe()">
-              <span v-bind:style="loginRememberSpan"> 记住我 </span>
-              <img v-bind:style="loginRememberImg" src="../assets/login/rememberme_active.png" v-show="rememberMe">
-              <img v-bind:style="loginRememberImg" src="../assets/login/rememberme_normal.png" v-show="!rememberMe">
-              <input v-model="rememberMe" type="checkbox" style="display: none">
-            </label>
-          </div>
           <div class="loginFail" v-bind:style="loginFail" v-bind:class="errorFlag ? 'loginFailVisible': 'loginFailHidden'">
-            <img class="failImg" v-bind:style="failImg" style="object-fit: fill" src="../assets/login/icon_login_fail.png"/>：登录失败啦！用户名或密码错误！
+            <img class="failImg" v-bind:style="failImg" style="object-fit: fill;vertical-align: middle;" src="../assets/login/icon_login_fail.png"/>：登录失败啦！用户名或密码错误！
           </div>
           <button class="submitButton" v-on:click="handleEvent()" type="submit" id="loginButton"
                   v-bind:style="submitButton">
@@ -71,7 +63,7 @@
                 'border-radius': 140 * widthPercent + 'px ' + 140 * widthPercent + 'px 0 0'
               },
               containerBgStyle : {
-                height: 420 * widthPercent + 'px',
+                height: 350 * widthPercent + 'px',
                 width: 480 * widthPercent + 'px',
                 'padding-top': 40 * widthPercent + 'px'
               },
@@ -121,22 +113,8 @@
               loginFail : {
                 'font-size': 14 * widthPercent + 'px',
                 height: 30 * widthPercent + 'px',
-                'line-height': 30 * widthPercent + 'px'
-              },
-              loginRememberSpan : {
-                float: 'right',
-                height: 16 * widthPercent + 'px',
-                'line-height': 16 * widthPercent + 'px',
-                color: '#666666',
-                cursor: 'pointer',
-                'font-weight': 100
-              },
-              loginRememberImg : {
-                float: 'right',
-                height: 16 * widthPercent + 'px',
-                width: 16 * widthPercent + 'px',
-                'margin-right': 10 * widthPercent + 'px',
-                cursor: 'pointer'
+                'line-height': 30 * widthPercent + 'px',
+                'margin-top': 10 * widthPercent + 'px'
               },
               loginFailHidden : {
                 'font-size': 14 * widthPercent + 'px',
@@ -153,11 +131,6 @@
                 top: 39 * widthPercent + 'px',
                 right: 42 * widthPercent + 'px'
               },
-              checkBoxDiv : {
-                height: 21 * widthPercent + 'px',
-                'margin-top': 30 * widthPercent + 'px',
-                'padding-right': 30 * widthPercent + 'px'
-              },
               loginLoadStyle : {
                 height: 30 * widthPercent + 'px',
                 width: 30 * widthPercent + 'px',
@@ -165,20 +138,13 @@
               },
               userName: '',
               password: '',
-              rememberMe: false,
               errorFlag: false,
               showLoadImg: false
             }
         },
         methods: {
-          changeForgetMe: function () {
-            this.rememberMe = !this.rememberMe;
-          },
           handleEvent: function () {
 
-          },
-          errorMessage: function () {
-            this.errorFlag = true;
           }
         }
     }
@@ -265,14 +231,6 @@
   }
   .submitButton:disabled{
     background-image: url("../assets/login/button_login_gray.png");
-  }
-  .checkBoxDiv{
-    width:100%;
-    height: 21px;
-    margin-top: 30px;
-    padding-right: 30px;
-    margin-bottom:0;
-    box-sizing: border-box;
   }
   .emptyPassword{
     position: absolute;
