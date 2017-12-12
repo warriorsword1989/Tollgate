@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:style="bgDivStyle" style="background-color: #1a1a1a;height: 100%">
+  <div v-bind:style="bgDivStyle">
     <video class="bgVideo" poster="../assets/login/firstframes.png">
     </video>
     <div class="loginDiv" v-bind:style="loginDiv">
@@ -47,6 +47,7 @@
             }
             return {
               bgDivStyle : {
+                height: 970 * widthPercent + 'px',
                 width: 1920 * widthPercent + 'px',
                 position: 'fixed'
               },
