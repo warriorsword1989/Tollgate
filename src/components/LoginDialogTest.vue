@@ -32,10 +32,15 @@
         </form>
       </div>
       <el-button type="primary" @click ="newDialog(null)">new dialog</el-button>
+      <drop-area @drop="drop">
+        <div class="dropped" v-for="dialog in droppeds" @click="unDrop(dialog.id)">
+          <span class="name">{{dialog.name}}</span>
+        </div>
+      </drop-area>
     </div>
-    <dialog-drag v-for='(dialog, key) in dialogs' @close='removeDialog' :options='dialog.options'
-                 :id='dialog.id' :class='dialog.style.name' :ref='"dialog-" + dialog.id' :key='dialog.id'>
-      <span slot='title'>{{ dialog.name }}</span>
+    <dialog-drag v-for="(dialog, key) in dialogs" @close="removeDialog" :options="dialog.options"
+                 :id="dialog.id" :class="dialog.style.name" :ref="'dialog-' + dialog.id" :key="dialog.id">
+      <span slot="title">{{ dialog.name }}</span>
       <span>{{ dialog.name }} {{ dialog.name }} {{ dialog.name }} {{ dialog.name }}</span>
     </dialog-drag>
   </div>
@@ -43,6 +48,7 @@
 
 <script>
   import DialogDrag from 'vue-dialog-drag'
+  import DropArea from 'vue-dialog-drag/dist/drop-area'
 
   export default {
     name: "login",
@@ -149,6 +155,7 @@
         errorFlag: false,
         showLoadImg: false,
         dialogs: [],  //  从这里开始到data结束，都是弹窗需要的属性
+        droppeds: [],
         dialogId: 1,
         dialogWidth: 400,
         style: null,
@@ -218,10 +225,27 @@
         });
 
         return (index > -1) ? index : null;
+      },
+      drop (id) {
+        let index = this.findDialog(id);
+
+        if (index !== null) {
+          this.droppeds.push(this.dialogs[index]);
+          this.dialogs.splice(index, 1);
+        }
+      },
+      unDrop (id) {
+        let index = this.findDialog(id, this.droppeds);
+
+        if (index !== null) {
+          this.dialogs.push(this.droppeds[index]);
+          this.droppeds.splice(index, 1);
+        }
       }
     },
     components: {
-      DialogDrag
+      DialogDrag,
+      DropArea
     }
   }
 </script>
