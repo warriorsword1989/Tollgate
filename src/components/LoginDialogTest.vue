@@ -31,18 +31,23 @@
           </button>
         </form>
       </div>
+      <!--new dialog按钮-->
       <el-button type="primary" @click ="newDialog(null)">new dialog</el-button>
+      <!--drop 使用指南开始-->
       <drop-area @drop="drop">
         <div class="dropped" v-for="dialog in droppeds" @click="unDrop(dialog.id)">
           <span class="name">{{dialog.name}}</span>
         </div>
       </drop-area>
+      <!--drop 结束-->
     </div>
+    <!--drag 使用指南开始-->
     <dialog-drag v-for="(dialog, key) in dialogs" @close="removeDialog" :options="dialog.options"
                  :id="dialog.id" :class="dialog.style.name" :ref="'dialog-' + dialog.id" :key="dialog.id">
       <span slot="title">{{ dialog.name }}</span>
       <span>{{ dialog.name }} {{ dialog.name }} {{ dialog.name }} {{ dialog.name }}</span>
     </dialog-drag>
+    <!--drag 结束-->
   </div>
 </template>
 
@@ -154,11 +159,10 @@
         password: '',
         errorFlag: false,
         showLoadImg: false,
-        dialogs: [],  //  从这里开始到data结束，都是弹窗需要的属性
+        dialogs: [],  //  从这里开始到data结束，都是draggableDialog需要的属性
         droppeds: [],
         dialogId: 1,
         dialogWidth: 400,
-        style: null,
         styles: [
           { name: 'dialog-1', options: { width: 400, dragCursor: 'move', centered: 'viewport' } },
           { name: 'dialog-2', options: { width: 150 } },
