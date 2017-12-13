@@ -33,8 +33,8 @@
       </div>
       <!--new dialog按钮-->
       <el-button type="primary" @click ="newDialog(null)">new dialog</el-button>
-      <!--drop 使用指南开始-->
-      <drop-area @drop="drop">
+      <!--drop 使用指南开始, 拖进去以后，单击，就弹出去了-->
+      <drop-area @drop="drop" style="border-color: red;">
         <div class="dropped" v-for="dialog in droppeds" @click="unDrop(dialog.id)">
           <span class="name">{{dialog.name}}</span>
         </div>
