@@ -1,16 +1,18 @@
 import oracledb from 'oracledb';
+import oracleService from '../../config/application';
 import logger from '../config/logs';
 
 class ConnectOracle {
   constructor() {
     this.connectionAttrs = {
-      user: 'fm_meta_trunk',
-      password: 'fm_meta_trunk',
-      connectString: '192.168.3.227:1521/ORCL'
+      user: oracleService.userName,
+      password: oracleService.password,
+      connectString: oracleService.connectUrl
     };
     this.releaseConnections = this.releaseConnections.bind(this);
   }
   executeSql (sql){
+    oracledb.autoCommit = true;
     return new Promise((resolve, reject) => {
       oracledb
         .getConnection(this.connectionAttrs)
