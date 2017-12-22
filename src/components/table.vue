@@ -97,8 +97,14 @@
           </div>
           <div class="tableContentAdd">
             <div class="block">
-              <span>截止日期</span>
-              <el-date-picker v-model="item.finalDay" type="date" placeholder="选择日期" value-format="yyyy/MM/dd" size="mini" ></el-date-picker>
+              <span>生效日期</span>
+              <el-date-picker v-model="item.successDate" type="date" placeholder="选择日期" value-format="yyyy/MM/dd" size="mini" ></el-date-picker>
+            </div>
+          </div>
+          <div class="tableContentAdd">
+            <div class="block">
+              <span>失效日期</span>
+              <el-date-picker v-model="item.failureDate" type="date" placeholder="选择日期" value-format="yyyy/MM/dd" size="mini" ></el-date-picker>
             </div>
           </div>
           <div style="border : 1px dashed #409eff; margin-bottom : 20px;margin-left:25px;" v-show=" index !== (tableContent.length - 1)"></div>
@@ -128,7 +134,8 @@
               feeRate:'', // 费率1
               laneNumFeeRate:'1', // 费率1车道数
               tollGateFee:'', // 固定收费站对应次费
-              finalDay:'', // 截止日期
+              successDate:'',// 生效日期
+              failureDate:'', // 失效日期
               laneNum:'1', // 费率车道数
               laneNumFeeRates:[{　// 费率1车道数 数组
                 value: '1',
@@ -172,7 +179,8 @@
                 feeRate:'',
                 laneNumFeeRate:'1',
                 tollGateFee:'',
-                finalDay:'2016/12/23'
+                successDate:'2016/12/23',
+                failureDate:''
               }],
             }
         },
@@ -196,7 +204,8 @@
                     feeRate:this.feeRate,
                     laneNumFeeRate:this.laneNumFeeRate,
                     tollGateFee:this.tollGateFee,
-                    finalDay:this.finalDay,
+                    successDate:this.successDate,
+                    failureDate:this.failureDate,
                   });
                 },
                  deleteItem:function () {
