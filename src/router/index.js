@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
+import mainMap from '@/components/mainMap'
 import Home from '@/components/Home'
 import table from '@/components/table'
 import Truck from '@/components/Truck'
@@ -14,6 +15,7 @@ import RdlinkAdditional from '@/components/RdlinkAdditional'
 import vacationFee from '@/components/vacationFee'
 import specialFeeMes from '@/components/specialFeeMes'
 import RdlinkCheck from '@/components/RdlinkCheck'
+
 Vue.use(Router);
 
 export default new Router({
@@ -27,6 +29,11 @@ export default new Router({
       path: '/login',
       component: Login,
       name: 'Login'
+    },
+    {
+      path: '/mainMap',
+      component: mainMap,
+      name: 'mainMap'
     },
     {
       path: '/Home',

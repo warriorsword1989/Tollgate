@@ -8,6 +8,7 @@ import router from './router'
 import 'vue-dialog-drag/dist/vue-dialog-drag.css'
 import 'vue-dialog-drag/dist/drop-area.css'
 import 'vue-dialog-drag/dist/dialog-styles.css'
+import mapInit from './components/mapInit';
 
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
@@ -19,3 +20,5 @@ new Vue({
   template: '<App/>',
   components: { App }
 });
+
+mapInit.initialize();
