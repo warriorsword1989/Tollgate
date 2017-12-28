@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import mainMap from '@/components/mainMap'
 import Home from '@/components/Home'
@@ -22,8 +21,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'Login',
+      component: Login // name需要保持唯一,通过router.push({name:'Login'})方式切换路由
     },
     {
       path: '/login',

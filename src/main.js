@@ -10,6 +10,8 @@ import 'vue-dialog-drag/dist/drop-area.css'
 import 'vue-dialog-drag/dist/dialog-styles.css'
 import mapInit from './components/mapInit';
 
+mapInit.initialize();
+
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
@@ -21,4 +23,3 @@ new Vue({
   components: { App }
 });
 
-mapInit.initialize();

@@ -21,7 +21,7 @@ const postReq = function (url, param) {
   //   let token = appUtil.getCurrentUser().token;
   //   param.token = token;
   // }
-  return axios.post(`${baseUrl + url}`, {paramter: JSON.stringify(param)}).then(res => res.data).catch(res => ({errcode: null, message: '处理失败'}));
+  return axios.post(`${baseUrl + url}`, {parameter: JSON.stringify(param)}).then(res => res.data).catch(res => ({errcode: null, message: '处理失败'}));
 };
 // 统一增加token
 const getReq = function (url, param) {
@@ -32,7 +32,7 @@ const getReq = function (url, param) {
   //   let token = appUtil.getCurrentUser().token;
   //   param.token = token;
   // }
-  return axios.get(`${baseUrl + url}`, {params: {paramter: JSON.stringify(param)}}).then(res => res.data).catch(res => ({errcode: null}));
+  return axios.get(`${baseUrl + url}`, {params: {parameter: JSON.stringify(param)}}).then(res => res.data).catch(res => ({errcode: null}));
 };
 
 // -- 用户相关  --

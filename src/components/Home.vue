@@ -8,7 +8,7 @@
               <div class="photoProject_rightDiv_choose">
                 <span>行政区划：</span>
                 <el-select v-model="tip.adminCode" placeholder="请选择">
-                  <el-option v-for="item in cityList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                  <el-option v-for="item in tip.cityList" :key="item.adminCode" :label="item.cityName" :value="item.adminCode"></el-option>
                 </el-select>
               </div>
               <div class="photoProject_rightDiv_choose">
@@ -45,13 +45,13 @@
           </div>
         </div>
         <div style="height:calc(100% - 300px);padding-right: 10px">
-          <el-table :data="photoData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border height="500 - 300" style="width: 100%;height: 100%;">
+          <el-table :data="tip.photoData.slice((tip.currentPage-1)*tip.pageSize,tip.currentPage*tip.pageSize)" border height="500 - 300" style="width: 100%;height: 100%;">
             <el-table-column prop="id" label="序号" type="index" align="center"></el-table-column>
-            <el-table-column prop="tollGateName" label="收费站名称" align="center"></el-table-column>
-            <el-table-column prop="tollGateType" label="收费站类型" align="center"></el-table-column>
-            <el-table-column prop="passagewayNum" label="通道总数" align="center"></el-table-column>
-            <el-table-column prop="provinceFee" label="是否跨省收费" align="center"></el-table-column>
-            <el-table-column prop="feedback" label="tips反馈" align="center"></el-table-column>
+            <el-table-column prop="toll_name" label="收费站名称" align="center"></el-table-column>
+            <el-table-column prop="tollTypeName" label="收费站类型" align="center"></el-table-column>
+            <el-table-column prop="toll_pnum" label="通道总数" align="center"></el-table-column>
+            <el-table-column prop="tollLocName" label="是否跨省收费" align="center"></el-table-column>
+            <el-table-column prop="isAdoptedName" label="tips反馈" align="center"></el-table-column>
             <el-table-column prop="operation" label="操作" align="center">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="button" size="small">动态作业</el-button>
@@ -61,7 +61,7 @@
           </el-table>
         </div>
         <div class="block">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="4" layout="total, prev, pager, next" :total="20"></el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="tip.currentPage" :page-size="tip.pageSize" layout="total, prev, pager, next" :total="tip.photoData.length"></el-pagination>
         </div>
       </el-tab-pane>
 <!--情报作业-->
@@ -134,6 +134,7 @@
 
 <script>
     import { getTollGateTipList } from '../dataService/api';
+    import { cityList } from '../config/CityList';
     export default {
         name: "Home",
         data() {
@@ -174,146 +175,31 @@
             activeName: 'first',
             tabPosition:'left',
             tip: {
+              tollType: [
+                '未调查', '领卡', '交卡付费', '固定收费(次费)',
+                '交卡付费后再领卡', '交卡付费并代收固定费用',
+                '验票(无票收费)', '领卡并代收固定费用', '持卡打标识不收费',
+                '验票领卡', '交卡不收费'
+              ],
               tipsVersion:'',
               updateStartTime:preTime,
               updateEndTime:time,
               tollName:'',
               adminCode:'110000',
               isAdopted: ['1', '2', '3'],
+              photoData: [],
+              pageSize:10,
+              currentPage:1,
+              cityList: cityList
             },
             sendBeforeTime:preTime,
             sendAfterTime:time,
             pushBeforeTime:preTime,
             pushAfterTime:time,
             tollGateNames:[{}],
-            currentPage:1,
-            pagesize:10,
             genDataPagesize:10,
             genDataCurrentPage:1,
             tollGateSearch:'',
-            cityList: [{
-              value: '110000',
-              label: '北京市'
-            }, {
-              value: '2',
-              label: '长春市'
-            }, {
-              value: '3',
-              label: '北京市'
-            }, {
-              value: '4',
-              label: '北京市'
-            }, {
-              value: '5',
-              label: '北京市'
-            }],
-            photoData: [{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            }],
-            genData: [{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            },{
-              id: '',
-              tollGateName: '王小虎',
-              tollGateType:'11',
-              passagewayNum:'11',
-              provinceFee:'11',
-              feedback:'11',
-            }],
             value: '',
             radio: '1',
             // 时间控件
@@ -369,28 +255,17 @@
           };
         },
         methods: {
-          //  getSearchNames :function () {
-          //   let names = [];
-          //   let text = '';
-          //   for (let i = 0, len = this.tollGateNames.length; i < len; i++) {
-          //     text = this.tollGateNames[i].text;
-          //     if (text) {
-          //       names.push(text);
-          //     }
-          //   }
-          //   return names;
-          // },
           changePage:function () {
 
           },
           handleClick:function () {
-
+            this.$router.push('/mainMap');
           },
           handleSizeChange:function (val) {
-            this.pagesize = val;
+            this.tip.pageSize = val;
           },
           handleCurrentChange:function (val) {
-            this.currentPage = val;
+            this.tip.currentPage = val;
           },
           // 获取数据
           getTollGateTipList() {
@@ -408,10 +283,21 @@
               updateEndTime: this.tip.updateEndTime
             };
             getTollGateTipList(param).then(function (data) {
-
+              if (data.errorCode === 0) {
+                const resultData = data.data;
+                for (let i = 0; i < resultData.length; i++) {
+                  resultData[i].tollTypeName = self.tip.tollType[parseInt(resultData[i].toll_type, 10)];
+                  resultData[i].tollLocName = parseInt(resultData[i].toll_loc, 10) === 0 ? '未调查' : parseInt(resultData[i].toll_loc, 10) === 1 ? '本省收费站' : '跨省收费站';
+                  resultData[i].isAdoptedName = parseInt(resultData[i].is_adopted, 10) === 1 ? '未处理' : parseInt(resultData[i].is_adopted, 10) === 2 ? '已处理' : '无法处理';
+                }
+                self.tip.photoData = resultData
+              }
             });
           },
         },
+        mounted: function() {
+          this.getTollGateTipList();
+        }
     }
 </script>
 
