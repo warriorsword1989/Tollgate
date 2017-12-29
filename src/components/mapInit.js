@@ -18,18 +18,7 @@ import '../tools/ToolController';
 
 class MapInit {
   map = null;
-  container = document.createElement("div");
   singletons = [];
-  highlightCtrl = FM.mapApi.render.HighlightController.getInstance();
-  feedbackCtrl = fastmap.mapApi.FeedbackController.getInstance();
-  sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
-  sourceCtrl = fastmap.mapApi.source.SourceController.getInstance();
-  featureSelector = fastmap.mapApi.FeatureSelector.getInstance();
-  snapCtrl = fastmap.mapApi.snap.SnapController.getInstance();
-  geometryAlgorithm = fastmap.mapApi.geometry.GeometryAlgorithm.getInstance();
-  symbolFactory = fastmap.mapApi.symbol.GetSymbolFactory();
-  meshAlgm = fastmap.mapApi.MeshAlgorithm.getInstance();
-  toolCtrl = fastmap.uikit.ToolController.getInstance();
   registSingletons = () => {
     this.singletons.push(fastmap.mapApi.MeshAlgorithm.getInstance());
     this.singletons.push(fastmap.mapApi.FeatureSelector.getInstance());
@@ -61,26 +50,11 @@ class MapInit {
   initMap = () => {
     const options = {
       tileSize: 256,
-      container: this.container,
+      container: 'editorMap',
       center: [0, 0],
       zoom: 15
     };
     return new FM.mapApi.Map(options);
-  };
-
-  addTo = parent => {
-    if (parent) {
-      parent.appendChild(this.container);
-      // 让地图调整大小适应父节点
-      this.map.getLeafletMap().invalidateSize(false);
-    }
-  };
-
-  remove = () => {
-    const parent = this.container.parentNode;
-    if (parent) {
-      parent.removeChild(this.container);
-    }
   };
 
   loadConfigs = () => {
@@ -170,13 +144,22 @@ class MapInit {
   };
 
   initialize = () => {
+    this.highlightCtrl = FM.mapApi.render.HighlightController.getInstance();
+    this.feedbackCtrl = fastmap.mapApi.FeedbackController.getInstance();
+    this.sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
+    this.sourceCtrl = fastmap.mapApi.source.SourceController.getInstance();
+    this.featureSelector = fastmap.mapApi.FeatureSelector.getInstance();
+    this.snapCtrl = fastmap.mapApi.snap.SnapController.getInstance();
+    this.geometryAlgorithm = fastmap.mapApi.geometry.GeometryAlgorithm.getInstance();
+    this.symbolFactory = fastmap.mapApi.symbol.GetSymbolFactory();
+    this.meshAlgm = fastmap.mapApi.MeshAlgorithm.getInstance();
+    this.toolCtrl = fastmap.uikit.ToolController.getInstance();
+
+    this.registSingletons();
+
     var map = this.initMap();
 
     this.map = map;
-
-    this.container.style.height = '100%';
-
-    this.container.style.width = '100%';
 
     this.sceneCtrl.setMap(map);
 
