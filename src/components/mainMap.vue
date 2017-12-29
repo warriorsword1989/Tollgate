@@ -28,11 +28,10 @@
       }
     },
     mounted: function() {
-      const editorMap = document.getElementById('editorMap');
-      mapInit.addTo(editorMap);
+      mapInit.initialize();
     },
     destroyed: function () {
-      mapInit.remove();
+      mapInit.destorySingletons();
     }
   }
 </script>
