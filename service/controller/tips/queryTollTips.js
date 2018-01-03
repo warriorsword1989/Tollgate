@@ -3,11 +3,14 @@ import logger from '../../config/logs';
 import { changeResult } from '../../Util';
 
 class Tips {
-  constructor() {
-
+  constructor(req, res, next) {
+    this.req = req;
+    this.res = res;
+    this.next = next;
   }
-  async getTollGateTipList(req, res, next) {
-    const param = JSON.parse(res.req.query.parameter);
+  
+  async getTollGateTipList() {
+    const param = JSON.parse(this.req.query.parameter);
     const adminCode = param.adminCode;
     const tipsVersion = param.tipsVersion;
     const tollName = param.tollName;
@@ -30,11 +33,11 @@ class Tips {
     console.log(sql);
     const result = await  connectOracle.executeSql(sql);
     const resultData = changeResult(result);
-    res.send({
+    this.res.send({
       errorCode: 0,
       data: resultData
     });
   }
 }
 
-export default new Tips()
+export default Tips;

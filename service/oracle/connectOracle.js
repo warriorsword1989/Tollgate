@@ -1,8 +1,8 @@
 import oracledb from 'oracledb';
 import oracleService from '../../config/application';
-import logger from '../config/logs';
 
 class ConnectOracle {
+
   constructor() {
     this.connectionAttrs = {
       user: oracleService.userName,
@@ -11,6 +11,7 @@ class ConnectOracle {
     };
     this.releaseConnections = this.releaseConnections.bind(this);
   }
+
   executeSql (sql){
     oracledb.autoCommit = true;
     return new Promise((resolve, reject) => {
@@ -24,7 +25,7 @@ class ConnectOracle {
               this.releaseConnections(connection);
             })
             .catch(err => {
-              reject(err)
+              reject(err);
               this.releaseConnections(connection)
             })
         })
@@ -32,6 +33,7 @@ class ConnectOracle {
           reject(err)
         })
     })}
+
   releaseConnections(resultSet, connection){
     process.nextTick(() => {
       if (resultSet) {
