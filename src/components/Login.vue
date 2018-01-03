@@ -37,7 +37,8 @@
 </template>
 
 <script>
-
+  import { login } from '../dataService/api';
+  import { appUtil } from '../Application';
   export default {
     name: "login",
     data() {
@@ -146,11 +147,17 @@
     },
     methods: {
       handleEvent: function () {
-        if (this.userName === 'admin' && this.password === 'admin') {
-          this.$router.push('/Home');
-        } else {
-          this.errorFlag = true;
-        }
+        let that = this;
+        let loginParams = { "userName": this.userName, "userPwd": this.password };
+        login(loginParams).then(function (result) {
+          let { errorCode, data,  token } = result;
+          if (errorCode == 0) {
+            appUtil.setCurrentUser(token);
+            that.$router.push('/Home');
+          } else {
+            that.errorFlag = true;
+          }
+        });
       }
     }
   }
