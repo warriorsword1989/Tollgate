@@ -22,6 +22,7 @@ const postReq = function (url, param) {
     let token = appUtil.getCurrentUser();
     param.token = token;
   }
+  console.log(`${baseUrl + url}`);
   return axios.post(`${baseUrl + url}`, {parameter: JSON.stringify(param)}).then(res => res.data).catch(res => ({errcode: null, message: '处理失败'}));
 };
 // 统一增加token

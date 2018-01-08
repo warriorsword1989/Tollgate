@@ -83,7 +83,7 @@ export const cityList = [
     cityName: '四川省'
   },
   {
-    adminCode: '510000',
+    adminCode: '140000',
     cityName: '山西省'
   }, {
     adminCode: '620000',
