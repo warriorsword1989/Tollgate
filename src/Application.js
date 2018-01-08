@@ -11,7 +11,7 @@ export const appConfig = {
   appName: 'tollGate',
   // serviceUrl: 'http://192.168.15.220:3000' // 正式环境的服务地址
   // serviceUrl: 'http://192.168.4.189:3000' // 开发环境的服务地址
-  serviceUrl: 'http://localhost:8010' // 开发环境的服务地址
+  serviceUrl: window.serviceConfig.serviceUrl // 开发环境的服务地址
 };
 
 export const appUtil = {
