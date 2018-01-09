@@ -14,7 +14,7 @@ router.use ('/', function (req, res, next) {
     token = null;
   }
   let handler = req.path.split('/').pop();
-  if (handler === 'login') {
+  if (handler === 'login' || handler === 'import') {
     next('route');
   } else {
     if (token) {

@@ -2,11 +2,13 @@ import connectOracle from '../../oracle/connectOracle';
 import logger from '../../config/logs';
 
 class InfoData {
-  constructor() {
-
+  constructor(req, res, next) {
+    this.req = req;
+    this.res = res;
+    this.next = next;
   }
-  async getInfoData(req, res, next) {
-    const param = JSON.parse(res.req.query.parameter);
+  async getInfoData() {
+    const param = JSON.parse(this.res.req.query.parameter);
     let errorMess = '';
     for (let i = 0; i < param.info.length; i++) {
       let sql = "INSERT INTO SC_TOLL_INFO (INFO_INTEL_ID, INFO_CODE, ADMIN_CODE, URL, PUBLIC_TIME," +
@@ -21,12 +23,11 @@ class InfoData {
         errorMess += err;
       }
     }
-    res.send({
-      status: 100000,
-      pm: true,
-      result: errorMess
+    this.res.send({
+      errorCode: 0,
+      data: errorMess
     });
   }
 }
 
-export default new InfoData()
+export default InfoData;
