@@ -40,3 +40,4 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(8010);
+console.log("服务已经启动： 端口为 8010");
