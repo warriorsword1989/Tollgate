@@ -1,36 +1,48 @@
 <template>
-  <el-container>
-    <el-aside :width="leftWidth">
-      <div class="header">
-        <h3 class="title">照片详情</h3>
-        <el-button :class="{ isActive: leftFloatArrow }" round.boolean=false @click="toggleLeftPanel" type="primary">
-          <i class="el-icon-arrow-left"></i>
-        </el-button>
+  <div class="mainMap">
+    <transition name="el-fade-in-liner">
+      <div class="sideBar" v-show="!leftFloatArrow">
+        <div @click="showDialog = !showDialog" class="header">
+          <h3 class="title">照片详情</h3>
+        </div>
+        <div class="photoView">
+           <photo-swiper :image-list="dataModle.imageList"></photo-swiper>
+        </div>
+        <div class="dataView">
+          <photo-edit :data-model="dataModle"></photo-edit>
+        </div>
       </div>
-      <div class="photoView">
-        <photo-swiper :image-list="dataModle.imageList"></photo-swiper>
-      </div>
-      <div class="dataView">
-        <photo-edit :data-model="dataModle"></photo-edit>
-      </div>
-    </el-aside>
-    <el-main>
-      <div id="editorMap" class="map"></div>
-    </el-main>
-  </el-container>
+    </transition>
+
+    <div id="editorMap" class="map"></div>
+
+    <el-button :class="{ 'enter-active': leftFloatArrow,  'enter-start': !leftFloatArrow }" :round.boolean=false @click="toggleLeftPanel"
+      type="primary">
+      <i class="el-icon-arrow-left"></i>
+    </el-button>
+
+    <tableEdit :dialog-table-visible="showDialog" @DialogClose="closeDialog"></tableEdit>
+  </div>
 </template>
+
 
 <script>
   import mapInit from './mapInit';
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
+  import tableEdit from './tableEdit/tabDiag';
   export default {
     name: 'mainMap',
-    components: { photoEdit, photoSwiper },
+    components: {
+      photoEdit,
+      photoSwiper,
+      tableEdit
+    },
     data() {
       return {
-        leftWidth: '640px',
+        leftWidth: '25%',
         leftFloatArrow: false,
+        showDialog: false,
         dataModle: {
           uploadTime: '2012-10-7',
           sourceId: '111111',
@@ -41,18 +53,21 @@
           imageList: [
             'http://img2.imgtn.bdimg.com/it/u=2473758249,2536588353&fm=200&gp=0.jpg',
             'http://img1.imgtn.bdimg.com/it/u=2229000148,3674036755&fm=200&gp=0.jpg',
-            'http://img4.imgtn.bdimg.com/it/u=4146374575,892898083&fm=200&gp=0.jpg',
-            'http://img2.imgtn.bdimg.com/it/u=4070935547,487271359&fm=200&gp=0.jpg',
             'http://img3.imgtn.bdimg.com/it/u=1321305856,3339290601&fm=200&gp=0.jpg',
+            'http://img2.imgtn.bdimg.com/it/u=4070935547,487271359&fm=200&gp=0.jpg',
             'http://img1.imgtn.bdimg.com/it/u=3523654413,712008688&fm=27&gp=0.jpg'
           ]
         }
       }
     },
+    computed: {
+    },
     methods: {
       toggleLeftPanel: function (event) {
         this.leftFloatArrow = !this.leftFloatArrow;
-        this.leftWidth = this.leftFloatArrow ? '0px' : '640px';
+      },
+      closeDialog: function () {
+        this.showDialog = false;
       }
     },
     watch: {
@@ -71,76 +86,71 @@
 </script>
 
 <style scoped>
-  .el-container {
-    height: 100%;
-    width: 100%;
-    background: #fff;
-  }
-
-  .map {
+  .mainMap {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #f7f5f5;
+  }
+  .map {
+    width: 100%;
+    height: 100%;
+    background: #fff;
   }
 
-  .el-aside {
+  .sideBar {
     background: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 600px;
     display: flex;
+    z-index: 1;
     flex-direction: column;
     border-right: 1px solid #ccc;
   }
 
-  .el-aside .header {
+  .sideBar .header {
     height: 40px;
-    display: flex;
-    flex-direction: row;
     background-color: #636ef5;
     justify-content: space-between;
   }
-  .el-aside .header .rectButton {
+
+  .sideBar .header .rectButton {
     border-radius: 4px;
   }
 
-  .el-aside .header h3 {
+  .sideBar .header h3 {
     color: #fff;
     margin: 0;
     padding: 0 10px;
     line-height: 40px;
     letter-spacing: 1px;
   }
-  .el-aside .header button.isActive {
+
+  .enter-start {
     position: absolute;
-    left: 0px;
     top: 0px;
-    z-index: 1;
-    transform:rotate(180deg);
-    transition:All 0.6s ease-in-out;
+    left: 544px;
+    z-index: 2;
   }
 
-  .el-aside .photoView {
-    flex: 6;
+  .enter-active {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    transform: rotate(180deg);
+    transition: all .4s liner;
+  }
+
+  .sideBar .photoView {
+    flex: 7;
     flex-direction: column
   }
-
-  .el-aside .dataView {
-    flex: 4;
+  .sideBar .dataView {
+    flex: 3;
     text-align: justify;
-    padding: 20px;
-    border-top: 1px solid #ccc;
+    padding-top: 10px;
   }
-
-  .el-main {
-    flex: 1;
-    padding: 0
-  }
-
-
-  .el-asideHide {
-    flex: 0;
-  }
-  .el-mainBig {
-    flex: 1;
-  }
-
 </style>

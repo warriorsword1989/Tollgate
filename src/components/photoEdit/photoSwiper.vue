@@ -19,7 +19,7 @@
         swiperOptionTop: {
           spaceBetween: 10,
           loop: true,
-          loopedSlides: 5, //looped slides should be the same
+          loopedSlides: 4, //looped slides should be the same
           navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev'
@@ -30,17 +30,17 @@
           slidesPerView: 4,
           touchRatio: 0.2,
           loop: true,
-          loopedSlides: 5, //looped slides should be the same
-          slideToClickedSlide: true,
+          loopedSlides: 4, //looped slides should be the same
+          slideToClickedSlide: true
         }
       }
     },
     mounted() {
       this.$nextTick(() => {
-        const swiperTop = this.$refs.swiperTop.swiper
-        const swiperThumbs = this.$refs.swiperThumbs.swiper
-        swiperTop.controller.control = swiperThumbs
-        swiperThumbs.controller.control = swiperTop
+        const swiperTop = this.$refs.swiperTop.swiper;
+        const swiperThumbs = this.$refs.swiperThumbs.swiper;
+        swiperTop.controller.control = swiperThumbs;
+        swiperThumbs.controller.control = swiperTop;
       })
     }
   }

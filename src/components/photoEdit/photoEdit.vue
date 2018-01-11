@@ -1,6 +1,6 @@
 <template>
   <div class="photoEdit">
-    <el-form :inline="true" :model="dataModel" label-position="right" label-width="80px" class="demo-form-inline">
+    <el-form :inline="true" :model="dataModel" label-position="right" size="mini" label-width="80px" class="demo-form-inline">
       <el-form-item label="上传时间:">
         <el-input v-model="dataModel.uploadTime" placeholder="上传时间"></el-input>
       </el-form-item>
@@ -21,21 +21,19 @@
         </el-select>
       </el-form-item>
       <el-form-item class="inlineBlock" label="活动形式">
-        <el-input type="textarea" :rows=3 class="remark" v-model="dataModel.desc"></el-input>
+        <el-input type="textarea" :rows=2 class="remark" v-model="dataModel.desc"></el-input>
       </el-form-item>
       <el-form-item class="inlineBlock send">
         <el-button type="primary" @click.prevent="onSumbit">提 交</el-button>
       </el-form-item>
-      <tableEdit></tableEdit>
     </el-form>
   </div>
 </template>
 
 <script>
-  import tableEdit from '../tableEdit/tabDiag';
   export default {
     name: 'photoEdit',
-    components: { tableEdit },
+    components: { },
     props: ['dataModel'],
     data() {
       return {
@@ -57,7 +55,6 @@
       }
     }
   }
-
 </script>
 
 <style scoped>
@@ -71,7 +68,7 @@
     display: block;
   }
   .photoEdit .el-form--inline .el-form-item .remark {
-    width: 500px;
+    width: 400px;
   }
   .photoEdit .el-form--inline .el-form-item.send {
     float: right;
