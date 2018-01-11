@@ -12,14 +12,14 @@ class ConnectOracle {
     this.releaseConnections = this.releaseConnections.bind(this);
   }
 
-  executeSql (sql, params){
+  executeSql (sql){
     oracledb.autoCommit = true;
     return new Promise((resolve, reject) => {
       oracledb
         .getConnection(this.connectionAttrs)
         .then(connection => {
           return connection
-            .execute(sql, params)
+            .execute(sql)
             .then(results => {
               resolve(results);
               this.releaseConnections(connection);
