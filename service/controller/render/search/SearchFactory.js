@@ -1,4 +1,5 @@
-import RdnodeSearch from './RdnodeSearch';
+import RdNodeSearch from './RdNodeSearch';
+import RdLinkSearch from './RdLinkSearch';
 
 class SearchFactory {
   constructor(connection) {
@@ -9,9 +10,12 @@ class SearchFactory {
     let search = null;
     switch (type){
       case "RDNODE":
-        search = new RdnodeSearch(this.connection);
+        search = new RdNodeSearch(this.connection);
         break;
       case "RDLINK":
+        search = new RdLinkSearch(this.connection);
+        break;
+      default:
         break;
     }
 

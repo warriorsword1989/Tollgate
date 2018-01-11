@@ -19,9 +19,9 @@
               </div>
               <div class="photoProject_rightDiv_choose">
                 <span>更新时间：</span>
-                <el-date-picker v-model="tip.updateStartTime" type="date" placeholder="选择日期"format="yyyy-MM-dd" :picker-options="pickerupdateDateBefore"></el-date-picker>
+                <el-date-picker v-model="tip.updateStartTime" type="date" placeholder="选择日期" :picker-options="pickerupdateDateBefore" value-format="yyyy-MM-dd"></el-date-picker>
                 <span>至</span>
-                <el-date-picker v-model="tip.updateEndTime" type="date" placeholder="选择日期"format="yyyy-MM-dd" :picker-options="pickerupdateDateAfter"></el-date-picker>
+                <el-date-picker v-model="tip.updateEndTime" type="date" placeholder="选择日期" :picker-options="pickerupdateDateAfter" value-format="yyyy-MM-dd"></el-date-picker>
               </div>
               <div class="photoProject_rightDiv_choose">
                 <span>收费站名称：</span>

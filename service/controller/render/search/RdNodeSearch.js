@@ -1,6 +1,6 @@
 import Search from './Search';
-import MercatorProjection from '../MercatorProjection';
-import { changeResult } from '../Util';
+import MercatorProjection from '../../../MercatorProjection';
+import { changeResult } from '../../../Util';
 
 class RdnodeSearch extends Search{
   constructor(connection){

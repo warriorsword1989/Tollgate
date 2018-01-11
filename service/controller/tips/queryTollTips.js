@@ -8,7 +8,7 @@ class Tips {
     this.res = res;
     this.next = next;
   }
-  
+
   async getTollGateTipList() {
     const param = JSON.parse(this.req.query.parameter);
     const adminCode = param.adminCode;
@@ -19,7 +19,7 @@ class Tips {
     const isAdopted = param.isAdopted;
     let sql = "SELECT * FROM SC_TOLL_TIPS_INDEX WHERE ADMIN_CODE = '" + adminCode + "'";
     if (tipsVersion) {
-      sql = sql + " AND TIPS_VERSION = '" + tipsVersion + "'";
+      sql = sql + " AND upper(TIPS_VERSION) = '" + tipsVersion.toUpperCase() + "'";
     }
     if (tollName) {
       sql = sql + " AND TOLL_NAME LIKE '%" + tollName + "%'";
