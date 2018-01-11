@@ -1,5 +1,3 @@
-import Vue from 'vue'
-import Router from 'vue-router'
 import Login from '@/components/Login'
 import mainMap from '@/components/mainMap'
 import Home from '@/components/Home'
@@ -15,11 +13,9 @@ import vacationFee from '@/components/vacationFee'
 import specialFeeMes from '@/components/specialFeeMes'
 import RdlinkCheck from '@/components/RdlinkCheck'
 
-Vue.use(Router);
-
-export default new Router({
-  routes: [
-    {
+export default {
+  mode: 'history',
+  routes: [{
       path: '/',
       name: 'Login',
       component: Login // name需要保持唯一,通过router.push({name:'Login'})方式切换路由
@@ -95,4 +91,4 @@ export default new Router({
       name: 'RdlinkCheck'
     }
   ]
-})
+};

@@ -11,7 +11,7 @@ export default {
 </script>
 
 <style lang="less">
-  @import "./style/main.less";
+@import "./style/main.less";
 #app {
   width: 100%;
   height: 100%;
