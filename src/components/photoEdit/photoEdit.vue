@@ -2,16 +2,16 @@
   <div class="photoEdit">
     <el-form :inline="true" :model="dataModel" label-position="right" size="mini" label-width="80px" class="demo-form-inline">
       <el-form-item label="上传时间:">
-        <el-input v-model="dataModel.uploadTime" placeholder="上传时间"></el-input>
+        <el-input v-model="dataModel.uploadTime" :disabled="true"  placeholder="上传时间"></el-input>
       </el-form-item>
       <el-form-item label="来源ID:">
-        <el-input v-model="dataModel.sourceId" placeholder="来源ID"></el-input>
+        <el-input v-model="dataModel.sourceId" :disabled="true" placeholder="来源ID"></el-input>
       </el-form-item>
       <el-form-item label="照片内容:">
-        <el-input v-model="dataModel.photoContent" placeholder="照片内容"></el-input>
+        <el-input v-model="dataModel.photoContent" :disabled="true" placeholder="照片内容"></el-input>
       </el-form-item>
       <el-form-item label="版本号:">
-        <el-input v-model="dataModel.version" placeholder="版本号"></el-input>
+        <el-input v-model="dataModel.version" :disabled="true" placeholder="版本号"></el-input>
       </el-form-item>
       <el-form-item label="Tips反馈:">
         <el-select v-model="dataModel.feedback" placeholder="Tips反馈">
@@ -21,7 +21,7 @@
         </el-select>
       </el-form-item>
       <el-form-item class="inlineBlock" label="活动形式">
-        <el-input type="textarea" :rows=2 class="remark" v-model="dataModel.desc"></el-input>
+        <el-input resize="none" type="textarea" :rows=2 class="remark" v-model="dataModel.desc"></el-input>
       </el-form-item>
       <el-form-item class="inlineBlock send">
         <el-button type="primary" @click.prevent="onSumbit">提 交</el-button>

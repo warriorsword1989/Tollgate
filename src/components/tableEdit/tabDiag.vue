@@ -87,5 +87,4 @@
   .tableDialog {
     background: #636ef5;
   }
-
 </style>
