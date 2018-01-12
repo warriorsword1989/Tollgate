@@ -15,13 +15,12 @@ class User {
    * 用户登陆
    */
   async login() {
-    let queryObj = JSON.parse(this.req.body.parameter);
+    let queryObj = this.req.body;
     let sql = "SELECT " +
       "user_id, user_real_name, user_nick_name, user_email, user_phone " +
       "FROM USER_INFO " +
       "WHERE " +
       "USER_REAL_NAME = '" + queryObj.userName + "' AND USER_PASSWORD='" + queryObj.userPwd + "'";
-    console.log(sql);
     let result = await connectOracle.executeSql (sql);
     let resultData = changeResult (result);
     if (resultData.length) {

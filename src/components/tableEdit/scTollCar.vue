@@ -123,7 +123,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">固定收费站对应次费：</div>
               <div style="width:120px;display:inline-block">
-                <el-input v-model="fixFee" size="mini"></el-input>
+                <el-input v-model="dataModel.fixFee" size="mini"></el-input>
               </div>
             </div>
           </el-col>

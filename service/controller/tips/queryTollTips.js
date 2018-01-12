@@ -10,7 +10,7 @@ class Tips {
   }
 
   async getTollGateTipList() {
-    const param = JSON.parse(this.req.query.parameter);
+    const param = this.req.query;
     const adminCode = param.adminCode;
     const tipsVersion = param.tipsVersion;
     const tollName = param.tollName;

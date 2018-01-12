@@ -6,7 +6,7 @@
           <div class="grid-content bg-purple">
             <div style="display:inline-block" class="label">区间闭合标识：</div>
             <div style="width:150px;display:inline-block">
-              <el-select size="mini" v-model="dataModel.flag" placeholder="请选择">
+              <el-select size="mini" v-model="dataModel.tunnageFlag" placeholder="请选择">
                 <el-option
                   v-for="item in flagOptions"
                   :key="item.value"
@@ -21,7 +21,7 @@
           <div class="grid-content bg-purple">
             <div style="display:inline-block" class="label">桥梁隧道名称组号：</div>
             <div style="width:120px;display:inline-block">
-              <el-input size="mini"></el-input>
+              <el-input v-model="dataModel.nameBtId" size="mini"></el-input>
             </div>
           </div>
         </el-col>
@@ -29,7 +29,7 @@
           <div class="grid-content bg-purple">
             <div style="display:inline-block" class="label">桥梁隧道名称：</div>
             <div style="width:150px;display:inline-block">
-              <el-input size="mini"></el-input>
+              <el-input v-model="dataModel.nameBt" size="mini"></el-input>
             </div>
           </div>
         </el-col>
@@ -44,12 +44,12 @@
         <el-row :gutter="10">
           <el-col :span="10">
             <div style="display: flex;flex-direction: row" class="grid-content bg-purple">
-              <div style="display:inline-block" class="label">各车型座位数区间：</div>
+              <div style="display:inline-block" class="label">各车型吨数区间：</div>
               <div style="display:flex;flex-direction: row;text-align: center">
                 <div style="width: 20px">{{'>'}}</div>
-                <div style="width: 100px"><el-input size="mini"></el-input></div>
+                <div style="width: 100px"><el-input v-model="dataModel.tunnageMin" size="mini"></el-input></div>
                 <div style="width: 20px">{{'<='}}</div>
-                <div style="max-width: 100px"><el-input size="mini"></el-input></div>
+                <div style="max-width: 100px"><el-input v-model="dataModel.tunnageMax" size="mini"></el-input></div>
               </div>
             </div>
           </el-col>
@@ -57,7 +57,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">费率(元/公里)非桥隧道：</div>
               <div style="width:100px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.rate" size="mini"></el-input>
               </div>
             </div>
           </el-col>
@@ -65,7 +65,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">费率车道数：</div>
               <div style="width:110px;display:inline-block">
-                <el-select size="mini" v-model="dataModel.carClass" placeholder="费率车道数">
+                <el-select size="mini" v-model="dataModel.laneNum" placeholder="费率车道数">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
@@ -78,7 +78,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">集装箱尺寸数：</div>
               <div style="width:150px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.container" size="mini"></el-input>
               </div>
             </div>
           </el-col>
@@ -86,7 +86,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">轴数：</div>
               <div style="width:120px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.axleNum" size="mini"></el-input>
               </div>
             </div>
           </el-col>
@@ -94,15 +94,15 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">轮数：</div>
               <div style="width:120px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.wheelNum" size="mini"></el-input>
               </div>
             </div>
           </el-col>
           <el-col :span="5">
             <div class="grid-content bg-purple">
-              <div style="display:inline-block" class="label">轮数：</div>
+              <div style="display:inline-block" class="label">型号：</div>
               <div style="width:120px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.model" size="mini"></el-input>
               </div>
             </div>
           </el-col>
@@ -112,7 +112,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">桥隧道费率（元/车次）：</div>
               <div style="width:120px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.rateBt" size="mini"></el-input>
               </div>
             </div>
           </el-col>
@@ -120,7 +120,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">车次加费（元）：</div>
               <div style="width:120px;display:inline-block">
-                <el-select size="mini" v-model="dataModel.car1Class" placeholder="费率车道数">
+                <el-select size="mini" v-model="dataModel.feeAdd" placeholder="费率车道数">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
@@ -131,7 +131,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">最低收费（元）：</div>
               <div style="width:120px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.chargeMin" size="mini"></el-input>
               </div>
             </div>
           </el-col>
@@ -141,7 +141,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">费率1（元/公里）：</div>
               <div style="width:150px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.rate1" size="mini"></el-input>
               </div>
             </div>
           </el-col>
@@ -149,7 +149,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">费率1车道数：</div>
               <div style="width:150px;display:inline-block">
-                <el-select size="mini" v-model="dataModel.car1Class" placeholder="费率1车道数">
+                <el-select size="mini" v-model="dataModel.laneNum1" placeholder="费率1车道数">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
@@ -160,7 +160,7 @@
             <div class="grid-content bg-purple">
               <div style="display:inline-block" class="label">固定收费站对应次费：</div>
               <div style="width:150px;display:inline-block">
-                <el-input size="mini"></el-input>
+                <el-input v-model="dataModel.fixFee" size="mini"></el-input>
               </div>
             </div>
           </el-col>
@@ -184,28 +184,42 @@
     data() {
       return {
         dataModel: {
-          carClass: 0,
-          car1Class: 0,
-          flag: 0
+          tunnageFlag: 1,
+          nameBtId: 1,
+          nameBt: '无名',
+          rate: 1,
+          tunnageMin: 10,
+          tunnageMax: 1,
+          laneNum: 2,
+          container: 5,
+          axleNum: 1,
+          wheelNum: 2,
+          model: 2,
+          rateBt: 4,
+          feeAdd: 2,
+          chargeMin: 3,
+          rate1: 4,
+          laneNum1: 1,
+          fixFee: 3
         },
         options: [{
-          value: '0',
+          value: 0,
           label: '空'
         }, {
-          value: '1',
+          value: 1,
           label: '4'
         }, {
-          value: '2',
+          value: 2,
           label: '6'
         }],
         flagOptions: [{
-          value: '0',
+          value: 0,
           label: '前开后闭'
         }, {
-          value: '1',
+          value: 1,
           label: '前闭后开'
         }, {
-          value: '2',
+          value: 2,
           label: '前闭后闭'
         }]
       }

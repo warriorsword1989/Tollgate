@@ -152,7 +152,7 @@
         login(loginParams).then(function (result) {
           let { errorCode, data,  token } = result;
           if (errorCode == 0) {
-            appUtil.setCurrentUser(token);
+            appUtil.setTollgateToken(token);
             that.$router.push('/Home');
           } else {
             that.errorFlag = true;

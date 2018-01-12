@@ -6,9 +6,11 @@ import router from './routes';
 
 const app = express();
 
-app.all('*', (req, res, next) => {
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", req.headers.origin || '*');
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, x-access-token");
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
     res.header("Access-Control-Allow-Credentials", true); //可以带cookies
     res.header("X-Powered-By", '3.2.1');
@@ -18,10 +20,6 @@ app.all('*', (req, res, next) => {
         next();
     }
 });
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(history());
 app.use(express.static('./public'));
 
 // 路由分发;
