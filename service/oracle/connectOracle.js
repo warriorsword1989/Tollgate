@@ -60,4 +60,4 @@ class ConnectOracle {
   }
 }
 
-export default new ConnectOracle()
+export default ConnectOracle;
