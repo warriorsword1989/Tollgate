@@ -20,7 +20,7 @@
           <div class="labelText">收费类型：</div>
           <div class="inputPart">
             <el-select size="mini" v-model.number="tableData.rate_class" placeholder="请选择">
-              <el-option v-for="item in flagOptions" :key="item.value" :label="item.label" :value="item.value">
+              <el-option v-for="item in feeClass" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </div>
@@ -177,5 +177,9 @@
     display: flex;
     flex-direction: row;
   }
-
+  .el-select,
+  .el-select--mini{
+    display: block;
+    width: 100%;
+  }
 </style>

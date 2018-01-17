@@ -96,4 +96,9 @@
   .grid-content .inputPart {
     flex: 1
   }
+  .el-select,
+  .el-select--mini{
+    display: block;
+    width: 100%;
+  }
 </style>
