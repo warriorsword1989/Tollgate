@@ -18,9 +18,10 @@
     <!-- 地图 -->
     <div id="editorMap" class="map"></div>
     <!-- 显示隐藏按钮 -->
-    <el-button :class="{ 'enter-active': leftFloatArrow,  'enter-start': !leftFloatArrow }" :round.boolean=false @click="toggleLeftPanel"
+    <el-button :class="{ 'enter-active': leftFloatArrow,  'enter-start': !leftFloatArrow, 'left-toggle': true }" :round.boolean=false @click="toggleLeftPanel"
       type="primary">
-      <i class="el-icon-arrow-left"></i>
+      <i v-if="!leftFloatArrow" class="el-icon-arrow-left"></i>
+      <i v-if="leftFloatArrow" class="el-icon-arrow-right"></i>
     </el-button>
 
     <tableEdit :dialog-table-visible="showDialog" @DialogClose="closeDialog"></tableEdit>
@@ -148,6 +149,10 @@
     letter-spacing: 1px;
   }
 
+  .left-toggle {
+    border-radius: 0;
+  }
+
   .enter-start {
     position: absolute;
     top: 0px;
@@ -160,7 +165,6 @@
     top: 0px;
     left: 0px;
     z-index: 2;
-    transform: rotate(180deg);
     transition: all .4s liner;
   }
 
