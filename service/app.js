@@ -4,6 +4,10 @@ import bodyParser from 'body-parser';
 import router from './routes';
 
 
+const cluster = require('cluster');
+const cpuNums = require('os').cpus().length;
+
+
 const app = express();
 
 app.all('*', (req, res, next) => {
@@ -39,5 +43,24 @@ app.use(function(err, req, res, next) {
   res.status(500).send('出错啦:' + err.stack);
 });
 
-app.listen(8010);
+
+if(cluster.isMaster){
+  for(let i=0;i<cpuNums;i++){
+    cluster.fork();
+  }
+  cluster.on('exit',(worker)=>{
+    console.log(`worker${worker.id} exit.`)
+  });
+  cluster.on('fork',(worker)=>{
+    console.log(`fork：worker${worker.id}`)
+  });
+  cluster.on('listening',(worker,addr)=>{
+    console.log(`worker${worker.id} listening on ${addr.address}:${addr.port}`)
+  });
+  cluster.on('online',(worker)=>{
+    console.log(`worker${worker.id} is online now`)
+  });
+}else{
+  app.listen(8010);
+}
 console.log("服务已经启动： 端口为 8010");
