@@ -197,7 +197,7 @@
         }],
         roundTypeOptions: [{
           value: 0,
-          label: '无取整1'
+          label: '无取整'
         }, {
           value: 1,
           label: '将元位作三舍为零四进入五，七舍为五八进入十处理'
