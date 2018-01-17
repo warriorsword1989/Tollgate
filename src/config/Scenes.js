@@ -17,7 +17,7 @@ const scenes = {
             type: 'feature',
             label: 'roadFeature',
             name: '基础信息场景',
-            layers: ['RdLink', 'RdNode', 'IxPoi', 'AdLink', 'ZoneLink', 'LuLink', '[tip]', 'RdLinkAnnotation']
+            layers: ['RdNode', 'AdLink', 'AdAdmin', 'AdFace', 'RwLink', 'RdLink', 'RdTollgate']
         }
     }
 };

@@ -11,21 +11,53 @@ class Render {
   }
 
   async getObjByTile() {
+    const self = this;
     const param = JSON.parse(this.req.query.parameter);
     const types = param.types;
-    const dataArray = [];
+    const data = {};
+    const promises = this._createPromises(types, param);
+    Promise.all(promises)
+      .then((res) => {
+        for (let i = 0; i < res.length; i++) {
+          data[res[i].type] = res[i].data;
+        }
+        self.res.send({
+          errcode: 0,
+          data: data,
+          errmsg: 'success'
+        });
+      });
+  }
+
+  _createPromises(types, param) {
+    const promises = [];
+    for (let i = 0; i < types.length; ++i) {
+      const promise = this._createAjaxPromise(types[i], param);
+      promises.push(promise);
+    }
+
+    return promises;
+  }
+
+   _createAjaxPromise(type, param) {
     const searchFactory =  new SearchFactory(connectRenderObj);
-    for (let i = 0; i < types.length; i++) {
-      const objSearch = searchFactory.createSearch(types[i]);
+    const promise = new Promise(async function (resolve, reject) {
+      const objSearch = searchFactory.createSearch(type);
       if (objSearch) {
         const result  = await objSearch.getByTileWithGap(param.x, param.y, param.z, 0);
-        dataArray.push(result);
+        resolve({
+            data: result,
+            type: type
+          });
+      } else {
+        reject({
+          data: [],
+          type: type
+        });
       }
-    }
-    this.res.send({
-      errorCode: 0,
-      data: dataArray
     });
+
+    return promise;
   }
 }
 

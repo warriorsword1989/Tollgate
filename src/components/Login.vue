@@ -310,6 +310,7 @@
   }
 
   .login-container-bg {
+    text-align: center;
     border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.8);
   }
