@@ -4,19 +4,12 @@ const router = express.Router();
 import appConfig from '../../config/application';
 
 // 用户操作的路由;
-router.use ('/', function (req, res, next) {
-  let token = req.headers['x-access-token'];
-  if (req.method === 'POST') {
-    token = JSON.parse(req.body.parameter).token;
-  } else if (req.method === 'GET') {
-    token = JSON.parse(req.query.parameter).token;
-  } else {
-    token = null;
-  }
+router.use ('/', function (req, res, next) {  
   let handler = req.path.split('/').pop();
   if (handler === 'login' || handler === 'import' || handler === 'getObjByTile') {
     next('route');
   } else {
+    let token = req.headers['x-access-token'] || req.query.token || req.body.token;
     if (token) {
       jwt.verify(token, appConfig.secret, function(err, decoded) {
         if (err) {

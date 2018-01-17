@@ -5,17 +5,19 @@
         <div @click="showDialog = !showDialog" class="header">
           <h3 class="title">照片详情</h3>
         </div>
+        <!-- 照片显示 -->
         <div class="photoView">
-           <photo-swiper :image-list="dataModle.imageList"></photo-swiper>
+           <photo-swiper :image-list="dataModel.imageList"></photo-swiper>
         </div>
+        <!-- 数据编辑 -->
         <div class="dataView">
-          <photo-edit :data-model="dataModle"></photo-edit>
+          <photo-edit :data-model="tipsModel"></photo-edit>
         </div>
       </div>
     </transition>
-
+    <!-- 地图 -->
     <div id="editorMap" class="map"></div>
-
+    <!-- 显示隐藏按钮 -->
     <el-button :class="{ 'enter-active': leftFloatArrow,  'enter-start': !leftFloatArrow }" :round.boolean=false @click="toggleLeftPanel"
       type="primary">
       <i class="el-icon-arrow-left"></i>
@@ -31,6 +33,7 @@
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
   import tableEdit from './tableEdit/tabDiag';
+  import { getTollGateTip, getTipsPhoto } from '../dataService/api';
   export default {
     name: 'mainMap',
     components: {
@@ -43,20 +46,17 @@
         leftWidth: '25%',
         leftFloatArrow: false,
         showDialog: false,
-        dataModle: {
+        tipsModel: {
+          tipsLifecycle: '1',
+          memo: '描述信息',
+          rowkey: ''
+        },
+        dataModel: {
           uploadTime: '2012-10-7',
           sourceId: '111111',
           photoContent: '1212',
           version: '1.2.1',
-          feedback: 1,
-          desc: '描述信息',
-          imageList: [
-            'http://img2.imgtn.bdimg.com/it/u=2473758249,2536588353&fm=200&gp=0.jpg',
-            'http://img1.imgtn.bdimg.com/it/u=2229000148,3674036755&fm=200&gp=0.jpg',
-            'http://img3.imgtn.bdimg.com/it/u=1321305856,3339290601&fm=200&gp=0.jpg',
-            'http://img2.imgtn.bdimg.com/it/u=4070935547,487271359&fm=200&gp=0.jpg',
-            'http://img1.imgtn.bdimg.com/it/u=3523654413,712008688&fm=27&gp=0.jpg'
-          ]
+          imageList: []
         }
       }
     },
@@ -75,7 +75,26 @@
         console.log(val);
       },
     },
-    mounted: function () {
+    mounted () {
+      let _self = this;
+      // 加载tips信息；
+      let param = {rowkey: this.$route.params.rowkey};
+      getTollGateTip(param)
+      .then(result => {
+         let { errorCode, data } = result;
+         if (errorCode == 0) {
+            _self.tipsModel = {
+              tipsLifecycle: data[0].tips_lifecycle,
+              rowkey: data[0].rowkey,
+              memo: data[0].memo || ''
+            }
+          }
+      })
+      .finally(() => {
+        console.log('finally');
+      }).catch(err => {
+        console.log(err);
+      });
       mapInit.initialize();
     },
     destroyed: function () {
@@ -99,6 +118,7 @@
 
   .sideBar {
     background: #fff;
+    overflow: hidden;
     position: absolute;
     top: 0;
     left: 0;
@@ -145,12 +165,14 @@
   }
 
   .sideBar .photoView {
-    flex: 7;
+    flex: 8;
+    display: flex;
     flex-direction: column
   }
   .sideBar .dataView {
-    flex: 3;
-    text-align: justify;
+    height: 150px;
     padding-top: 10px;
+    border-top: 1px solid #8b8d9c;
+    text-align: justify;
   }
 </style>

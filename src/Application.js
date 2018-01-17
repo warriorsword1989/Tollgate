@@ -9,19 +9,29 @@
 
 export const appConfig = {
   appName: 'tollGate',
+  renderName: 'mapRender',
   // serviceUrl: 'http://192.168.15.220:3000' // 正式环境的服务地址
   // serviceUrl: 'http://192.168.4.189:3000' // 开发环境的服务地址
   serviceUrl: window.serviceConfig.serviceUrl // 开发环境的服务地址
 };
 
 export const appUtil = {
-  setCurrentUser: function (user) {
-    sessionStorage.setItem(`${appConfig.appName}-user`, JSON.stringify(user));
+  setTollgateToken: function (token) {
+    sessionStorage.setItem(`${appConfig.appName}-token`, token);
   },
-  getCurrentUser: function () {
-    return JSON.parse(sessionStorage.getItem(`${appConfig.appName}-user`));
+  setRenderToken: function (token) {
+    sessionStorage.setItem(`${appConfig.renderName}-token`, token);
   },
-  removeCurrentUser: function () {
-    sessionStorage.removeItem(`${appConfig.appName}-user`);
+  getTollgateToken: function () {
+    return sessionStorage.getItem(`${appConfig.appName}-token`);
+  },
+  getRenderToken: function () {
+    return sessionStorage.getItem(`${appConfig.renderName}-token`);
+  },
+  removeTollgateToken: function () {
+    sessionStorage.removeItem(`${appConfig.appName}-token`);
+  },
+  removeRenderToken: function () {
+    sessionStorage.removeItem(`${appConfig.renderName}-token`);
   }
 };
