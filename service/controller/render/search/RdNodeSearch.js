@@ -21,15 +21,18 @@ class RdnodeSearch extends Search{
     const resultData = changeResult(result);
     let dataArray = [];
     for(let i = 0; i< resultData.length; i++){
-      let snapShot = {};
-      snapShot.a = resultData[i].linkpids;
-      snapShot.b = resultData[i].node_forms;
-      snapShot.c = resultData[i].kind;
-      snapShot.g = MercatorProjection.coord2Pixel(resultData[i].geometry, px, py, z);
+      let snapShot = {
+        g: MercatorProjection.coord2Pixel(resultData[i].geometry, px, py, z),
+        t: 16,
+        i: parseInt(resultData[i].node_pid, 10),
+        m: {}
+      };
+      snapShot.m.a = resultData[i].linkpids;
+      snapShot.m.b = resultData[i].node_forms;
+      snapShot.m.c = parseInt(resultData[i].kind, 10);
       dataArray.push(snapShot);
     }
 
-    console.log(dataArray);
     return dataArray;
   }
 }

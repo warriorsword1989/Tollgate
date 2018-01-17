@@ -1,5 +1,10 @@
 import RdNodeSearch from './RdNodeSearch';
 import RdLinkSearch from './RdLinkSearch';
+import AdLinkSearch from './AdLinkSearch';
+import AdAdminSearch from './AdAdminSearch';
+import AdFaceSearch from './AdFaceSearch';
+import RwLinkSearch from './RwLinkSearch';
+import RdGateSearch from './RdGateSearch';
 
 class SearchFactory {
   constructor(connection) {
@@ -15,7 +20,23 @@ class SearchFactory {
       case "RDLINK":
         search = new RdLinkSearch(this.connection);
         break;
+      case "ADLINK":
+        search = new AdLinkSearch(this.connection);
+        break;
+      case "ADADMIN":
+        search = new AdAdminSearch(this.connection);
+        break;
+      case "ADFACE":
+        search = new AdFaceSearch(this.connection);
+        break;
+      case "RWLINK":
+        search = new RwLinkSearch(this.connection);
+        break;
+      case "RDTOLLGATE":
+        search = new RdGateSearch(this.connection);
+        break;
       default:
+        search = [];
         break;
     }
 
