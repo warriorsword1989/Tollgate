@@ -65,12 +65,12 @@
     methods: {
       getThumbnailUrl(rowkey) {
         var url = 'http://fs-road.navinfo.com/dev/trunk/service/fcc/photo/getSnapshotByRowkey';
-        return url + '?access_token=000001AGJCIID9TN37AED5316278F355C9DB0BF15EF7A598&parameter={rowkey:"' + rowkey +
+        return url + '?access_token=000001AGJCK3OMQZ18D5EF0ADB6C9608F8C68507812BD1EB&parameter={rowkey:"' + rowkey +
           '",type:"thumbnail"}';
       },
       getOriginUrl(rowkey) {
         var url = 'http://fs-road.navinfo.com/dev/trunk/service/fcc/photo/getSnapshotByRowkey';
-        return url + '?access_token=000001AGJCIID9TN37AED5316278F355C9DB0BF15EF7A598&parameter={rowkey:"' + rowkey +
+        return url + '?access_token=000001AGJCK3OMQZ18D5EF0ADB6C9608F8C68507812BD1EB&parameter={rowkey:"' + rowkey +
             '",type:"origin"}';
       },
       slideChanged() {
@@ -82,7 +82,7 @@
        // 加载tips照片；
       let _self = this;
       let photoIds = this.$route.params.photo_id.split(';');
-      getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: '000001AGJCJT9VONAE45C7E71B9CEB0EF88D8F7C9416EE82'})
+      getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: '000001AGJCK3OMQZ18D5EF0ADB6C9608F8C68507812BD1EB'})
       .then((results) => {
         _self.imageList = results.data.data;
       })
