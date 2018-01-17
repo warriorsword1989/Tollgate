@@ -147,6 +147,9 @@
             console.log(err);
           });
       }
+    },
+    destroyed() {
+      this.$emit('childDestroyed');
     }
   }
 </script>

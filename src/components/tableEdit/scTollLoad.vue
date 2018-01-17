@@ -179,6 +179,9 @@
     },
     methods: {
       onSubmit(){}
+    },
+    destroyed() {
+      this.$emit('childDestroyed');
     }
   }
 

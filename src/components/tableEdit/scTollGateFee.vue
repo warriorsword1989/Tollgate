@@ -73,9 +73,12 @@
         });
       }
     },
-     mounted () {
-       console.log(this.tableData)
-     }
+    mounted () {
+      console.log(this.tableData)
+    },
+    destroyed() {
+      this.$emit('childDestroyed');
+    }
   }
 
 </script>
