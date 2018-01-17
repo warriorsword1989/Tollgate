@@ -1,14 +1,14 @@
 /**
  * Created by xujie3949 on 2017/1/11.
  */
+import { appConfig, appUtil } from '../Application';
 const sourceConfig = {
     objSource: {
-        sourceUrl: 'http://fs-road.navinfo.com/dev/trunk/service' + '/render/obj/getByTileWithGap?access_token=' + '000001A8JBSQHQMTDD91C4641C53ABB4D92B939B8B4BB9BC',
+        sourceUrl: appConfig.serviceUrl + '/tollgate/render/getObjByTile?',
         parsor: FM.mapApi.render.data.Feature,
         type: 'classical',
         subdomains: ['r1', 'r2', 'r3', 'r4', 'r5', 'r6'],
         requestParameter: {
-            dbId: 69,
             gap: 10,
             types: []
         }

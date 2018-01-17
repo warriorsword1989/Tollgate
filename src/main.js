@@ -5,7 +5,7 @@ import Router from 'vue-router'
 import ElementUI from 'element-ui'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import VueAwesomeSwiper from 'vue-awesome-swiper'
-
+import router from './router'
 
 import App from './App'
 import routerConfig from './router'
@@ -17,7 +17,6 @@ import 'vue-dialog-drag/dist/vue-dialog-drag.css'
 import 'vue-dialog-drag/dist/drop-area.css'
 import 'vue-dialog-drag/dist/dialog-styles.css'
 
-Vue.use(Router);
 Vue.use(ElementUI);
 Vue.use(VueAwesomeSwiper);
 Vue.component(CollapseTransition.name, CollapseTransition)
@@ -26,7 +25,7 @@ Vue.config.productionTip = false;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  router: new Router(routerConfig),
+  router,
   template: '<App/>',
   components: { App }
 });
