@@ -258,8 +258,8 @@
           changePage:function () {
 
           },
-          handleClick:function () {
-            this.$router.push('/mainMap');
+          handleClick:function (data) {
+            this.$router.push({name:'mainMap', params: data});
           },
           handleSizeChange:function (val) {
             this.tip.pageSize = val;

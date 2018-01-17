@@ -1,25 +1,25 @@
 import oracledb from 'oracledb';
 import oracleService from '../../config/application';
 
-class ConnectRenderObj {
+class ConnectMetaOracle {
 
   constructor() {
     this.connectionAttrs = {
-      user: oracleService.RenderObjUserName,
-      password: oracleService.RenderObjPassword,
-      connectString: oracleService.connectRenderObjUrl
+      user: oracleService.MetaObjUserName,
+      password: oracleService.MetaObjPassword,
+      connectString: oracleService.connectMetaObjUrl
     };
     this.releaseConnections = this.releaseConnections.bind(this);
   }
 
-  executeSql (sql, params){
+  executeSql (sql){
     oracledb.autoCommit = true;
     return new Promise((resolve, reject) => {
       oracledb
         .getConnection(this.connectionAttrs)
         .then(connection => {
           return connection
-            .execute(sql, params)
+            .execute(sql)
             .then(results => {
               resolve(results);
               this.releaseConnections(connection);
@@ -60,4 +60,4 @@ class ConnectRenderObj {
   }
 }
 
-export default new ConnectRenderObj();
+export default ConnectMetaOracle;

@@ -1,4 +1,4 @@
-import connectOracle from '../../oracle/connectOracle';
+import ConnectOracle from '../../oracle/connectOracle';
 import logger from '../../config/logs';
 import { changeResult } from '../../Util';
 
@@ -7,6 +7,8 @@ class Tips {
     this.req = req;
     this.res = res;
     this.next = next;
+    this.table = 'SC_TOLL_TIPS_INDEX';
+    this.db = new ConnectOracle();
   }
 
   async getTollGateTipList() {
@@ -17,7 +19,7 @@ class Tips {
     const updateStartTime = param.updateStartTime;
     const updateEndTime = param.updateEndTime;
     const isAdopted = param.isAdopted;
-    let sql = "SELECT * FROM SC_TOLL_TIPS_INDEX WHERE ADMIN_CODE = '" + adminCode + "'";
+    let sql = "SELECT * FROM " + this.table + " WHERE ADMIN_CODE = '" + adminCode + "'";
     if (tipsVersion) {
       sql = sql + " AND upper(TIPS_VERSION) = '" + tipsVersion.toUpperCase() + "'";
     }
@@ -31,12 +33,42 @@ class Tips {
       sql = sql + " AND IS_ADOPTED IN (" + isAdopted.toString() + ")";
     }
     console.log(sql);
-    const result = await  connectOracle.executeSql(sql);
+    const result = await this.db.executeSql(sql);
     const resultData = changeResult(result);
     this.res.send({
       errorCode: 0,
       data: resultData
     });
+  }
+
+  async getTollGateTip() {
+    const param = this.req.query;
+    const rowkey = param.rowkey;
+    let sql = "SELECT * FROM " + this.table + " WHERE ROWKEY = '" + rowkey + "'";
+    console.log(sql);
+    const result = await this.db.executeSql(sql);
+    const resultData = changeResult(result);
+    this.res.send({
+      errorCode: 0,
+      data: resultData
+    });
+  }
+
+  async updateTollGateTip() {
+    const param = this.req.body;
+    const rowkey = param.rowkey;
+    const lifeCycle = param.tipsLifecycle;
+    const memo = param.memo;
+    let sql = "UPDATE " + this.table + " SET"+
+    " TIPS_LIFECYCLE='" + lifeCycle +
+    "', MEMO='"+ memo +
+    "' WHERE ROWKEY='" + rowkey+ "'";
+    const result = await this.db.executeSql(sql);
+    if (result.rowsAffected === 1) {
+      this.res.send({errorCode: 0});
+    } else {
+      this.res.send({errorCode: -1});
+    }
   }
 }
 

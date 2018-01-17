@@ -16,22 +16,22 @@ axios.defaults.baseURL = appConfig.serviceUrl;
 
 //添加一个请求拦截器
 axios.interceptors.request.use(function(config){
-  if (config.method === 'post') {
-    config.data = qs.stringify(config.data);
-  }
   if (config.url.split('/').pop() != 'login') {
     config.headers.common['x-access-token'] = appUtil.getTollgateToken();
   }
+  if (config.method === 'post') {
+    config.data = qs.stringify(config.data);
+  }
   return config;
 },function(err){
-  return Promise.reject(error);
+  return Promise.reject(err);
 });
 
 //添加一个响应拦截器
 axios.interceptors.response.use(function(res){
   return res.data;
 },function(err){
-  return Promise.reject(error);
+  return Promise.reject(err);
 });
 
 // -- 用户相关  --
@@ -39,3 +39,12 @@ export const login = params => { return axios.post('/tollgate/user/login', param
 
 // -- tips列表相关  --
 export const getTollGateTipList = params => { return axios.get('/tollgate/tips/getTollGateTipList', {params})};
+export const getTollGateTip = params => { return axios.get('/tollgate/tips/getTollGateTip', {params})};
+export const updateTollGateTip = params => { return axios.post('/tollgate/tips/updateTollGateTip', params)};
+const hbase = axios.create({
+  baseURL:"http://fs-road.navinfo.com/dev/trunk/service"
+});
+export const getTipsPhoto = params => { return hbase.get('/fcc/photo/getPhotosByRowkey', {params})};
+// 收费站新增编辑相关;
+export const getTollGate = params => { return axios.get('/tollgate/tips/getTollGate', {params})};
+export const updateTollGate = params => { return axios.post('/tollgate/tips/updateTollGate', params)};

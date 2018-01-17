@@ -9,6 +9,8 @@ class User {
     this.req = req;
     this.res = res;
     this.next = next;
+    this.table = 'USER_INFO';
+    this.db = new connectOracle();
   }
 
   /**
@@ -21,7 +23,7 @@ class User {
       "FROM USER_INFO " +
       "WHERE " +
       "USER_REAL_NAME = '" + queryObj.userName + "' AND USER_PASSWORD='" + queryObj.userPwd + "'";
-    let result = await connectOracle.executeSql (sql);
+    let result = await this.db.executeSql (sql);
     let resultData = changeResult (result);
     if (resultData.length) {
       // 生成token
