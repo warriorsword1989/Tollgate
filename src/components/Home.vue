@@ -259,7 +259,8 @@
 
           },
           handleClick:function (data) {
-            this.$router.push({name:'mainMap', params: data});
+            console.log(data)
+            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id}});
           },
           handleSizeChange:function (val) {
             this.tip.pageSize = val;

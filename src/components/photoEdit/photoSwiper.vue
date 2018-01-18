@@ -1,5 +1,10 @@
 <template>
-  <div class="tipsInfos">
+  <div
+  v-loading="loading"
+  element-loading-text="拼命加载中"
+  element-loading-spinner="el-icon-loading"
+  element-loading-background="rgba(243, 239, 239, 0.5);"
+  class="tipsInfos">
     <!-- 照片显示 -->
     <div class="photoSwiper">
       <swiper :options="swiperOptionTop" @slideChange="slideChanged" class="gallery-top" ref="swiperTop">
@@ -34,9 +39,11 @@
 </template>
 <script>
   import { getTipsPhoto } from '../../dataService/api';
+  import { appUtil } from '../../Application';
   export default {
     data() {
       return {
+        loading: true,
         swiperOptionTop: {
           spaceBetween: 10,
           loop: true,
@@ -55,6 +62,7 @@
           slideToClickedSlide: true
         },
         imageList: [],
+        renderToken: '',
         photoInfo: {
           uploadDate: '',
           rowkey: '',
@@ -65,12 +73,12 @@
     methods: {
       getThumbnailUrl(rowkey) {
         var url = 'http://fs-road.navinfo.com/dev/trunk/service/fcc/photo/getSnapshotByRowkey';
-        return url + '?access_token=000001AGJCK3OMQZ18D5EF0ADB6C9608F8C68507812BD1EB&parameter={rowkey:"' + rowkey +
+        return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
           '",type:"thumbnail"}';
       },
       getOriginUrl(rowkey) {
         var url = 'http://fs-road.navinfo.com/dev/trunk/service/fcc/photo/getSnapshotByRowkey';
-        return url + '?access_token=000001AGJCK3OMQZ18D5EF0ADB6C9608F8C68507812BD1EB&parameter={rowkey:"' + rowkey +
+        return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
             '",type:"origin"}';
       },
       slideChanged() {
@@ -81,12 +89,14 @@
     mounted() {
        // 加载tips照片；
       let _self = this;
-      let photoIds = this.$route.params.photo_id.split(';');
-      getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: '000001AGJCK3OMQZ18D5EF0ADB6C9608F8C68507812BD1EB'})
+      let photoIds = this.$route.params.photoId.split(';');
+      this.renderToken = appUtil.getRenderToken();
+      getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: this.renderToken})
       .then((results) => {
         _self.imageList = results.data.data;
       })
       .finally(() => {
+        this.loading = false;
         this.$nextTick(() => {
           const swiperTop = this.$refs.swiperTop.swiper;
           const swiperThumbs = this.$refs.swiperThumbs.swiper;

@@ -32,8 +32,8 @@ class TollGate {
    * 更新表;
    */
   async updateTollGate() {
-    const param = this.req.body;
-    this.table = param.table;
+    const param = this.req.body.data;
+    this.table = this.req.body.table;
     const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : 'GROUP_ID';
     let updateString = this.getUpdateString(param);
     let sql = "UPDATE " + this.table + " SET " + updateString +
@@ -52,8 +52,12 @@ class TollGate {
   getUpdateString(data){
     let tempString = ''
     for(let key in data) {
-      if (key != 'table') {
-        tempString += key.toUpperCase() + "='" + data[key] + "',";
+      if (key != 'command') {
+        if (typeof data[key] === 'string') {
+          tempString += key.toUpperCase() + "='" + data[key] + "',";
+        } else {
+          tempString += key.toUpperCase() + "=" + data[key] + ",";
+        }
       }
     }
     return tempString.substr(0, tempString.length-1);

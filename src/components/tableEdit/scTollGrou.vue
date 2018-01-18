@@ -1,18 +1,24 @@
 <template>
-  <el-form :inline="true" class="wraper">
+  <el-form
+  :inline="true"
+  class="wraper"
+  v-loading="loading"
+  element-loading-text="拼命加载中"
+  element-loading-spinner="el-icon-loading"
+  element-loading-background="rgba(243, 239, 239, 0.5);">
     <div class="grid-content">
 
       <div class="grid-wraper">
         <div class="grid-list">
           <div class="labelText">区域标识：</div>
           <div class="inputPart">
-            <el-input v-model="tableData.system_id" size="mini"></el-input>
+            <el-input v-model="dataModel.system_id" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div class="labelText">ETC打折类型：</div>
           <div class="inputPart">
-            <el-select size="mini" v-model.number="tableData.etc_type" placeholder="请选择">
+            <el-select size="mini" v-model.number="dataModel.etc_type" placeholder="请选择">
               <el-option v-for="item in etcTypeOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -24,7 +30,7 @@
         <div class="grid-list">
           <div class="labelText">ETC打折：</div>
           <div class="inputPart">
-            <el-input v-model="tableData.etc_d" size="mini"></el-input>
+            <el-input v-model="dataModel.etc_d" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
@@ -42,7 +48,7 @@
         <div class="grid-list">
           <div class="labelText">是否有绿色通道：</div>
           <div class="inputPart">
-            <el-select size="mini" v-model.number="tableData.pre_truck_0" placeholder="请选择">
+            <el-select size="mini" v-model.number="dataModel.pre_truck_0" placeholder="请选择">
               <el-option v-for="item in geenPathOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -51,7 +57,7 @@
         <div class="grid-list">
           <div class="labelText">客车优惠车型：</div>
           <div class="inputPart">
-            <el-select size="mini" v-model.number="tableData.pre_truck_0" placeholder="请选择">
+            <el-select size="mini" v-model.number="dataModel.pre_truck_0" placeholder="请选择">
               <el-option v-for="item in carTypeOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -63,13 +69,13 @@
         <div class="grid-list">
           <div class="labelText">客车优惠降低量：</div>
           <div class="inputPart">
-            <el-input v-model="tableData.dec_car" size="mini"></el-input>
+            <el-input v-model="dataModel.dec_car" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div class="labelText">货车优惠空载车型：</div>
           <div class="inputPart">
-            <el-select size="mini" v-model.number="tableData.pre_truck_0" placeholder="请选择">
+            <el-select size="mini" v-model.number="dataModel.pre_truck_0" placeholder="请选择">
               <el-option v-for="item in truckTypeOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -81,14 +87,14 @@
         <div class="grid-list">
           <div class="labelText">货车空载优惠降低量：</div>
           <div class="inputPart">
-            <el-input v-model="tableData.dec_truck" size="mini"></el-input>
+            <el-input v-model="dataModel.dec_truck" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div class="labelText">货车正常装载优惠吨数区间：</div>
           <div class="inputPart">
-            <el-input v-model="tableData.pre_truck_loadmin" size="mini"></el-input> -
-            <el-input v-model="tableData.pre_truck_loadmax" size="mini"></el-input>
+            <el-input v-model="dataModel.pre_truck_loadmin" size="mini"></el-input> -
+            <el-input v-model="dataModel.pre_truck_loadmax" size="mini"></el-input>
           </div>
         </div>
       </div>
@@ -97,13 +103,13 @@
         <div class="grid-list">
           <div class="labelText">货车正常装载优惠计费吨数：</div>
           <div class="inputPart">
-            <el-input v-model="tableData.pre_truck_load" size="mini"></el-input>
+            <el-input v-model="dataModel.pre_truck_load" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div class="labelText">最低收费金额：</div>
           <div class="inputPart">
-            <el-input v-model="tableData.fee_limit" size="mini"></el-input>
+            <el-input v-model="dataModel.fee_limit" size="mini"></el-input>
           </div>
         </div>
       </div>
@@ -112,7 +118,7 @@
         <div class="grid-list">
           <div class="labelText">收费取整：</div>
           <div class="inputPart">
-            <el-select size="mini" v-model.number="tableData.round" placeholder="请选择">
+            <el-select size="mini" v-model.number="dataModel.round" placeholder="请选择">
               <el-option v-for="item in roundTypeOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -120,25 +126,47 @@
         </div>
       </div>
 
-      <div style="padding:20px;text-align: right;" class="footerPart">
+      <div style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
         <el-row :gutter="5">
           <el-button type="primary" @click="onSubmit">保 存</el-button>
         </el-row>
       </div>
-
     </div>
   </el-form>
 </template>
 
 <script>
-  import {
-    updateTollGate
-  } from '../../dataService/api';
+  import {updateTollGate} from '../../dataService/api';
+  import {getTollGate} from '../../dataService/api';
   export default {
     name: 'scTollGrou',
-    props: ['tableData'],
+    props: ['tableName'],
     data() {
       return {
+        loading: true,
+        mountFlag: false,
+        dataModel: {
+          axle_num_limit:null,
+          dec_car:null,
+          dec_truck:1,
+          etc_d:1,
+          etc_type:1,
+          fee_limit:null,
+          free_type:"1",
+          green_path:1,
+          group_id:1,
+          model_limit:null,
+          pre_car:null,
+          pre_truck_0:null,
+          pre_truck_load:null,
+          pre_truck_loadmax:null,
+          pre_truck_loadmin:null,
+          round:null,
+          source:1,
+          system_id:1,
+          ton_limit:null
+        },
+        originModel: Object.assign({}, this.dataModel),
         geenPathOptions: [{
           value: 0,
           label: '无'
@@ -219,26 +247,26 @@
     computed: {
       free_type_computed: {
         get: function () {
-          return this.tableData.free_type.split('|') || ["0"];
+          return this.dataModel.free_type.split('|') || ["0"];
         },
         set: function (newValue) {
-          this.tableData.free_type = newValue!=0 ? newValue.join('|') : "0";
+          this.dataModel.free_type = newValue!=0 ? newValue.join('|') : "0";
         }
       }
     },
     methods: {
       onSubmit() {
         let params = {
-          table: 'SC_TOLL_GROUP'
+          table: 'SC_TOLL_GROUP',
+          data: Object.assign(this.dataModel, {command: 'update'})
         };
-        Object.assign(params, this.tableData);
+        this.loading = true;
         updateTollGate(params)
           .then(result => {
-            let {
-              errorCode
-            } = result;
+            let {errorCode} = result;
             const h = this.$createElement;
             if (errorCode === 0) {
+              this.$emit('tabStatusChange', {status: false, tabIndex: 6});
               return this.$message({
                 message: '数据更新成功！',
                 type: 'success'
@@ -251,6 +279,7 @@
             }
           })
           .finally(() => {
+            this.loading = false;
             console.log('finally');
           })
           .catch(err => {
@@ -258,7 +287,33 @@
           });
       }
     },
-    mounted() {
+    watch: {
+      dataModel: {
+        handler (newValue, oldValue) {
+          if (!this.mountFlag) {
+            this.$emit('tabStatusChange', {status: true, tabIndex: 6});
+          } else {
+            this.mountFlag = false;
+          }
+        },
+        deep:true
+      }
+    },
+    mounted(){
+      this.mountFlag = true;
+      let param = {table: 'SC_TOLL_GROUP', pid: 55796611};
+      getTollGate(param)
+      .then(result => {
+        let {errorCode, data} = result;
+        this.dataModel = data[0];
+      })
+      .finally(() => {
+        this.loading = false;
+        console.log('finally');
+      })
+      .catch(err => {
+        console.log(err);
+      });
       console.log('mounted scTollGrou')
     },
     destroyed() {

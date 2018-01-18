@@ -11,7 +11,7 @@
         </div>
         <!-- 数据编辑 -->
         <div class="dataView">
-          <photo-edit :data-model="tipsModel"></photo-edit>
+          <photo-edit></photo-edit>
         </div>
       </div>
     </transition>
@@ -34,7 +34,8 @@
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
   import tableEdit from './tableEdit/tabDiag';
-  import { getTollGateTip, getTipsPhoto } from '../dataService/api';
+  import { appUtil } from '../Application';
+  import { tempLogin, getTipsPhoto } from '../dataService/api';
   export default {
     name: 'mainMap',
     components: {
@@ -47,11 +48,6 @@
         leftWidth: '25%',
         leftFloatArrow: false,
         showDialog: false,
-        tipsModel: {
-          tipsLifecycle: '1',
-          memo: '描述信息',
-          rowkey: ''
-        },
         dataModel: {
           uploadTime: '2012-10-7',
           sourceId: '111111',
@@ -78,23 +74,19 @@
     },
     mounted () {
       let _self = this;
-      // 加载tips信息；
-      let param = {rowkey: this.$route.params.rowkey};
-      getTollGateTip(param)
+      tempLogin({parameter:{"userNickName":"fanjingwei01672","userPassword":"016720"}})
       .then(result => {
-         let { errorCode, data } = result;
-         if (errorCode == 0) {
-            _self.tipsModel = {
-              tipsLifecycle: data[0].tips_lifecycle,
-              rowkey: data[0].rowkey,
-              memo: data[0].memo || ''
-            }
-          }
+        let {data, errcode} = result.data;
+        if (errcode === 0) {
+          let fmToken = data.access_token;
+          appUtil.setRenderToken(fmToken);
+        }
       })
       .finally(() => {
-        console.log('finally');
-      }).catch(err => {
-        console.log(err);
+        console.log('login finally')
+      })
+      .catch(err => {
+        console.log(err)
       });
       mapInit.initialize();
     },
