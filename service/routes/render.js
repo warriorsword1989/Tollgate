@@ -13,5 +13,15 @@ router.get ('/getObjByTile', function (req, res, next) {
   }
 });
 
+router.get ('/getTipsByTile', function (req, res, next) {
+  "use strict";
+  try {
+    let RenderManager = new Render(req, res, next);
+    RenderManager['getTipsByTile'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
 export default router;
 

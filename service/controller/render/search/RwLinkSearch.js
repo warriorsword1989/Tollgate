@@ -10,7 +10,7 @@ class RwLinkSearch extends Search{
   async getByTileWithGap(x, y, z, gap){
     const wkt = MercatorProjection.getWktWithGap(x, y, z, 0);
 
-    const sql = "select a.link_pid, a.color, a.s_node_pid ,a.e_node_pid, b.name, to_char(a.GEOMETRY.get_wkt()) as GEOMETRY from rw_link a, (select /*+ index(b) */ b.link_pid, c.name from rw_link_name b, rd_name c where b.name_groupid = c.name_groupid and b.u_record != 2) b  where a.u_record != 2 and a.link_pid = b.link_pid(+) and sdo_within_distance(a.geometry, sdo_geometry(:wkt, 8307), 'DISTANCE=0') = 'TRUE'";
+    const sql = "select a.link_pid, a.color, a.s_node_pid ,a.e_node_pid, b.name, (a.GEOMETRY.get_wkt()) as GEOMETRY from rw_link a, (select /*+ index(b) */ b.link_pid, c.name from rw_link_name b, rd_name c where b.name_groupid = c.name_groupid and b.u_record != 2) b  where a.u_record != 2 and a.link_pid = b.link_pid(+) and sdo_within_distance(a.geometry, sdo_geometry(:wkt, 8307), 'DISTANCE=0') = 'TRUE'";
 
     const result = await this.connection.executeSql(sql, {wkt: wkt});
 

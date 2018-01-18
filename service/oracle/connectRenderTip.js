@@ -1,13 +1,13 @@
 import oracledb from 'oracledb';
 import oracleService from '../../config/application';
 
-class ConnectRenderObj {
+class ConnectRenderTip {
 
   constructor() {
     this.connectionAttrs = {
-      user: oracleService.RenderObjUserName,
-      password: oracleService.RenderObjPassword,
-      connectString: oracleService.connectRenderObjUrl
+      user: oracleService.userName,
+      password: oracleService.password,
+      connectString: oracleService.connectUrl
     };
     this.releaseConnections = this.releaseConnections.bind(this);
   }
@@ -60,4 +60,4 @@ class ConnectRenderObj {
   }
 }
 
-export default new ConnectRenderObj();
+export default new ConnectRenderTip();
