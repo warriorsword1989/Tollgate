@@ -254,7 +254,7 @@
 
 <style scoped>
   .tableEditPanel {
-    max-height: 350px;
+    max-height: 250px;
     overflow-y:scroll;
     overflow-x:hidden;
   }

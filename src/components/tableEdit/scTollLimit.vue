@@ -169,7 +169,7 @@
 
 <style lang="less" scoped>
   .tableEditPanel {
-    max-height: 350px;
+    max-height: 250px;
     overflow-y: auto;
     overflow-x: hidden;
     .text-left {

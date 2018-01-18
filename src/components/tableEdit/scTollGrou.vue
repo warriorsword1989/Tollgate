@@ -1,7 +1,7 @@
 <template>
   <el-form
   :inline="true"
-  class="wraper"
+  class="tableEditPanel"
   v-loading="loading"
   element-loading-text="拼命加载中"
   element-loading-spinner="el-icon-loading"
@@ -325,6 +325,31 @@
 </script>
 
 <style scoped>
+  .tableEditPanel {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    .text-left {
+      text-align: left;
+      padding: 3px;
+    }
+    .edit-cell {
+      margin: 5px;
+      text-align: left;
+    }
+    .btn-icon {
+      padding: 5px;
+    }
+    .icon-option {
+      font-size: 30px;
+      cursor: pointer;
+      transition: all .3s;
+      &:hover {
+        color: #409EFF;
+      }
+    }
+  }
+
   .grid-wraper {
     display: flex;
     flex-direction: row;
