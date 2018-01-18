@@ -14,15 +14,13 @@ const sourceConfig = {
         }
     },
     tipSource: {
-        sourceUrl: 'http://fs-road.navinfo.com/dev/trunk/service' + '/render/tip/getByTileWithGap?access_token=' + '000001A8JBSQHQMTDD91C4641C53ABB4D92B939B8B4BB9BC',
+        sourceUrl: appConfig.serviceUrl + '/tollgate/render/getTipsByTile?',
         parsor: FM.mapApi.render.data.Tip,
         type: 'classical',
         subdomains: ['r1', 'r2', 'r3', 'r4', 'r5', 'r6'],
         requestParameter: {
-            mdFlag: "d",
             gap: 10,
-            types: [],
-            workStatus: [0, 1, 2]
+            types: []
         }
     }
 };

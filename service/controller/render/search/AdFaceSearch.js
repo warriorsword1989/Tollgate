@@ -7,10 +7,11 @@ class AdFaceSearch extends Search{
     super(connection);
   }
 
+
   async getByTileWithGap(x, y, z, gap){
     const wkt = MercatorProjection.getWktWithGap(x, y, z, 0);
 
-    const sql = "select a.face_pid, to_char(a.geometry.get_wkt()) as geometry, a.region_id from ad_face a where a.u_record != 2 and sdo_within_distance(a.geometry, sdo_geometry(:wkt, 8307), 'DISTANCE=0') = 'TRUE'";
+    const sql = "select a.face_pid, (a.geometry.get_wkt()) as geometry, a.region_id from ad_face a where a.u_record != 2 and sdo_within_distance(a.geometry, sdo_geometry(:wkt, 8307), 'DISTANCE=0') = 'TRUE'";
 
     const result = await this.connection.executeSql(sql, {wkt: wkt});
 

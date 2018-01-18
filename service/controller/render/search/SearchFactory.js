@@ -5,6 +5,7 @@ import AdAdminSearch from './AdAdminSearch';
 import AdFaceSearch from './AdFaceSearch';
 import RwLinkSearch from './RwLinkSearch';
 import RdGateSearch from './RdGateSearch';
+import TipTollGateSearch from './TipTollGateSearch';
 
 class SearchFactory {
   constructor(connection) {
@@ -34,6 +35,9 @@ class SearchFactory {
         break;
       case "RDTOLLGATE":
         search = new RdGateSearch(this.connection);
+        break;
+      case "1107":
+        search = new TipTollGateSearch(this.connection);
         break;
       default:
         search = [];
