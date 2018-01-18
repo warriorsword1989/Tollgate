@@ -11,6 +11,9 @@ class TollGate {
     this.db = new ConnectMetaOracle();
   }
 
+  /**
+   * 根据groupId查询收费站信息;
+   */
   async getTollGate() {
     const param = this.req.query;
     const pid = param.pid;
@@ -25,9 +28,12 @@ class TollGate {
     });
   }
 
+  /**
+   * 更新表;
+   */
   async updateTollGate() {
-    const param = this.req.body;
-    this.table = param.table;
+    const param = this.req.body.data;
+    this.table = this.req.body.table;
     const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : 'GROUP_ID';
     let updateString = this.getUpdateString(param);
     let sql = "UPDATE " + this.table + " SET " + updateString +
@@ -39,12 +45,19 @@ class TollGate {
       this.res.send({errorCode: -1});
     }
   }
-
+  /**
+   * 获得update部分语句
+   * @param {*} data 
+   */
   getUpdateString(data){
     let tempString = ''
     for(let key in data) {
-      if (key != 'table') {
-        tempString += key.toUpperCase() + "='" + data[key] + "',";
+      if (key != 'command') {
+        if (typeof data[key] === 'string') {
+          tempString += key.toUpperCase() + "='" + data[key] + "',";
+        } else {
+          tempString += key.toUpperCase() + "=" + data[key] + ",";
+        }
       }
     }
     return tempString.substr(0, tempString.length-1);

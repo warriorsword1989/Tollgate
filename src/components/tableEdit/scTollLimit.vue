@@ -1,6 +1,13 @@
 <template>
   <div class="tableEditPanel">
-    <el-form :inline="true" class="wraper">
+    <el-form
+    :inline="true"
+    class="wraper"
+    v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(243, 239, 239, 0.5);"
+    >
       <div style="text-align:center">
         <el-col :span="10">
           <div class="grid-content bg-purple text-left">
@@ -32,7 +39,7 @@
           <el-col :span="10">
             <div style="display: flex;flex-direction: row" class="grid-content bg-purple edit-cell">
               <div style="display:inline-block" class="label">轴数限载标准：</div>
-              <div style="width:120px;display:inline-block">
+              <div style="width:200px;display:inline-block">
                 <el-input v-model="item.axle_num_limit" size="mini"></el-input>
               </div>
             </div>
@@ -40,7 +47,7 @@
           <el-col :span="10">
             <div class="grid-content bg-purple edit-cell">
               <div style="display:inline-block" class="label">型号限载标准：</div>
-              <div style="width:120px;display:inline-block">
+              <div style="width:200px;display:inline-block">
                 <el-input v-model="item.model_limit" size="mini"></el-input>
               </div>
             </div>
@@ -53,15 +60,14 @@
           <el-col :span="10">
             <div class="grid-content bg-purple edit-cell">
               <div style="display:inline-block" class="label">吨数限载标准：</div>
-              <div style="width: 130px;display: inline-flex;">
+              <div style="width: 200px;display: inline-flex;">
                 <el-input v-model="item.ton_limit" size="mini"></el-input>
-                <span> 吨</span>
               </div>
             </div>
           </el-col>
         </el-row>
       </fieldset>
-      <div style="padding:20px;text-align: right;" class="footerPart">
+      <div style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
         <el-row :gutter="5">
           <el-button type="primary" @click="onSubmit">保 存</el-button>
         </el-row>
@@ -70,42 +76,102 @@
   </div>
 </template>
 
-
 <script>
+  import qs from 'querystring';
+  import {getTollGate} from '../../dataService/api';
+  import {updateTollGate} from '../../dataService/api';
   export default {
     name: 'scTollLoad',
-    props: [],
+    props: ['tableName'],
     data() {
       return {
-        dataModels: []
+        loading: true,
+        dataModels: [],
+        mountFlag: false
       }
     },
     methods: {
-      addLimitItem () {
+      addLimitItem() {
         let tollLimit = {
-          system_id: 1,
-          admin_name: '',
+          system_id: 16,
+          admin_name: '云南省',
           axle_num_limit: 1,
           model_limit: '',
           ton_limit: ''
         };
         this.dataModels.push(tollLimit);
       },
-      removeLimitItem (index) {
-        console.log(index);
+      removeLimitItem(index) {
         this.dataModels.splice(index, 1);
       },
-      onSubmit(){}
+      onSubmit() {
+        this.loading = true;
+        let params = {
+          table: 'SC_TOLL_RDLINK_BT',
+          data: this.dataModels
+        };
+        this.$emit('tabStatusChange', {status: false, tabIndex: 7});
+        updateTollGate(params)
+        .then(result => {
+          let {errorCode} = result;
+          const h = this.$createElement;
+          if (errorCode === 0) {
+            return this.$message({message: '数据更新成功！', type: 'success'});
+          } else {
+            return this.$message({message: '数据更新失败！', type: 'warning'});
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+          console.log('finally');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    },
+    watch: {
+      dataModels: {
+        handler (newValue, oldValue) {
+          if (!this.mountFlag) {
+            this.$emit('tabStatusChange', {status: true, tabIndex: 7});
+          } else {
+            this.mountFlag = false;
+          }
+        },
+        deep:true
+      }
+    },
+    mounted() {
+      this.mountFlag = true;
+      let param = {
+        table: 'SC_TOLL_LIMIT',
+        pid: 16
+      };
+      getTollGate(param)
+        .then(result => {
+          let {errorCode,data} = result;
+          this.dataModels = data;
+        })
+        .finally(() => {
+          this.loading = false;
+          console.log('finally');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    destroyed() {
+      this.$emit('childDestroyed');
     }
   }
-
 </script>
 
 <style lang="less" scoped>
   .tableEditPanel {
     max-height: 350px;
-    overflow-y:scroll;
-    overflow-x:hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     .text-left {
       text-align: left;
       padding: 3px;
@@ -126,11 +192,12 @@
       }
     }
   }
+
   .el-row {
     margin-bottom: 20px;
-  &:last-child {
-     margin-bottom: 0;
-   }
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   fieldset {
@@ -142,5 +209,4 @@
     font-size: 16px;
     font-weight: bold;
   }
-
 </style>

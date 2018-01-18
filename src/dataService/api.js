@@ -12,15 +12,13 @@ import qs from 'querystring';
 import { appConfig, appUtil } from '../Application';
 // axios的全局配置;
 axios.defaults.baseURL = appConfig.serviceUrl;
+axios.defaults.headers.common['Content-Type'] = 'application/json;charset=UTF-8';
 
 
 //添加一个请求拦截器
 axios.interceptors.request.use(function(config){
   if (config.url.split('/').pop() != 'login') {
     config.headers.common['x-access-token'] = appUtil.getTollgateToken();
-  }
-  if (config.method === 'post') {
-    config.data = qs.stringify(config.data);
   }
   return config;
 },function(err){
@@ -45,6 +43,7 @@ const hbase = axios.create({
   baseURL:"http://fs-road.navinfo.com/dev/trunk/service"
 });
 export const getTipsPhoto = params => { return hbase.get('/fcc/photo/getPhotosByRowkey', {params})};
+export const tempLogin = params => { return hbase.get('/man/userInfo/login', {params})};
 // 收费站新增编辑相关;
 export const getTollGate = params => { return axios.get('/tollgate/tips/getTollGate', {params})};
 export const updateTollGate = params => { return axios.post('/tollgate/tips/updateTollGate', params)};

@@ -1,5 +1,10 @@
 <template>
-  <div class="photoEdit">
+  <div
+  v-loading="loading"
+  element-loading-text="拼命加载中"
+  element-loading-spinner="el-icon-loading"
+  element-loading-background="rgba(243, 239, 239, 0.5);"
+  class="photoEdit">
     <el-form :inline="true" :model="dataModel" label-position="right" size="mini" label-width="80px" class="demo-form-inline">
       <el-form-item label="Tips反馈:">
         <el-select v-model="dataModel.tipsLifecycle">
@@ -19,13 +24,18 @@
 </template>
 
 <script>
-  import { updateTollGateTip } from '../../dataService/api';
+  import { updateTollGateTip, getTollGateTip } from '../../dataService/api';
   export default {
     name: 'photoEdit',
     components: { },
-    props: ['dataModel'],
     data() {
       return {
+        loading: true,
+        dataModel: {
+          tipsLifecycle: '1',
+          memo: '描述信息',
+          rowkey: ''
+        },
         options: [{
           value: '1',
           label: '未处理'
@@ -40,6 +50,7 @@
     },
     methods: {
       onSumbit(event) {
+        this.loading = true;
         updateTollGateTip(this.dataModel)
         .then(result => {
           let {errorCode} = result;
@@ -51,13 +62,36 @@
           }
         })
         .finally(() => {
+          this.loading = false;
           console.log('finally')
         })
         .catch(err => {
           console.log(err);
         })
       }
-    }
+    },
+     mounted () {
+       let _self = this;
+       // 加载tips信息；
+        let param = {rowkey: this.$route.params.rowkey};
+        getTollGateTip(param)
+        .then(result => {
+          let { errorCode, data } = result;
+          if (errorCode == 0) {
+              _self.dataModel = {
+                tipsLifecycle: data[0].tips_lifecycle,
+                rowkey: data[0].rowkey,
+                memo: data[0].memo || ''
+              }
+            }
+        })
+        .finally(() => {
+          this.loading = false;
+          console.log('finally');
+        }).catch(err => {
+          console.log(err);
+        });
+     }
   }
 </script>
 

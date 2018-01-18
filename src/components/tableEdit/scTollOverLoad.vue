@@ -1,7 +1,7 @@
 <template>
   <div class="tableEditPanel">
     <el-form :inline="true" class="wraper">
-      <div style="text-align:center">
+      <div style="text-align: center;overflow: auto;padding-top:10px">
         <el-col :span="7">
           <div class="grid-content bg-purple">
             <div style="display:inline-block" class="label">区间闭合标识：</div>
@@ -192,7 +192,7 @@
           </el-col>
         </el-row>
       </fieldset>
-      <div style="padding:20px;text-align: right;" class="footerPart">
+      <div style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
         <el-row :gutter="5">
           <el-button type="primary" @click="onSubmit">保 存</el-button>
         </el-row>
@@ -208,6 +208,7 @@
     props: [],
     data() {
       return {
+        mountFlag: false,
         dataModel: {
           tunnageFlag: 1,
           intervalFlag: 1,
@@ -246,8 +247,25 @@
         }]
       }
     },
+     watch: {
+      dataModel: {
+        handler (newValue, oldValue) {
+          if (!this.mountFlag) {
+            this.$emit('tabStatusChange', {status: true, tabIndex: 4});
+          } else {
+            this.mountFlag = false;
+          }
+        },
+        deep:true
+      }
+    },
     methods: {
-      onSubmit(){}
+      onSubmit(){
+        this.$emit('tabStatusChange', {status: false, tabIndex: 4});
+      }
+    },
+    destroyed() {
+      this.$emit('childDestroyed');
     }
   }
 

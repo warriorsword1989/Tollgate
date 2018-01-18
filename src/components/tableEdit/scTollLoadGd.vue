@@ -152,7 +152,7 @@
           </el-col>
         </el-row>
       </fieldset>
-      <div style="padding:20px;text-align: right;" class="footerPart">
+      <div style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
         <el-row :gutter="5">
           <el-button type="primary" @click="onSubmit">保 存</el-button>
         </el-row>
@@ -168,6 +168,7 @@
     props: [],
     data() {
       return {
+        mountFlag: false,
         dataModel: {
           tunnageFlag: 1,
           intervalFlag: 1,
@@ -206,8 +207,28 @@
         }]
       }
     },
+    watch: {
+      dataModel: {
+        handler (newValue, oldValue) {
+          if (!this.mountFlag) {
+            this.$emit('tabStatusChange', {status: true, tabIndex: 3});
+          } else {
+            this.mountFlag = false;
+          }
+        },
+        deep:true
+      }
+    },
+    mounted () {
+      this.mountFlag = true;
+    },
     methods: {
-      onSubmit(){}
+      onSubmit(){
+        this.$emit('tabStatusChange', {status: false, tabIndex: 3});
+      }
+    },
+    destroyed() {
+      this.$emit('childDestroyed');
     }
   }
 
