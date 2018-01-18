@@ -103,7 +103,7 @@
           swiperTop.controller.control = swiperThumbs;
           swiperThumbs.controller.control = swiperTop;
           const activeIndex = swiperTop.activeIndex || 0;
-          this.photoInfo = this.imageList[activeIndex];
+          this.photoInfo = this.imageList[activeIndex] || this.photoInfo;
         })
       })
       .catch(err => {

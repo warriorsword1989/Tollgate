@@ -1,6 +1,7 @@
 <template>
   <div
   v-loading="loading"
+  style="overflow:auto"
   element-loading-text="拼命加载中"
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(243, 239, 239, 0.5);"

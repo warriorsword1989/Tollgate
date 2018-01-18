@@ -36,8 +36,8 @@
         </el-col>
       </div>
       <div>
-        <el-row :gutter="5">
-          <el-col :span="24">
+        <el-row :gutter="0">
+          <el-col :span="14">
               <div style="display: flex;flex-direction: row" class="grid-content bg-purple">
                 <div style="display:inline-block" class="label">正常装载级别吨数范围（车货总重）：</div>
                 <div style="display:flex;flex-direction: row;text-align: center">
@@ -236,7 +236,7 @@
 
 <style scoped>
   .tableEditPanel {
-    max-height: 350px;
+    max-height: 250px;
     overflow-y:scroll;
     overflow-x:hidden;
   }

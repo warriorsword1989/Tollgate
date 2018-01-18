@@ -1,6 +1,7 @@
 <template>
   <el-dialog class="tableDialog" title="收费站信息编辑"
     width="1260px"
+    style="overflow:hidden"
     custom-class="tableDialog"
     @close='closeDialog'
     @childDestroyed='destroyedChild'
@@ -23,7 +24,7 @@
             <span style="color:#636ef5;">{{isTableShow ? '隐藏编辑面板' : '显示编辑面板'}}</span>
           </div>
         </template>
-        <el-tabs @tab-click='tabOnActive'  :tab-position="tabPosition" style="height: 350px;">
+        <el-tabs @tab-click='tabOnActive'  :tab-position="tabPosition" style="height: 250px;">
           <el-tab-pane :label="isEdit[0]?'* 客车车型划分及费率':'客车车型划分及费率'">
             <sc-toll-car @tabStatusChange="changeTabStatus"></sc-toll-car>
           </el-tab-pane>
