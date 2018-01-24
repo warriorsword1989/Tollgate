@@ -1,138 +1,137 @@
 <template>
-  <el-form
-  :inline="true"
-  class="tableEditPanel"
-  v-loading="loading"
-  element-loading-text="拼命加载中"
-  element-loading-spinner="el-icon-loading"
-  element-loading-background="rgba(243, 239, 239, 0.5);">
-    <div class="grid-content">
-
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div class="labelText">区域标识：</div>
-          <div class="inputPart">
-            <el-input v-model="dataModel.system_id" size="mini"></el-input>
+  <div 
+    v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(243, 239, 239, 0.5);">
+    <el-form
+     v-for="(dataItem, index) in dataModels"
+    :key="index"
+    :model="dataItem"
+    ref="dataItem"
+    :inline="true"
+    class="tableEditPanel">
+      <div class="grid-content">
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div class="labelText">区域标识：</div>
+            <div class="inputPart">
+              <el-input v-model="dataItem.system_id" size="mini"></el-input>
+            </div>
+          </div>
+          <div class="grid-list">
+            <div class="labelText">ETC打折类型：</div>
+            <div class="inputPart">
+              <el-select size="mini" v-model.number="dataItem.etc_type" placeholder="请选择">
+                <el-option v-for="item in etcTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
           </div>
         </div>
-        <div class="grid-list">
-          <div class="labelText">ETC打折类型：</div>
-          <div class="inputPart">
-            <el-select size="mini" v-model.number="dataModel.etc_type" placeholder="请选择">
-              <el-option v-for="item in etcTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div class="labelText">ETC打折：</div>
+            <div class="inputPart">
+              <el-input v-model="dataItem.etc_d" size="mini"></el-input>
+            </div>
           </div>
+          <div class="grid-list">
+            <div class="labelText">免费车型：</div>
+            <div class="inputPart">
+              <el-select size="mini" v-model="free_type_computed" multiple placeholder="请选择">
+                <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div class="labelText">是否有绿色通道：</div>
+            <div class="inputPart">
+              <el-select size="mini" v-model.number="dataItem.pre_truck_0" placeholder="请选择">
+                <el-option v-for="item in geenPathOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="grid-list">
+            <div class="labelText">客车优惠车型：</div>
+            <div class="inputPart">
+              <el-select size="mini" v-model.number="dataItem.pre_truck_0" placeholder="请选择">
+                <el-option v-for="item in carTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div class="labelText">客车优惠降低量：</div>
+            <div class="inputPart">
+              <el-input v-model="dataItem.dec_car" size="mini"></el-input>
+            </div>
+          </div>
+          <div class="grid-list">
+            <div class="labelText">货车优惠空载车型：</div>
+            <div class="inputPart">
+              <el-select size="mini" v-model.number="dataItem.pre_truck_0" placeholder="请选择">
+                <el-option v-for="item in truckTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div class="labelText">货车空载优惠降低量：</div>
+            <div class="inputPart">
+              <el-input v-model="dataItem.dec_truck" size="mini"></el-input>
+            </div>
+          </div>
+          <div class="grid-list">
+            <div class="labelText">货车正常装载优惠吨数区间：</div>
+            <div class="inputPart">
+              <el-input v-model="dataItem.pre_truck_loadmin" size="mini"></el-input> -
+              <el-input v-model="dataItem.pre_truck_loadmax" size="mini"></el-input>
+            </div>
+          </div>
+        </div>
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div class="labelText">货车正常装载优惠计费吨数：</div>
+            <div class="inputPart">
+              <el-input v-model="dataItem.pre_truck_load" size="mini"></el-input>
+            </div>
+          </div>
+          <div class="grid-list">
+            <div class="labelText">最低收费金额：</div>
+            <div class="inputPart">
+              <el-input v-model="dataItem.fee_limit" size="mini"></el-input>
+            </div>
+          </div>
+        </div>
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div class="labelText">收费取整：</div>
+            <div class="inputPart">
+              <el-select size="mini" v-model.number="dataItem.round" placeholder="请选择">
+                <el-option v-for="item in roundTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="grid-list"></div>
+        </div>
+        <div style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
+          <el-row :gutter="5">
+            <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
+          </el-row>
         </div>
       </div>
-
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div class="labelText">ETC打折：</div>
-          <div class="inputPart">
-            <el-input v-model="dataModel.etc_d" size="mini"></el-input>
-          </div>
-        </div>
-        <div class="grid-list">
-          <div class="labelText">免费车型：</div>
-          <div class="inputPart">
-            <el-select size="mini" v-model="free_type_computed" multiple placeholder="请选择">
-              <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div class="labelText">是否有绿色通道：</div>
-          <div class="inputPart">
-            <el-select size="mini" v-model.number="dataModel.pre_truck_0" placeholder="请选择">
-              <el-option v-for="item in geenPathOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
-        </div>
-        <div class="grid-list">
-          <div class="labelText">客车优惠车型：</div>
-          <div class="inputPart">
-            <el-select size="mini" v-model.number="dataModel.pre_truck_0" placeholder="请选择">
-              <el-option v-for="item in carTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div class="labelText">客车优惠降低量：</div>
-          <div class="inputPart">
-            <el-input v-model="dataModel.dec_car" size="mini"></el-input>
-          </div>
-        </div>
-        <div class="grid-list">
-          <div class="labelText">货车优惠空载车型：</div>
-          <div class="inputPart">
-            <el-select size="mini" v-model.number="dataModel.pre_truck_0" placeholder="请选择">
-              <el-option v-for="item in truckTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div class="labelText">货车空载优惠降低量：</div>
-          <div class="inputPart">
-            <el-input v-model="dataModel.dec_truck" size="mini"></el-input>
-          </div>
-        </div>
-        <div class="grid-list">
-          <div class="labelText">货车正常装载优惠吨数区间：</div>
-          <div class="inputPart">
-            <el-input v-model="dataModel.pre_truck_loadmin" size="mini"></el-input> -
-            <el-input v-model="dataModel.pre_truck_loadmax" size="mini"></el-input>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div class="labelText">货车正常装载优惠计费吨数：</div>
-          <div class="inputPart">
-            <el-input v-model="dataModel.pre_truck_load" size="mini"></el-input>
-          </div>
-        </div>
-        <div class="grid-list">
-          <div class="labelText">最低收费金额：</div>
-          <div class="inputPart">
-            <el-input v-model="dataModel.fee_limit" size="mini"></el-input>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div class="labelText">收费取整：</div>
-          <div class="inputPart">
-            <el-select size="mini" v-model.number="dataModel.round" placeholder="请选择">
-              <el-option v-for="item in roundTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
-        </div>
-      </div>
-
-      <div style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
-        <el-row :gutter="5">
-          <el-button type="primary" @click="onSubmit">保 存</el-button>
-        </el-row>
-      </div>
-    </div>
-  </el-form>
+    </el-form>
+  </div>
 </template>
 
 <script>
@@ -145,7 +144,8 @@
       return {
         loading: true,
         mountFlag: false,
-        dataModel: {
+        dataModels: [],
+        originModel: {
           axle_num_limit:null,
           dec_car:null,
           dec_truck:1,
@@ -166,7 +166,7 @@
           system_id:1,
           ton_limit:null
         },
-        originModel: Object.assign({}, this.dataModel),
+        originModel: Object.assign({}, this.dataItem),
         geenPathOptions: [{
           value: 0,
           label: '无'
@@ -247,26 +247,41 @@
     computed: {
       free_type_computed: {
         get: function () {
-          return this.dataModel.free_type.split('|') || ["0"];
+          return this.dataModels[0].free_type.split('|') || ["0"];
         },
         set: function (newValue) {
-          this.dataModel.free_type = newValue!=0 ? newValue.join('|') : "0";
+          this.dataModels[0].free_type = newValue!=0 ? newValue.join('|') : "0";
         }
       }
     },
     methods: {
-      onSubmit() {
-        let params = {
-          table: 'SC_TOLL_GROUP',
-          data: Object.assign(this.dataModel, {command: 'update'})
-        };
-        this.loading = true;
-        updateTollGate(params)
+      onSubmit(formName) {
+        let validateFlag = true;
+        this.$refs[formName].forEach((formItem, index) => {
+          formItem.validate((valid) => {
+            if (valid) {
+              this.loading = true;
+            } else {
+              return validateFlag = false;
+            }
+          });
+        });
+        if (validateFlag) {
+          let params = {
+            table: 'SC_TOLL_GROUP',
+            data: this.dataModels
+          };
+          updateTollGate(params)
           .then(result => {
-            let {errorCode} = result;
+            let {
+              errorCode
+            } = result;
             const h = this.$createElement;
             if (errorCode === 0) {
-              this.$emit('tabStatusChange', {status: false, tabIndex: 6});
+              this.$emit('tabStatusChange', {
+                status: false,
+                tabIndex: 6
+              });
               return this.$message({
                 message: '数据更新成功！',
                 type: 'success'
@@ -280,15 +295,15 @@
           })
           .finally(() => {
             this.loading = false;
-            console.log('finally');
           })
           .catch(err => {
             console.log(err);
           });
+        }
       }
     },
     watch: {
-      dataModel: {
+      dataModels: {
         handler (newValue, oldValue) {
           if (!this.mountFlag) {
             this.$emit('tabStatusChange', {status: true, tabIndex: 6});
@@ -305,7 +320,7 @@
       getTollGate(param)
       .then(result => {
         let {errorCode, data} = result;
-        this.dataModel = data[0];
+        this.dataModels = data;
       })
       .finally(() => {
         this.loading = false;
@@ -325,56 +340,35 @@
 </script>
 
 <style scoped>
-  .tableEditPanel {
-    max-height: 250px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    .text-left {
-      text-align: left;
-      padding: 3px;
-    }
-    .edit-cell {
-      margin: 5px;
-      text-align: left;
-    }
-    .btn-icon {
-      padding: 5px;
-    }
-    .icon-option {
-      font-size: 30px;
-      cursor: pointer;
-      transition: all .3s;
-      &:hover {
-        color: #409EFF;
-      }
-    }
-  }
-
-  .grid-wraper {
+   .grid-wraper {
     display: flex;
     flex-direction: row;
-    margin: 10px;
+    margin: 10px 0;
   }
-
+  .grid-content {
+    padding: 0 15px;
+  }
   .grid-content .grid-list {
     flex: 1;
+    padding: 0 5px;
     display: flex;
     flex-direction: row;
   }
-
   .grid-content .labelText {
-    width: 200px;
+    width: 100px;
+    margin-right: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
     text-align: right;
   }
-
   .grid-content .inputPart {
     flex: 1;
     display: flex;
     flex-direction: row;
   }
-
   .el-select,
-  .el-select--mini{
+  .el-select--mini {
     display: block;
     width: 100%;
   }

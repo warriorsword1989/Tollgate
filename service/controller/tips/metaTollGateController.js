@@ -1,6 +1,8 @@
 import ConnectMetaOracle from '../../oracle/connectMetaOracle';
 import logger from '../../config/logs';
-import { changeResult } from '../../Util';
+import {
+  changeResult
+} from '../../Util';
 
 class TollGate {
   constructor(req, res, next) {
@@ -18,7 +20,7 @@ class TollGate {
     const param = this.req.query;
     const pid = param.pid;
     this.table = param.table;
-    const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : 'GROUP_ID';
+    const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
     let sql = "SELECT * FROM " + this.table + " WHERE " + primaryKey + " = '" + pid + "'";
     const result = await this.db.executeSql(sql);
     const resultData = changeResult(result);
@@ -29,18 +31,22 @@ class TollGate {
   }
 
   /**
-   * 更新表;
+   * 对数据表进行更新
    */
   async updateTollGate() {
     const param = this.req.body.data;
     this.table = this.req.body.table;
-    const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : 'GROUP_ID';
-    let updateString = this.getUpdateString(param);
-    let sql = "UPDATE " + this.table + " SET " + updateString +
-    " WHERE " + primaryKey + "=" + param[primaryKey.toLowerCase()];
-    const result = await this.db.executeSql(sql);
-    if (result.rowsAffected === 1) {
-      this.res.send({errorCode: 0});
+    const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
+    let delSql = "DELETE FROM " + this.table + " WHERE " + primaryKey + " = " + param[0][primaryKey.toLowerCase()];
+    let insertSql = this.getInsertString(param);
+    const delResult = await this.db.executeSql(delSql);
+    if (delResult.rowsAffected != -1) {
+      const insertResult = await this.db.executeSql(insertSql);
+      if (insertResult.rowsAffected != -1) {
+        this.res.send({errorCode: 0});
+      } else {
+        this.res.send({errorCode: -1});
+      }
     } else {
       this.res.send({errorCode: -1});
     }
@@ -49,20 +55,29 @@ class TollGate {
    * 获得update部分语句
    * @param {*} data 
    */
-  getUpdateString(data){
-    let tempString = ''
-    for(let key in data) {
-      if (key != 'command') {
-        if (typeof data[key] === 'string') {
-          tempString += key.toUpperCase() + "='" + data[key] + "',";
-        } else {
-          tempString += key.toUpperCase() + "=" + data[key] + ",";
+  getInsertString(data) {
+    let tempString = 'INSERT ALL INTO  ' + this.table + ' ';
+    for (let i = 0; i < data.length; i++) {
+      if (i == 0) {
+        tempString += '(' + Object.keys(data[i]).join(',') + ') VALUES ('
+      } else {
+        tempString += 'INTO ' + this.table + ' (' + Object.keys(data[i]).join(',') + ') VALUES ('
+      }
+      for (let key in data[i]) {
+        if (key != 'command') {
+          if (typeof data[i][key] === 'string') {
+            tempString += "'" + data[i][key] + "',";
+          } else {
+            tempString += data[i][key] + ",";
+          }
         }
       }
+      tempString = tempString.substr(0, tempString.length - 1);
+      tempString += (i == data.length - 1) ? ')' : ') ';
     }
-    return tempString.substr(0, tempString.length-1);
+    return tempString + ' SELECT * FROM dual';
   }
-  
+
 }
 
 export default TollGate;

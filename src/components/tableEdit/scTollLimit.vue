@@ -1,152 +1,172 @@
 <template>
-  <div class="tableEditPanel">
-    <el-form
-    :inline="true"
-    class="wraper"
-    v-loading="loading"
-    element-loading-text="拼命加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(243, 239, 239, 0.5);"
-    >
-      <div style="text-align:center">
-        <el-col :span="10">
-          <div class="grid-content bg-purple text-left">
-            <div style="display:inline-block" class="label">区域标识：</div>
-            <div style="width:150px;display:inline-block">
-              <el-input v-if="dataModels.length" v-model="dataModels[0].system_id" size="mini" disabled></el-input>
-              <el-input v-if="!dataModels.length" size="mini" disabled></el-input>
-            </div>
+  <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
+    <div class="grid-content">
+      <div class="grid-wraper">
+        <div class="grid-list">
+          <div style="width:140px" class="labelText">区域标识：</div>
+          <div class="inputPart">
+            <el-input v-model="dataModels[0] && dataModels[0].system_id || originModel.system_id" size="mini"></el-input>
           </div>
-        </el-col>
-        <el-col :span="10">
-          <div class="grid-content bg-purple text-left">
-            <div style="display:inline-block" class="label">行政区划名称：</div>
-            <div style="width:120px;display:inline-block">
-              <el-input v-if="dataModels.length" v-model="dataModels[0].admin_name" size="mini" disabled></el-input>
-              <el-input v-if="!dataModels.length" size="mini" disabled></el-input>
-            </div>
+        </div>
+        <div class="grid-list">
+          <div style="width:120px" class="labelText">行政区划名称：</div>
+          <div class="inputPart">
+            <el-input v-model="dataModels[0] && dataModels[0].admin_name || originModel.admin_name" size="mini"></el-input>
           </div>
-        </el-col>
-        <el-col :span="4">
-          <div class="grid-content bg-purple text-left">
-            <el-button type="primary" class="btn-icon" icon="el-icon-plus" @click="addLimitItem"></el-button>
-          </div>
-        </el-col>
+        </div>
+        <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
       </div>
-      <fieldset v-for="(item, index) in dataModels">
-        <legend>限重标准 {{index + 1}}</legend>
-        <el-row :gutter="10">
-          <el-col :span="10">
-            <div style="display: flex;flex-direction: row" class="grid-content bg-purple edit-cell">
-              <div style="display:inline-block" class="label">轴数限载标准：</div>
-              <div style="width:200px;display:inline-block">
-                <el-input v-model="item.axle_num_limit" size="mini"></el-input>
+    </div>
+    <el-form v-for="(dataItem, index) in dataModels" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
+      <div class="grid-content">
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <fieldset>
+              <legend>限重标准 {{index + 1}}</legend>
+              <div class="grid-wraper">
+                <div class="grid-list">
+                  <div class="labelText">轴数限载标准：</div>
+                  <div class="inputPart">
+                    <div class="inputPart">
+                      <el-input v-model="dataItem.axle_num_limit" size="mini"></el-input>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid-list">
+                  <div class="labelText">型号限载标准：</div>
+                  <div class="inputPart">
+                    <el-input v-model="dataItem.model_limit" size="mini"></el-input>
+                  </div>
+                </div>
+                <div class="grid-list">
+                  <div class="labelText">吨数限载标准：</div>
+                  <div class="inputPart">
+                    <div class="inputPart">
+                      <el-input v-model="dataItem.ton_limit" size="mini"></el-input>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </el-col>
-          <el-col :span="10">
-            <div class="grid-content bg-purple edit-cell">
-              <div style="display:inline-block" class="label">型号限载标准：</div>
-              <div style="width:200px;display:inline-block">
-                <el-input v-model="item.model_limit" size="mini"></el-input>
-              </div>
-            </div>
-          </el-col>
-          <el-col :span="4">
-            <div class="grid-content bg-purple edit-cell">
-              <el-button type="primary" class="btn-icon" icon="el-icon-minus" @click="removeLimitItem(index)"></el-button>
-            </div>
-          </el-col>
-          <el-col :span="10">
-            <div class="grid-content bg-purple edit-cell">
-              <div style="display:inline-block" class="label">吨数限载标准：</div>
-              <div style="width: 200px;display: inline-flex;">
-                <el-input v-model="item.ton_limit" size="mini"></el-input>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-      </fieldset>
-      <div style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
-        <el-row :gutter="5">
-          <el-button type="primary" @click="onSubmit">保 存</el-button>
-        </el-row>
+            </fieldset>
+          </div>
+          <el-button @click="removeLimitItem(index)" style="padding: 5px;height: 28px;margin-top: 25px" type="primary" class="btn-icon"
+            icon="el-icon-minus"></el-button>
+        </div>
       </div>
+    </el-form>
+    <div style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
+      <el-row :gutter="5">
+        <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
+      </el-row>
+    </div>
     </el-form>
   </div>
 </template>
 
 <script>
-  import qs from 'querystring';
-  import {getTollGate} from '../../dataService/api';
-  import {updateTollGate} from '../../dataService/api';
+  import {updateTollGate, getTollGate} from '../../dataService/api';
+  import {cityList, getCityNameByCode} from '../../config/CityList';
   export default {
-    name: 'scTollLoad',
-    props: ['tableName'],
+    name: 'scTollCar',
+    props: ['tableName', 'selectedData'],
     data() {
       return {
         loading: true,
         dataModels: [],
-        mountFlag: false
-      }
-    },
-    methods: {
-      addLimitItem() {
-        let tollLimit = {
-          system_id: 16,
-          admin_name: '云南省',
+        originModel: {
+          system_id: 1,
+          admin_name: '',
           axle_num_limit: 1,
-          model_limit: '',
-          ton_limit: ''
-        };
-        this.dataModels.push(tollLimit);
-      },
-      removeLimitItem(index) {
-        this.dataModels.splice(index, 1);
-      },
-      onSubmit() {
-        this.loading = true;
-        let params = {
-          table: 'SC_TOLL_RDLINK_BT',
-          data: this.dataModels
-        };
-        this.$emit('tabStatusChange', {status: false, tabIndex: 7});
-        updateTollGate(params)
-        .then(result => {
-          let {errorCode} = result;
-          const h = this.$createElement;
-          if (errorCode === 0) {
-            return this.$message({message: '数据更新成功！', type: 'success'});
-          } else {
-            return this.$message({message: '数据更新失败！', type: 'warning'});
-          }
-        })
-        .finally(() => {
-          this.loading = false;
-          console.log('finally');
-        })
-        .catch(err => {
-          console.log(err);
-        });
+          model_limit: 0,
+          ton_limit: 1,
+          source: 0
+        },
+        mountFlag: false
       }
     },
     watch: {
       dataModels: {
-        handler (newValue, oldValue) {
+        handler(newValue, oldValue) {
           if (!this.mountFlag) {
-            this.$emit('tabStatusChange', {status: true, tabIndex: 7});
+            this.$emit('tabStatusChange', {
+              status: true,
+              tabIndex: 7
+            });
           } else {
             this.mountFlag = false;
           }
         },
-        deep:true
+        deep: true
+      }
+    },
+    methods: {
+      editBrage() {
+
+      },
+      addItem() {
+        if (this.dataModels.length > 4) {
+          return console.log('不能大于5');
+        }
+        let addItemData = Object.assign({}, this.originModel);
+        addItemData.system_id = this.$route.params.adminCode;
+        addItemData.admin_name = getCityNameByCode(this.$route.params.adminCode);
+        this.dataModels.push(addItemData);
+      },
+      removeLimitItem(index) {
+        this.dataModels.length > 1 && this.dataModels.splice(index, 1);
+      },
+      onSubmit(formName) {
+        let validateFlag = true;
+        this.$refs[formName].forEach((formItem, index) => {
+          formItem.validate((valid) => {
+            if (valid) {
+              this.loading = true;
+            } else {
+              return validateFlag = false;
+            }
+          });
+        });
+        if (validateFlag) {
+          let params = {
+            table: 'SC_TOLL_LIMIT',
+            data: this.dataModels
+          };
+          updateTollGate(params)
+          .then(result => {
+            let {
+              errorCode
+            } = result;
+            const h = this.$createElement;
+            if (errorCode === 0) {
+              this.$emit('tabStatusChange', {
+                status: false,
+                tabIndex: 7
+              });
+              return this.$message({
+                message: '数据更新成功！',
+                type: 'success'
+              });
+            } else {
+              return this.$message({
+                message: '数据更新失败！',
+                type: 'warning'
+              });
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }
       }
     },
     mounted() {
       this.mountFlag = true;
       let param = {
         table: 'SC_TOLL_LIMIT',
-        pid: 16
+        pid: this.$route.params.adminCode
       };
       getTollGate(param)
         .then(result => {
@@ -155,58 +175,57 @@
         })
         .finally(() => {
           this.loading = false;
-          console.log('finally');
         })
         .catch(err => {
           console.log(err);
         });
-    },
-    destroyed() {
-      this.$emit('childDestroyed');
     }
   }
+
 </script>
 
-<style lang="less" scoped>
-  .tableEditPanel {
-    max-height: 250px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    .text-left {
-      text-align: left;
-      padding: 3px;
-    }
-    .edit-cell {
-      margin: 5px;
-      text-align: left;
-    }
-    .btn-icon {
-      padding: 5px;
-    }
-    .icon-option {
-      font-size: 30px;
-      cursor: pointer;
-      transition: all .3s;
-      &:hover {
-        color: #409EFF;
-      }
-    }
-  }
-
-  .el-row {
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
+<style scoped>
   fieldset {
-    border: 2px dotted #409EFF
+    padding: 0;
+    border: 1px dashed #636ef5;
   }
 
   fieldset legend {
-    font-style: oblique;
-    font-size: 16px;
+    color: #151616;
+    font-size: 14px;
     font-weight: bold;
   }
+  .grid-wraper {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0;
+  }
+  .grid-content {
+    padding: 0 15px;
+  }
+  .grid-content .grid-list {
+    flex: 1;
+    padding: 0 5px;
+    display: flex;
+    flex-direction: row;
+  }
+  .grid-content .labelText {
+    width: 100px;
+    margin-right: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: right;
+  }
+  .grid-content .inputPart {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+  }
+  .el-select,
+  .el-select--mini {
+    display: block;
+    width: 100%;
+  }
+
 </style>

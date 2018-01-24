@@ -3,7 +3,7 @@
     <transition name="el-fade-in-liner">
       <div class="sideBar" v-show="!leftFloatArrow">
         <div @click="showDialog = !showDialog" class="header">
-          <h3 class="title">照片详情</h3>
+          <h3 class="title"><i class="el-icon-picture"></i> 照片详情</h3>
         </div>
         <!-- 照片显示 -->
         <div class="photoView">
@@ -23,8 +23,9 @@
       <i v-if="!leftFloatArrow" class="el-icon-arrow-left"></i>
       <i v-if="leftFloatArrow" class="el-icon-arrow-right"></i>
     </el-button>
+    <tableEdit :dialog-table-visible="showDialog" @dialogClose="closeDialog"></tableEdit>
 
-    <tableEdit :dialog-table-visible="showDialog" @DialogClose="closeDialog"></tableEdit>
+    <logout></logout>
   </div>
 </template>
 
@@ -34,6 +35,7 @@
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
   import tableEdit from './tableEdit/tabDiag';
+  import logout from './logout';
   import { appUtil } from '../Application';
   import { tempLogin, getTipsPhoto } from '../dataService/api';
   export default {
@@ -41,7 +43,8 @@
     components: {
       photoEdit,
       photoSwiper,
-      tableEdit
+      tableEdit,
+      logout
     },
     data() {
       return {
@@ -88,7 +91,7 @@
       .catch(err => {
         console.log(err)
       });
-      mapInit.initialize();
+      // mapInit.initialize();
     },
     destroyed: function () {
       mapInit.destorySingletons();
@@ -121,6 +124,7 @@
     z-index: 1;
     flex-direction: column;
     border-right: 1px solid #ccc;
+    box-shadow: 0 4px 20px #5c78a7;
   }
 
   .sideBar .header {

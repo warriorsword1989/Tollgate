@@ -104,3 +104,13 @@ export const cityList = [
     cityName: '江西省'
   }
 ];
+
+export const getCityNameByCode = function (code) {
+  let adminName = ''
+  cityList.forEach((item, index) => {
+    if (item.adminCode == code) {
+      return adminName = item.cityName;
+    }
+  });
+  return adminName;
+}

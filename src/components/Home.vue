@@ -128,15 +128,18 @@
         <!--</div>-->
       <!--</el-tab-pane>-->
     </el-tabs>
+    <logout></logout>
   </div>
 
 </template>
 
 <script>
+    import logout from './logout';
     import { getTollGateTipList } from '../dataService/api';
     import { cityList } from '../config/CityList';
     export default {
         name: "Home",
+        components: {logout},
         data() {
           // 显示前一个月
           let date = new Date();
@@ -260,7 +263,7 @@
           },
           handleClick:function (data) {
             console.log(data)
-            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id}});
+            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id, adminCode:this.tip.adminCode}});
           },
           handleSizeChange:function (val) {
             this.tip.pageSize = val;
