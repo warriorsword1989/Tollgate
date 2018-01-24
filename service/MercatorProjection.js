@@ -435,7 +435,7 @@ class MercatorProjection {
       if(geometry) {
         switch(geometry.type) {
           case "Point":
-              coords.push(this.lonlat2Pixel(geometry.coordinates[0], geometry.coordinates[1], z, x, y))
+              coords = (this.lonlat2Pixel(geometry.coordinates[0], geometry.coordinates[1], z, x, y));
             break;
           case "LineString":
             for (let i=0; i< geometry.coordinates.length; i++){

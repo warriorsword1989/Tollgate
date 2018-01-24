@@ -4,9 +4,9 @@ const router = express.Router();
 import appConfig from '../../config/application';
 
 // 用户操作的路由;
-router.use ('/', function (req, res, next) {  
+router.use ('/', function (req, res, next) {
   let handler = req.path.split('/').pop();
-  if (handler === 'login' || handler === 'import' || handler === 'getObjByTile') {
+  if (handler === 'login' || handler === 'import' || handler === 'getObjByTile' || handler === 'getTipsByTile') {
     next('route');
   } else {
     let token = req.headers['x-access-token'] || req.query.token || req.body.token;

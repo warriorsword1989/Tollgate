@@ -10,7 +10,7 @@ class AdAdminSearch extends Search{
   async getByTileWithGap(x, y, z, gap){
     const wkt = MercatorProjection.getWktWithGap(x, y, z, 0);
 
-    const sql = "select a.region_id,to_char(a.GEOMETRY.get_wkt()) as GEOMETRY,a.admin_type from ad_admin a where sdo_relate(a.geometry, sdo_geometry(:wkt, 8307), 'mask=anyinteract') = 'TRUE' and a.u_record != 2";
+    const sql = "select a.region_id,(a.GEOMETRY.get_wkt()) as GEOMETRY,a.admin_type from ad_admin a where sdo_relate(a.geometry, sdo_geometry(:wkt, 8307), 'mask=anyinteract') = 'TRUE' and a.u_record != 2";
 
     const result = await this.connection.executeSql(sql, {wkt: wkt});
 

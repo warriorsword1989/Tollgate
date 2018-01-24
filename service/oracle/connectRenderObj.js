@@ -19,7 +19,7 @@ class ConnectRenderObj {
         .getConnection(this.connectionAttrs)
         .then(connection => {
           return connection
-            .execute(sql, params)
+            .execute(sql, params, {fetchInfo: {'GEOMETRY': {type: oracledb.STRING}}})
             .then(results => {
               resolve(results);
               this.releaseConnections(connection);

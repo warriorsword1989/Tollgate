@@ -7,7 +7,7 @@ const oracleService = {
   RenderObjUserName: 'fm_gdb_trunk',
   RenderObjPassword: 'fm_gdb_trunk',
 
-  connectMetaObjUrl: '192.168.3.227:1521/orcl', //要素渲染地址
+  connectMetaObjUrl: '192.168.3.227:1521/orcl', //元数据库地址
   MetaObjUserName: 'fm_meta_trunk',
   MetaObjPassword: 'fm_meta_trunk',
 

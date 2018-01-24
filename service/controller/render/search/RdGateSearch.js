@@ -10,7 +10,10 @@ class RdGateSearch extends Search{
   async getByTileWithGap(x, y, z, gap){
     const wkt = MercatorProjection.getWktWithGap(x, y, z, 0);
 
-    const sql = "WITH TMP1 AS (SELECT to_char(A.GEOMETRY.get_wkt()) as GEOMETRY, A.NODE_PID FROM RD_NODE A, RD_TOLLGATE B WHERE SDO_RELATE(A.GEOMETRY, SDO_GEOMETRY(:wkt, 8307), 'mask=anyinteract') = 'TRUE' AND A.NODE_PID = B.NODE_PID AND A.U_RECORD != 2) SELECT T.PID, T.TYPE, TMP1.GEOMETRY AS GEOMETRY FROM RD_TOLLGATE T, TMP1 WHERE T.NODE_PID = TMP1.NODE_PID AND T.U_RECORD != 2";
+    const sql = "WITH TMP1 AS (SELECT (A.GEOMETRY.get_wkt()) as GEOMETRY, A.NODE_PID FROM RD_NODE A, RD_TOLLGATE B WHERE SDO_RELATE(A.GEOMETRY, SDO_GEOMETRY(:wkt, 8307), 'mask=anyinteract') = 'TRUE' AND A.NODE_PID = B.NODE_PID AND A.U_RECORD != 2) SELECT T.PID, T.TYPE, TMP1.GEOMETRY AS GEOMETRY FROM RD_TOLLGATE T, TMP1 WHERE T.NODE_PID = TMP1.NODE_PID AND T.U_RECORD != 2";
+
+    console.log(wkt);
+    console.log(sql);
 
     const result = await this.connection.executeSql(sql, {wkt: wkt});
 
