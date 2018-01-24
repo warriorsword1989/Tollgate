@@ -91,7 +91,7 @@
       .catch(err => {
         console.log(err)
       });
-      // mapInit.initialize();
+      mapInit.initialize();
     },
     destroyed: function () {
       mapInit.destorySingletons();
