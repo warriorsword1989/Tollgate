@@ -247,7 +247,7 @@
           if (!this.mountFlag) {
             this.$emit('tabStatusChange', {
               status: true,
-              tabIndex: 3
+              tabIndex: 4
             });
           } else {
             this.mountFlag = false;
@@ -333,7 +333,7 @@
               if (errorCode === 0) {
                 this.$emit('tabStatusChange', {
                   status: false,
-                  tabIndex: 3
+                  tabIndex: 4
                 });
                 return this.$message({
                   message: '数据更新成功！',
