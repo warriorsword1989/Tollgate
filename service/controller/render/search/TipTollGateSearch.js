@@ -12,6 +12,8 @@ class TipTollGateSearch extends Search{
 
     const sql = "select a.rowkey,(a.TOLL_LOCATION) as GEOMETRY,a.TOLL_NAME from SC_TOLL_TIPS_INDEX a where sdo_relate(a.TOLL_LOCATION, sdo_geometry(:wkt, 8307), 'mask=anyinteract') = 'TRUE'";
 
+    console.log(sql);
+    console.log(wkt);
     const result = await this.connection.executeSql(sql, {wkt: wkt});
 
     const px = MercatorProjection.tileXToPixelX(x);

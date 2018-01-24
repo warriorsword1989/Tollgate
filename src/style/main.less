@@ -37,3 +37,154 @@ body {
 .scrollDiy::-webkit-scrollbar {
   width: 0 !important;
 }
+.fm-layout-container {
+  position: absolute;
+  box-shadow: 0 0 10px #93bbff;
+  z-index: 9;
+  /* 处理div（display:inline-block）之间的间隙*/
+  font-size: 0px;
+}
+
+.fm-layout-container.left {
+  width: auto;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.fm-layout-container.right {
+  width: 300px;
+  height: 100%;
+  top: 0;
+  right: 0;
+}
+
+.fm-layout-container>div {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+/* 有标题的面板 */
+
+.fm-panel {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  /*box-shadow: 0 0 10px #93bbff;*/
+  overflow: hidden;
+  /* 与header中的margin-top: -40px配合使用，使得content可以有自适应高度的滚动条 */
+  padding-top: 40px;
+  font-size: 0px;
+}
+
+.fm-panel>.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  line-height: 40px;
+  height: 40px;
+  padding: 0px 10px;
+  background-color: #636ef5;
+  font-size: 0px;
+  margin-top: -40px;
+}
+
+.fm-panel>.header>.title {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.fm-panel>.header>.toolbar {
+  display: flex;
+  align-items: center;
+}
+
+.fm-panel>.header>.toolbar+.title {
+  margin-left: 10px;
+}
+
+.fm-panel>.header>.toolbar>*:not(:first-child) {
+  margin-left: 10px;
+}
+
+.fm-panel>.content {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  font-size: 12px;
+  position: inherit;
+}
+
+.fm-panel>.footer {
+  text-align: right;
+  padding: 10px;
+}
+/*单选复选框样式*/
+
+input[type=radio].fm-control {
+  padding: 0px;
+  margin: 5px;
+  width: 12px;
+  height: 12px;
+  vertical-align: middle;
+  content: url('../assets/toolIcon/icon/radio.png');
+}
+
+input[type=radio].fm-control:checked {
+  content: url('../assets/toolIcon/icon/radio-checked.png');
+}
+
+input[type=radio].fm-control:disabled {
+  content: url('../assets/toolIcon/icon/radio-disable.png');
+}
+
+input[type=radio].fm-control:checked:disabled {
+  content: url('../assets/toolIcon/icon/radio-checked-disable.png');
+}
+
+input[type=checkbox].fm-control {
+  padding: 0px;
+  margin: 5px;
+  width: 12px;
+  height: 12px;
+  vertical-align: middle;
+  content: url('../assets/toolIcon/icon/checkbox.png');
+}
+
+input[type=checkbox].fm-control:checked {
+  content: url('../assets/toolIcon/icon/checkbox-checked.png');
+}
+
+input[type=checkbox].fm-control:disabled {
+  content: url('../assets/toolIcon/icon/checkbox-disable.png');
+}
+
+input[type=checkbox].fm-control:checked:disabled {
+  content: url('../assets/toolIcon/icon/checkbox-checked-disable.png');
+}
+
+input[type=checkbox].fm-control.blue {
+  content: url('../assets/toolIcon/icon/checkbox2.png');
+}
+
+input[type=checkbox].fm-control.blue:checked {
+  content: url('../assets/toolIcon/icon/checkbox2-checked.png');
+}
+
+
+/*checkbox和radio后的label的样式*/
+
+input[type=checkbox].fm-control+label, input[type=radio].fm-control+label {
+  padding: 5px;
+  margin: 0px;
+  vertical-align: middle;
+  font-size: 12px;
+  color: #182848;
+  font-weight: normal;
+  line-height: 20px;
+}
