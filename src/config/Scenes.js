@@ -6,7 +6,7 @@
 const background = [];
 
 /** 参考图层配置 **/
-const overlay = ['tile', 'feedback'];
+const overlay = ['feedback'];
 
 /** 场景图层配置 **/
 const scenes = {

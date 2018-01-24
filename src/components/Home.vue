@@ -260,7 +260,7 @@
           },
           handleClick:function (data) {
             console.log(data)
-            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id}});
+            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id, point:data.toll_location}});
           },
           handleSizeChange:function (val) {
             this.tip.pageSize = val;

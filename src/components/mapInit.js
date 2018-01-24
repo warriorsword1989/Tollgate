@@ -8,13 +8,59 @@ import scenes from '../config/Scenes';
 import sourceConfig from '../config/SourceConfig';
 import symbolsFile from '../config/SymbolsFile';
 import tipLayers from '../config/TipLayers';
-import '../tools/Tool';
-import '../tools/MapTool';
-import '../tools/PanTool';
-import '../tools/selectTools/PointSelectTool';
-import '../tools/selectTools/PolygonSelectTool';
-import '../tools/selectTools/RectSelectTool';
-import '../tools/ToolController';
+import '../uikits/tools/Tool';
+import '../uikits/tools/MapTool';
+import '../uikits/tools/PanTool';
+import '../uikits/tools/selectTools/PointSelectTool';
+import '../uikits/tools/selectTools/PolygonSelectTool';
+import '../uikits/tools/selectTools/RectSelectTool';
+import '../uikits/tools/ToolController';
+import '../uikits/check/CheckConfig';
+import '../uikits/check/CheckController';
+import '../uikits/check/CheckEngine';
+import '../uikits/check/CheckResult';
+import '../uikits/check/CheckRule';
+import '../uikits/common/EventTypes';
+import '../uikits/config/Config';
+import '../uikits/config/EditTool';
+import '../uikits/config/Feature';
+import '../uikits/config/ThematicFigure';
+import '../uikits/config/Tip';
+import '../uikits/config/Utility';
+import '../uikits/controllers/EventController';
+import '../uikits/controllers/FeatCodeController';
+import '../uikits/controllers/HighRenderController';
+import '../uikits/controllers/LayerController';
+import '../uikits/controllers/LogMsgController';
+import '../uikits/controllers/ObjectEditController';
+import '../uikits/controllers/OutPutController';
+import '../uikits/controllers/SelectController';
+import '../uikits/controllers/ShapeEditorController';
+import '../uikits/controllers/ToolTipsController';
+import '../uikits/edit/shapeEdit/tools/ShapeTool';
+import '../uikits/edit/shapeEdit/ShapeEditor';
+import '../uikits/edit/topoEdit/TopoEditFactory';
+import '../uikits/edit/topoEdit/TopoEditor';
+import '../uikits/edit/topoEdit/CopyToLineTopoEditor';
+import '../uikits/edit/Editor';
+import '../uikits/edit/EditResult';
+import '../uikits/edit/complexEdit/ComplexEditor';
+import '../uikits/edit/complexEdit/results/CopyResult';
+import '../uikits/edit/complexEdit/tools/ComplexTool';
+import '../uikits/edit/complexEdit/tools/RectSelectTool';
+import '../uikits/edit/complexEdit/tools/CopyTool';
+import '../uikits/edit/relationEdit/RelationEditor';
+import '../uikits/edit/relationEdit/tools/RelationTool';
+import '../uikits/edit/relationEdit/tools/RectSelectTool';
+import '../uikits/editControl/EditControl';
+import '../uikits/editControl/EditControlFactory';
+import '../uikits/editControl/complexControl/StartupToolControl';
+import '../uikits/editControl/complexControl/CopyLineControl';
+import '../uikits/editControl/selectControl/SelectControl';
+import '../uikits/operation/Operation';
+import '../uikits/operation/EditResultOperation';
+import '../uikits/operation/OperationController';
+import '../uikits/Util';
 
 class MapInit {
   map = null;
@@ -143,7 +189,8 @@ class MapInit {
     });
   };
 
-  initialize = () => {
+  initialize = (point) => {
+    console.log(point);
     this.highlightCtrl = FM.mapApi.render.HighlightController.getInstance();
     this.feedbackCtrl = fastmap.mapApi.FeedbackController.getInstance();
     this.sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
@@ -161,6 +208,8 @@ class MapInit {
 
     this.map = map;
 
+    window.map = map;
+
     this.sceneCtrl.setMap(map);
 
     this.loadConfigs();
@@ -169,7 +218,7 @@ class MapInit {
 
     this.bindToolEvent(map);
 
-    map.getLeafletMap().setView([40.06116, 116.21334], 15);
+    map.getLeafletMap().setView([39.52388, 116.04153], 15);
 
     this.toolCtrl.resetCurrentTool('PanTool', null, null);
   };

@@ -1,17 +1,5 @@
 const referenceLayers = {
-    zisan: {
-        label: 'background',
-        name: '资三',
-        type: 'wms',
-        options: {
-            source: 'http://zs.navinfo.com:7090/rest/wms',
-            layers: 'GCJ02',
-            crs: L.CRS.EPSG4326,
-            version: '1.1.1',
-            minZoom: 1
-        }
-    },
-    tencent: {
+   tencent: {
         label: 'background',
         name: '腾讯',
         type: 'raster',
