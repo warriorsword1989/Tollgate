@@ -42,7 +42,8 @@
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
   import tableEdit from './tableEdit/tabDiag';
-  import {getTipsPhoto} from '../dataService/api';
+  import { appUtil } from '../Application';
+  import {tempLogin, getTipsPhoto} from '../dataService/api';
   import EditTool from './EditTool';
   import UserTool from './UserTool';
   import SceneTool from './SceneTool';
@@ -96,13 +97,45 @@
     },
     mounted() {
       let _self = this;
+      tempLogin({parameter:{"userNickName":"fanjingwei01672","userPassword":"016720"}})
+      .then(result => {
+        let {data, errcode} = result.data;
+        if (errcode === 0) {
+          let fmToken = data.access_token;
+          appUtil.setRenderToken(fmToken);
+        }
+      })
+      .finally(() => {
+        console.log('login finally')
+      })
+      .catch(err => {
+        console.log(err)
+      });
       this.eventController.on('ObjectSelected',function(data) {
         _self.tableData = data.features && [data.features.properties];
         if (_self.tableData.length) {
             _self.showDialog = true;
         }
       });
-      mapInit.initialize(this.$route.params.point);
+      let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
+      let point = this.$route.params.point;
+      const mapLocation = appUtil.getSessionStorage('mapLocation');
+      if (point) {
+        point = geometryAlgorithm.wktToGeojson(point).coordinates;
+      } else if (mapLocation) {
+        point = [mapLocation.point.lng, mapLocation.point.lat]
+      } else {
+        point = [116.33333, 40.88888];
+      }
+      const param = {
+        point: {
+          lat: point[1],
+          lng: point[0]
+        },
+        zoom: 15
+      };
+      appUtil.setSessionStorage('mapLocation', param);
+      mapInit.initialize();
     },
     destroyed: function () {
       mapInit.destorySingletons();

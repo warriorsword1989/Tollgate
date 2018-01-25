@@ -19,7 +19,7 @@ class Tips {
     const updateStartTime = param.updateStartTime;
     const updateEndTime = param.updateEndTime;
     const isAdopted = param.isAdopted;
-    let sql = "SELECT a.ROWKEY, a.TIPS_LIFECYCLE, a.PHOTO_ID, a.TOLL_NAME, a.TOLL_TYPE, (a.TOLL_LOCATION.get_wkt()) as TOLL_LOCATION, a.ADMIN_CODE, a.TIPS_VERSION, a.UPDATE_TIME, a.TOLL_PNUM, a.TOLL_LOC, a.IS_ADOPTED, a.MEMO FROM " + this.table + " a WHERE ADMIN_CODE = '" + adminCode + "'";
+    let sql = "SELECT a.ROWKEY, a.TIPS_LIFECYCLE, a.PHOTO_ID, a.TOLL_NAME, a.TOLL_TYPE, to_char(a.TOLL_LOCATION.get_wkt()) as TOLL_LOCATION, a.ADMIN_CODE, a.TIPS_VERSION, a.UPDATE_TIME, a.TOLL_PNUM, a.TOLL_LOC, a.IS_ADOPTED, a.MEMO FROM " + this.table + " a WHERE ADMIN_CODE = '" + adminCode + "'";
     if (tipsVersion) {
       sql = sql + " AND upper(TIPS_VERSION) = '" + tipsVersion.toUpperCase() + "'";
     }
@@ -45,7 +45,7 @@ class Tips {
     const param = this.req.query;
     const rowkey = param.rowkey;
     console.log(param)
-    let sql = "SELECT * FROM " + this.table + " WHERE ROWKEY='"+rowkey+"'";
+    let sql = "SELECT a.ROWKEY, a.TIPS_LIFECYCLE, a.PHOTO_ID, a.TOLL_NAME, a.TOLL_TYPE, to_char(a.TOLL_LOCATION.get_wkt()) as TOLL_LOCATION, a.ADMIN_CODE, a.TIPS_VERSION, a.UPDATE_TIME, a.TOLL_PNUM, a.TOLL_LOC, a.IS_ADOPTED, a.MEMO FROM " + this.table + " a WHERE ROWKEY='"+rowkey+"'";
     const result = await this.db.executeSql(sql);
     const resultData = changeResult(result);
     this.res.send({
