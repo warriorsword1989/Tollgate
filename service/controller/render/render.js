@@ -70,7 +70,9 @@ class Render {
     Promise.all(promises)
       .then((res) => {
         for (let i = 0; i < res.length; i++) {
-          data.push(res[i].data);
+          if (res[i].data.length > 0) {
+            data.push(res[i].data);
+          }
         }
         self.res.send({
           errcode: 0,

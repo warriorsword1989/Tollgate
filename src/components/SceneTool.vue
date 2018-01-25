@@ -21,6 +21,18 @@
         </li>
       </ul>
       <div class="sceneTitle">
+        <span style="font-weight: 700">Tips图层</span>
+      </div>
+      <ul class="two-column">
+        <li v-for="(item,index) in　tipLayers">
+          <input class="fm-control" :id="item.id" @click="toggleLayer(item)" v-model="item.checked"
+                 type="checkbox"/>
+          <label :for="item.id">
+            {{item.name}}
+          </label>
+        </li>
+      </ul>
+      <div class="sceneTitle">
         <span style="font-weight: 700">背景图层</span>
       </div>
       <ul>
@@ -64,6 +76,7 @@
         featureLayers: [],
         backLayers: [],
         overLayers: [],
+        tipLayers: [],
         sceneLayers: sceneCtrl.getSceneLayers(),
         visibleBackgroundLayerId: null
       }
@@ -125,6 +138,7 @@
       this.featureLayers = this.sceneCtrl.getLayersByLabel('feature');
       this.backLayers = this.sceneCtrl.getLayersByLabel('background');
       this.overLayers = this.sceneCtrl.getLayersByLabel('overlay');
+      this.tipLayers = this.sceneCtrl.getLayersByLabel('tip');
     }
   }
 </script>

@@ -10,10 +10,8 @@ class TipTollGateSearch extends Search{
   async getByTileWithGap(x, y, z, gap){
     const wkt = MercatorProjection.getWktWithGap(x, y, z, 0);
 
-    const sql = "select a.rowkey,(a.TOLL_LOCATION) as GEOMETRY,a.TOLL_NAME from SC_TOLL_TIPS_INDEX a where sdo_relate(a.TOLL_LOCATION, sdo_geometry(:wkt, 8307), 'mask=anyinteract') = 'TRUE'";
+    const sql = "select a.rowkey,(a.TOLL_LOCATION.get_wkt()) as GEOMETRY,a.TOLL_NAME from SC_TOLL_TIPS_INDEX a where sdo_relate(a.TOLL_LOCATION, sdo_geometry(:wkt, 8307), 'mask=anyinteract') = 'TRUE'";
 
-    console.log(sql);
-    console.log(wkt);
     const result = await this.connection.executeSql(sql, {wkt: wkt});
 
     const px = MercatorProjection.tileXToPixelX(x);

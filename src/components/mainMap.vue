@@ -103,7 +103,25 @@
     },
     mounted () {
       let _self = this;
-      mapInit.initialize(this.$route.params.point);
+      let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
+      let point = this.$route.params.point;
+      const mapLocation = appUtil.getSessionStorage('mapLocation');
+      if (point) {
+        point = geometryAlgorithm.wktToGeojson(point).coordinates;
+      } else if (mapLocation) {
+        point = [mapLocation.point.lng, mapLocation.point.lat]
+      } else {
+        point = [116.33333, 40.88888];
+      }
+      const param = {
+        point: {
+          lat: point[1],
+          lng: point[0]
+        },
+        zoom: 15
+      };
+      appUtil.setSessionStorage('mapLocation', param);
+      mapInit.initialize();
     },
     destroyed: function () {
       mapInit.destorySingletons();

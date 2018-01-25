@@ -6,7 +6,7 @@ const tipLayers = {
             source: 'tipSource',
             featureType: 'TIPTOLLGATE',
             serverFeatureType: '1107',
-            render: FM.mapApi.render.renderer.TipRender,
+            render: FM.mapApi.render.render.TipRender,
             minZoom: 10,
             minEditZoom: 17
         }
