@@ -128,15 +128,18 @@
         <!--</div>-->
       <!--</el-tab-pane>-->
     </el-tabs>
+    <user-tool class="userToolbar" style="50px"></user-tool>
   </div>
-
 </template>
 
 <script>
-    import { getTollGateTipList } from '../dataService/api';
+    import UserTool from './UserTool';
+    import {appUtil} from '../Application';
+    import { tempLogin, getTollGateTipList } from '../dataService/api';
     import { cityList } from '../config/CityList';
     export default {
         name: "Home",
+        components: {UserTool},
         data() {
           // 显示前一个月
           let date = new Date();
@@ -260,7 +263,7 @@
           },
           handleClick:function (data) {
             console.log(data)
-            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id, point:data.toll_location}});
+            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id, point:data.toll_location, adminCode:this.tip.adminCode}});
           },
           handleSizeChange:function (val) {
             this.tip.pageSize = val;
@@ -297,6 +300,20 @@
           },
         },
         mounted: function() {
+          tempLogin({parameter:{"userNickName":"fanjingwei01672","userPassword":"016720"}})
+          .then(result => {
+            let {data, errcode} = result.data;
+            if (errcode === 0) {
+              let fmToken = data.access_token;
+              appUtil.setRenderToken(fmToken);
+            }
+          })
+          .finally(() => {
+            console.log('login finally')
+          })
+          .catch(err => {
+            console.log(err)
+          });
           this.getTollGateTipList();
         }
     }

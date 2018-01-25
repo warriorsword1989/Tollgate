@@ -93,7 +93,8 @@
       this.renderToken = appUtil.getRenderToken();
       getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: this.renderToken})
       .then((results) => {
-        _self.imageList = results.data.data;
+        _self.imageList = results.data.data ? results.data.data : [];
+        _self.swiperOptionThumbs.loopedSlides = _self.swiperOptionTop.loopedSlides = _self.imageList.length;
       })
       .finally(() => {
         this.loading = false;
@@ -103,7 +104,6 @@
           swiperTop.controller.control = swiperThumbs;
           swiperThumbs.controller.control = swiperTop;
           const activeIndex = swiperTop.activeIndex || 0;
-          this.photoInfo = this.imageList[activeIndex] || this.photoInfo;
         })
       })
       .catch(err => {

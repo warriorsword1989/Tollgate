@@ -18,6 +18,7 @@
     "body-parser": "^1.18.2",
     "element-ui": "^2.0.7",
     "jsonwebtoken": "^8.1.0",
+    "lodash": "^4.17.4",
     "navinfo": "^1.0.0",
     "querystring": "^0.2.0",
     "terraformer-wkt-parser": "^1.1.2",
@@ -25,6 +26,7 @@
     "vue-awesome-swiper": "^3.1.0",
     "vue-concise-slider": "^2.4.3",
     "vue-dialog-drag": "^0.1.27",
+    "vue-draggable-resizable": "^1.6.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
