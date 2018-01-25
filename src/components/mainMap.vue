@@ -112,9 +112,9 @@
         console.log(err)
       });
       this.eventController.on('ObjectSelected',function(data) {
-        _self.tableData = data.features && [data.features.properties];
-        if (_self.tableData.length) {
-            _self.showDialog = true;
+        if (data.features) {
+          _self.tableData = [data.features.properties]
+          _self.showDialog = true;
         }
       });
       let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
