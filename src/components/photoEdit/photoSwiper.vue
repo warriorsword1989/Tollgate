@@ -72,12 +72,12 @@
     },
     methods: {
       getThumbnailUrl(rowkey) {
-        var url = 'http://fs-road.navinfo.com/dev/trunk/service/fcc/photo/getSnapshotByRowkey';
+        var url = window.serviceConfig.tempFsUrl+'/fcc/photo/getSnapshotByRowkey';
         return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
           '",type:"thumbnail"}';
       },
       getOriginUrl(rowkey) {
-        var url = 'http://fs-road.navinfo.com/dev/trunk/service/fcc/photo/getSnapshotByRowkey';
+        var url = window.serviceConfig.tempFsUrl+'/fcc/photo/getSnapshotByRowkey';
         return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
             '",type:"origin"}';
       },
@@ -87,6 +87,7 @@
       }
     },
     mounted() {
+      console.log(window.serviceConfig.tempFsUrl)
        // 加载tips照片；
       let _self = this;
       let photoIds = this.$route.params.photoId.split(';');
@@ -104,6 +105,7 @@
           swiperTop.controller.control = swiperThumbs;
           swiperThumbs.controller.control = swiperTop;
           const activeIndex = swiperTop.activeIndex || 0;
+          this.photoInfo = this.imageList[activeIndex];
         })
       })
       .catch(err => {
