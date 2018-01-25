@@ -5,13 +5,13 @@
         <div class="grid-list">
           <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
           <div class="inputPart">
-            <el-input v-model="originModel.name_bt_id" size="mini"></el-input>
+            <el-input :disabled="true" v-model="originModel.name_bt_id" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div style="width:120px" class="labelText">桥梁或隧道名称：</div>
           <div class="inputPart">
-            <el-input v-model="originModel.name_bt" size="mini"></el-input>
+            <el-input :disabled="true" v-model="originModel.name_bt" size="mini"></el-input>
           </div>
         </div>
         <el-button @click="editBrage" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
@@ -25,13 +25,13 @@
             <div class="grid-list">
               <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
               <div class="inputPart">
-                <el-input v-model="dataItem[innerKey].name_bt_id" size="mini"></el-input>
+                <el-input :disabled="true" v-model="dataItem[innerKey].name_bt_id" size="mini"></el-input>
               </div>
             </div>
             <div class="grid-list">
               <div style="width:120px" class="labelText">桥梁或隧道名称：</div>
               <div class="inputPart">
-                <el-input v-model="dataItem[innerKey].name_bt" size="mini"></el-input>
+                <el-input :disabled="true" v-model="dataItem[innerKey].name_bt" size="mini"></el-input>
               </div>
             </div>
             <el-button @click="editBrage" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
@@ -105,7 +105,7 @@
                 <div class="grid-list">
                   <div class="labelText">基本费率车道数：</div>
                   <div class="inputPart">
-                    <el-select size="mini" v-model.number="innerDataItem.lane_num" placeholder="请选择">
+                    <el-select :disabled="isGuangdong" size="mini" v-model.number="innerDataItem.lane_num" placeholder="请选择">
                       <el-option v-for="item in feeOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -116,13 +116,13 @@
                 <div class="grid-list">
                   <div class="labelText">费 率 1：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_base1" size="mini"></el-input>
+                    <el-input :disabled="isGuangdong" v-model="innerDataItem.rate_base1" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div class="labelText">费率1车道数：</div>
                   <div class="inputPart">
-                    <el-select size="mini" v-model.number="innerDataItem.lane_num1" placeholder="请选择">
+                    <el-select :disabled="isGuangdong" size="mini" v-model.number="innerDataItem.lane_num1" placeholder="请选择">
                       <el-option v-for="item in feeOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -169,9 +169,10 @@
     data() {
       return {
         loading: true,
+        isGuangdong: false,
         dataModels: [],
         originModel: {
-          group_id: this.selectedData.tollgateId,
+          group_id: this.selectedData.id,
           loading_class: 1,
           tunnage_flag: 1,
           tunnage_min: 1,
@@ -331,10 +332,11 @@
     },
     mounted() {
       let _self = this;
+      this.isGuangdong = this.$route.params.adminCode == '440000';
       this.mountFlag = true;
       let param = {
         table: 'SC_TOLL_LOAD',
-        pid: 55796611
+        pid: this.selectedData.id
       };
       getTollGate(param)
         .then(result => {

@@ -93,8 +93,7 @@
       this.renderToken = appUtil.getRenderToken();
       getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: this.renderToken})
       .then((results) => {
-        _self.imageList = results.data.data;
-        console.log(_self.imageList.length);
+        _self.imageList = results.data.data ? results.data.data : [];
         _self.swiperOptionThumbs.loopedSlides = _self.swiperOptionTop.loopedSlides = _self.imageList.length;
       })
       .finally(() => {

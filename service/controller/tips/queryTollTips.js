@@ -44,8 +44,8 @@ class Tips {
   async getTollGateTip() {
     const param = this.req.query;
     const rowkey = param.rowkey;
-    let sql = "SELECT * FROM " + this.table + " WHERE ROWKEY = '" + rowkey + "'";
-    console.log(sql);
+    console.log(param)
+    let sql = "SELECT * FROM " + this.table + " WHERE ROWKEY='"+rowkey+"'";
     const result = await this.db.executeSql(sql);
     const resultData = changeResult(result);
     this.res.send({

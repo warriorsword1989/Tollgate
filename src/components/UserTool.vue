@@ -4,28 +4,48 @@
       <!-- <div class="innerImg"></div> -->
     </div>
     <ul class="list-group fm-dropdown-menu">
-      <li @click="backToTips()">
-        返回tips列表
-      </li>
-      <li>
-        <a href="#/login">退出</a>
-      </li>
+      <li v-show="showTips" @click="backToTips()">返回tips列表</li>
+      <li><a @click="logout" href="#/login">退出</a></li>
     </ul>
   </div>
 </template>
 
 <script>
+    import { appUtil } from '../Application';
     export default {
         name: "user-tool",
+        data() {
+          return {
+            showTips: true
+          }
+        },
         methods: {
           backToTips: function () {
             this.$router.push('/Home');
+          },
+          logout: function () {
+            this.$router.push('/login');
+            appUtil.removeTollgateToken();
+            appUtil.removeRenderToken();
+          }
+        },
+        mounted () {
+          if (this.$route.path == '/Home') {
+            this.showTips = false;
           }
         }
     }
 </script>
 
 <style scoped>
+  .userToolContainer {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    text-align: center;
+    padding-bottom: 10px;
+    z-index: 10;
+  }
   .userToolContainer > div {
     box-shadow: 0 0 10px #93bbff;
     /*border-radius: 15px;*/

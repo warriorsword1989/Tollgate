@@ -5,13 +5,13 @@
         <div class="grid-list">
           <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
           <div class="inputPart">
-            <el-input v-model="originModel.name_bt_id" size="mini"></el-input>
+            <el-input :disabled="true" v-model="originModel.name_bt_id" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div style="width:120px" class="labelText">桥梁或隧道名称：</div>
           <div class="inputPart">
-            <el-input v-model="originModel.name_bt" size="mini"></el-input>
+            <el-input :disabled="true" v-model="originModel.name_bt" size="mini"></el-input>
           </div>
         </div>
         <el-button @click="editBrage" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
@@ -25,13 +25,13 @@
             <div class="grid-list">
               <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
               <div class="inputPart">
-                <el-input v-model="dataItem[innerKey].name_bt_id" size="mini"></el-input>
+                <el-input :disabled="true" v-model="dataItem[innerKey].name_bt_id" size="mini"></el-input>
               </div>
             </div>
             <div class="grid-list">
               <div style="width:120px" class="labelText">桥梁或隧道名称：</div>
               <div class="inputPart">
-                <el-input v-model="dataItem[innerKey].name_bt" size="mini"></el-input>
+                <el-input :disabled="true" v-model="dataItem[innerKey].name_bt" size="mini"></el-input>
               </div>
             </div>
             <el-button @click="editBrage" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
@@ -105,7 +105,7 @@
                 <div class="grid-list">
                   <div class="labelText">超载基本费率的倍数上限：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_max" size="mini"></el-input>
+                    <el-input v-model="innerDataItem.multiple_max" size="mini"></el-input>
                   </div>
                 </div>
               </div>
@@ -119,7 +119,7 @@
                 <div class="grid-list">
                   <div class="labelText">超载基本费率车道数：</div>
                   <div class="inputPart">
-                    <el-select size="mini" v-model.number="innerDataItem.lane_num" placeholder="请选择">
+                    <el-select :disabled="isGuangdong" size="mini" v-model.number="innerDataItem.lane_num" placeholder="请选择">
                       <el-option v-for="item in feeOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -130,13 +130,13 @@
                 <div class="grid-list">
                   <div class="labelText">超载区间的基本费率1：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.sub_rate_base1" size="mini"></el-input>
+                    <el-input :disabled="isGuangdong" v-model="innerDataItem.sub_rate_base1" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div class="labelText">超载区间的基本费率1对应车道数：</div>
                   <div class="inputPart">
-                    <el-select size="mini" v-model.number="innerDataItem.lane_num1" placeholder="请选择">
+                    <el-select :disabled="isGuangdong" size="mini" v-model.number="innerDataItem.lane_num1" placeholder="请选择">
                       <el-option v-for="item in feeOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -192,10 +192,11 @@
     data() {
       return {
         loading: true,
+        isGuangdong: false,
         dataModels: [],
         originModel: {
-          group_id: this.selectedData.tollgateId,
-          overloading_class: 1,
+          group_id: this.selectedData.id,
+          overloading_clss: 1,
           rato_flag: 1,
           rato_min: 1,
           rato_max: 1,
@@ -259,16 +260,6 @@
     methods: {
       editBrage() {
       },
-      _reSort() {
-        let a = _.groupBy(this.dataModels, 'loading_class');
-        Object.keys(a).forEach(item => {
-          a[item] = _.groupBy(a[item], 'loading_subclss');
-          Object.keys(a[item]).forEach(innerItem => {
-            a[item][innerItem] = a[item][innerItem][0]
-          });
-        });
-        this.dataModels = a;
-      },
       addOuter() {
         let _self = this;
         let existsKeys = Object.keys(this.dataModels);
@@ -276,7 +267,7 @@
         let leftKeys = _.difference(allKeys, existsKeys);
         if (leftKeys.length) {
           let newObj = Object.assign({}, _self.originModel);
-          newObj.loading_class = leftKeys[0];
+          newObj.overloading_clss = leftKeys[0];
           _self.$set(_self.dataModels, leftKeys[0], {'1': newObj});
         }
       },
@@ -287,14 +278,14 @@
         let _self = this;
         let existsKeys = [];
         for (let key in this.dataModels[index]) {
-          existsKeys.push(this.dataModels[index][key].loading_subclss);
+          existsKeys.push(this.dataModels[index][key].overloading_subclss);
         }
         let allKeys = [1, 2, 3, 4, 5];
         let leftKeys = _.difference(allKeys, existsKeys);
         if (leftKeys.length) {
           let newObj = Object.assign({}, _self.originModel);
-          newObj.loading_class = index;
-          newObj.loading_subclss = leftKeys[0];
+          newObj.overloading_clss = index;
+          newObj.overloading_subclss = leftKeys[0];
           _self.$set(_self.dataModels[index], leftKeys[0], newObj);
         }
       },
@@ -320,7 +311,7 @@
             });
           });
           let params = {
-            table: 'SC_TOLL_LOAD_GD',
+            table: 'SC_TOLL_OVERLOAD',
             data: submitData
           };
           console.log(submitData)
@@ -357,17 +348,18 @@
     },
     mounted() {
       let _self = this;
+      this.isGuangdong = this.$route.params.adminCode == '440000';
       this.mountFlag = true;
       let param = {
         table: 'SC_TOLL_OVERLOAD',
-        pid: 55796611
+        pid: this.selectedData.id
       };
       getTollGate(param)
         .then(result => {
           let {errorCode,data} = result;
-          let a = _.groupBy(data, 'loading_class');
+          let a = _.groupBy(data, 'overloading_clss');
           Object.keys(a).forEach(item => {
-            a[item] = _.groupBy(a[item], 'loading_subclss');
+            a[item] = _.groupBy(a[item], 'overloading_subclss');
             Object.keys(a[item]).forEach(innerItem => {
               a[item][innerItem] = a[item][innerItem][0]
             });

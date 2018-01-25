@@ -3,15 +3,15 @@
     <div class="grid-content">
       <div class="grid-wraper">
         <div class="grid-list">
-          <div style="width:140px" class="labelText">区域标识：</div>
+          <div style="width:140px" class="labelText">行政区域标识：</div>
           <div class="inputPart">
-            <el-input v-model="dataModels[0] && dataModels[0].system_id || originModel.system_id" size="mini"></el-input>
+            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].system_id || originModel.system_id" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div style="width:120px" class="labelText">行政区划名称：</div>
           <div class="inputPart">
-            <el-input v-model="dataModels[0] && dataModels[0].admin_name || originModel.admin_name" size="mini"></el-input>
+            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].admin_name || originModel.admin_name" size="mini"></el-input>
           </div>
         </div>
         <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>

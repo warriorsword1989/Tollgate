@@ -2,12 +2,13 @@
   <div class="mainMap">
     <transition name="el-fade-in-liner">
       <div class="sideBar" v-show="!leftFloatArrow">
-        <div @click="showDialog = !showDialog" class="header">
-          <h3 class="title"><i class="el-icon-picture"></i> 照片详情</h3>
+        <div class="header">
+          <h3 class="title">
+            <i class="el-icon-picture"></i> 照片详情</h3>
         </div>
         <!-- 照片显示 -->
         <div class="photoView">
-           <photo-swiper :image-list="dataModel.imageList"></photo-swiper>
+          <photo-swiper :image-list="dataModel.imageList"></photo-swiper>
         </div>
         <!-- 数据编辑 -->
         <div class="dataView">
@@ -17,31 +18,21 @@
     </transition>
     <!-- 地图 -->
     <div id="editorMap" class="map">
-      <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag ? '390px': '90px'}">
-
-      </edit-tool>
+      <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag ? '390px': '90px'}"></edit-tool>
     </div>
-    <user-tool class="userToolbar" v-bind:style="{right: rightPanelFlag ? '350px': '50px'}">
-
-    </user-tool>
-    <div class="sceneToolbar" @click="openRightPanel()" v-bind:style="{right: rightPanelFlag ? '310px': '10px'}">
-      <div>
-      </div>
-    </div>
+    <user-tool class="userToolbar" v-bind:style="{right: rightPanelFlag ? '350px': '50px'}"></user-tool>
+    <div class="sceneToolbar" @click="openRightPanel()" v-bind:style="{right: rightPanelFlag ? '310px': '10px'}"><div></div></div>
     <div class="fm-layout-container right" v-if="rightPanelFlag" style="overflow: hidden">
-      <scene-tool>
-      </scene-tool>
-      <img class="right-float-close" @click="closeRightPanel()" src="../assets/toolIcon/icon/button-close-normal.png"/>
+      <scene-tool></scene-tool>
+      <img class="right-float-close" @click="closeRightPanel()" src="../assets/toolIcon/icon/button-close-normal.png" />
     </div>
     <!-- 显示隐藏按钮 -->
-    <el-button :class="{ 'enter-active': leftFloatArrow,  'enter-start': !leftFloatArrow, 'left-toggle': true }" :round.boolean=false @click="toggleLeftPanel"
-      type="primary">
+    <el-button :class="{ 'enter-active': leftFloatArrow,  'enter-start': !leftFloatArrow, 'left-toggle': true }" :round.boolean=false
+      @click="toggleLeftPanel" type="primary">
       <i v-if="!leftFloatArrow" class="el-icon-arrow-left"></i>
       <i v-if="leftFloatArrow" class="el-icon-arrow-right"></i>
     </el-button>
-    <tableEdit :dialog-table-visible="showDialog" @dialogClose="closeDialog"></tableEdit>
-
-    <logout></logout>
+    <table-edit v-if="showDialog" :table-data="tableData" @dialogClose="closeDialog"></table-edit>
   </div>
 </template>
 
@@ -51,12 +42,11 @@
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
   import tableEdit from './tableEdit/tabDiag';
-  import logout from './logout';
-  import { appUtil } from '../Application';
-  import { tempLogin, getTipsPhoto } from '../dataService/api';
+  import {getTipsPhoto} from '../dataService/api';
   import EditTool from './EditTool';
   import UserTool from './UserTool';
   import SceneTool from './SceneTool';
+  import '../uikits/controllers/EventController';
   export default {
     name: 'mainMap',
     components: {
@@ -65,8 +55,7 @@
       EditTool,
       photoEdit,
       photoSwiper,
-      tableEdit,
-      logout
+      tableEdit
     },
     data() {
       return {
@@ -74,17 +63,18 @@
         leftFloatArrow: false,
         showDialog: false,
         rightPanelFlag: false,
+        tableData: [],
         dataModel: {
           uploadTime: '2012-10-7',
           sourceId: '111111',
           photoContent: '1212',
           version: '1.2.1',
           imageList: []
-        }
+        },
+        eventController: fastmap.uikit.EventController()
       }
     },
-    computed: {
-    },
+    computed: {},
     methods: {
       toggleLeftPanel: function (event) {
         this.leftFloatArrow = !this.leftFloatArrow;
@@ -104,8 +94,14 @@
         console.log(val);
       },
     },
-    mounted () {
+    mounted() {
       let _self = this;
+      this.eventController.on('ObjectSelected',function(data) {
+        _self.tableData = data.features && [data.features.properties];
+        if (_self.tableData.length) {
+            _self.showDialog = true;
+        }
+      });
       mapInit.initialize(this.$route.params.point);
     },
     destroyed: function () {
@@ -121,6 +117,7 @@
     height: 100%;
     overflow: hidden!important;
   }
+
   .map {
     width: 100%;
     height: 100%;
@@ -184,17 +181,20 @@
     display: flex;
     flex-direction: column
   }
+
   .sideBar .dataView {
     height: 150px;
     padding-top: 10px;
     border-top: 1px solid #8b8d9c;
     text-align: justify;
   }
+
   .toolsToolbar {
     position: absolute;
     top: 10px;
     z-index: 10;
   }
+
   .userToolbar {
     position: absolute;
     top: 10px;
@@ -202,6 +202,7 @@
     padding-bottom: 10px;
     z-index: 10;
   }
+
   .sceneToolbar {
     border-radius: 3px;
     box-shadow: 0 0 10px #93bbff;
@@ -212,14 +213,17 @@
     position: absolute;
     bottom: 10px;
   }
-  .sceneToolbar > div{
+
+  .sceneToolbar>div {
     width: 100%;
     height: 100%;
     background: url("../assets/toolIcon/icon/button_changjing_normal.png") no-repeat center center;
   }
-  .sceneToolbar:hover > div {
+
+  .sceneToolbar:hover>div {
     background: url("../assets/toolIcon/icon/button_changjing_active.png") no-repeat center center;
   }
+
   .right-float-close {
     position: absolute;
     right: 10px;
@@ -228,4 +232,5 @@
     height: 20px;
     cursor: pointer;
   }
+
 </style>

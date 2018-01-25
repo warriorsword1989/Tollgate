@@ -28,7 +28,10 @@ export default {
 }
 /****************复写table样式********************/  
 .el-table td, .el-table th {
-  padding: 5px 0;
+  padding: 3px 0;
+}
+.dragWindow .el-table__body-wrapper{
+  overflow:hidden;
 }
 /****************复写tab样式********************/  
 .dragWindow .el-tabs__content {

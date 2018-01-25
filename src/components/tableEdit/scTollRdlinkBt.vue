@@ -15,15 +15,16 @@
           <div class="grid-list">
             <div class="labelText">桥梁或隧道名称：</div>
             <div class="inputPart">
-              <el-input v-model="dataItem.name_bt" size="mini"></el-input>
+              <el-input :disabled="true" v-model="dataItem.name_bt" size="mini"></el-input>
             </div>
           </div>
           <div class="grid-list">
             <div class="labelText">桥梁或隧道名称组号：</div>
             <div class="inputPart">
-              <el-input v-model="dataItem.name_bt_id" size="mini"></el-input>
+              <el-input :disabled="true" v-model="dataItem.name_bt_id" size="mini"></el-input>
             </div>
           </div>
+          <el-button @click="editBrage" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
@@ -104,7 +105,7 @@
         dataModels: [],
         originModel: {
           car_class:null,
-          group_id:1,
+          group_id: this.selectedData.id,
           name_bt:null,
           name_bt_id:1,
           rate_add:null,
@@ -165,6 +166,7 @@
       }
     },
     methods: {
+      editBrage(){},
       onSubmit(formName) {
         let validateFlag = true;
         this.$refs[formName].forEach((formItem, index) => {
