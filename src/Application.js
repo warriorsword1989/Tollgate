@@ -33,5 +33,14 @@ export const appUtil = {
   },
   removeRenderToken: function () {
     sessionStorage.removeItem(`${appConfig.renderName}-token`);
+  },
+  setSessionStorage: function (name, param) {
+    sessionStorage.setItem(`${appConfig.appName}-${name}`, JSON.stringify(param));
+  },
+  getSessionStorage: function (name) {
+    return JSON.parse(sessionStorage.getItem(`${appConfig.appName}-${name}`));
+  },
+  removeSessionStorage: function (name) {
+    sessionStorage.removeItem(`${appConfig.appName}-${name}`);
   }
 };

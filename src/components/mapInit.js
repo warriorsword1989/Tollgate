@@ -8,6 +8,7 @@ import scenes from '../config/Scenes';
 import sourceConfig from '../config/SourceConfig';
 import symbolsFile from '../config/SymbolsFile';
 import tipLayers from '../config/TipLayers';
+import { appUtil } from '../Application';
 import '../uikits/tools/Tool';
 import '../uikits/tools/MapTool';
 import '../uikits/tools/PanTool';
@@ -190,7 +191,6 @@ class MapInit {
   };
 
   initialize = (point) => {
-    console.log(point);
     this.highlightCtrl = FM.mapApi.render.HighlightController.getInstance();
     this.feedbackCtrl = fastmap.mapApi.FeedbackController.getInstance();
     this.sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
@@ -218,9 +218,18 @@ class MapInit {
 
     this.bindToolEvent(map);
 
-    map.getLeafletMap().setView([39.52388, 116.04153], 15);
+    const mapLocation = appUtil.getSessionStorage('mapLocation');
+    const zoom = map.getLeafletMap().getZoom();
+    map.getLeafletMap().setView([mapLocation.point.lat, mapLocation.point.lng], mapLocation.zoom);
+
+    map.getLeafletMap().on('moveend', function () {
+      appUtil.setSessionStorage('mapLocation', {
+        zoom: zoom,
+        point: map.getLeafletMap().getCenter()
+      })
+    });
 
     this.toolCtrl.resetCurrentTool('PanTool', null, null);
   };
-};
+}
 export default new MapInit();
