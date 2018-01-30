@@ -17,6 +17,7 @@ import 'element-ui/lib/theme-chalk/base.css';
 import 'vue-dialog-drag/dist/vue-dialog-drag.css'
 import 'vue-dialog-drag/dist/drop-area.css'
 import 'vue-dialog-drag/dist/dialog-styles.css'
+import store from './store/index.js'
 
 Vue.use(ElementUI);
 Vue.use(VueAwesomeSwiper);
@@ -27,6 +28,7 @@ Vue.config.productionTip = false;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   template: '<App/>',
   components: { App }

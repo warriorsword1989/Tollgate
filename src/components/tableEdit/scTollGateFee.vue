@@ -1,28 +1,34 @@
 <template>
   <div class="tableEditPanel" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
-    <el-form :model="dataModels" ref="dataModels" :inline="true" class="wraper">
+    <el-form :rules="rules" :model="dataModels" ref="dataModels" :inline="false" class="wraper">
       <div class="grid-content">
         <div class="labelText">费用金额：</div>
         <div class="inputPart">
-          <el-input v-model="dataModels.out_fee" size="mini"></el-input>
+          <el-form-item prop="out_fee">
+            <el-input type="number" v-model.number="dataModels.out_fee" size="mini"></el-input>
+          </el-form-item>
         </div>
       </div>
       <div class="grid-content">
         <div class="labelText">内埠车牌范围：</div>
         <div class="inputPart">
-          <el-input v-model="dataModels.local_plate" size="mini"></el-input>
+          <el-form-item style="display:block" prop="local_plate">
+            <el-input v-model="dataModels.local_plate" size="mini"></el-input>
+          </el-form-item>
         </div>
       </div>
       <div class="grid-content">
         <div class="labelText">收费类型：</div>
         <div class="inputPart">
-          <el-select size="mini" v-model.number="dataModels.type" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
+          <el-form-item prop="type">
+            <el-select size="mini" v-model.number="dataModels.type" placeholder="请选择">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
         </div>
       </div>
-      <div style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
+      <div class="footerPart">
         <el-row :gutter="5">
           <el-button type="primary" @click="onSubmit('dataModels')">保 存</el-button>
         </el-row>
@@ -32,23 +38,25 @@
 </template>
 
 <script>
-  import {
-    updateTollGate
-  } from '../../dataService/api';
-  import {
-    getTollGate
-  } from '../../dataService/api';
+  import { updateTollGate, getTollGate} from '../../dataService/api';
   export default {
     name: 'scTollGateFee',
     props: ['tableName', 'selectedData'],
     data() {
+      let _self = this;
+      let check_local_plate = (rule, value, callback) => {
+        if (/[a-z]/.test(value)) {
+          callback(new Error('车牌范围字母必须大写'));
+        }
+        callback();
+      }
       return {
         loading: true,
         dataModels: {
           local_plate: '',
           out_fee: 0,
           source: 1,
-          toll_pid: this.selectedData.id,
+          toll_pid: this.$store.state.editSelectedData[0],
           type: 1
         },
         mountFlag: false,
@@ -61,7 +69,16 @@
         }, {
           value: 3,
           label: '当前收费站为跨界收费站'
-        }]
+        }],
+        rules: {
+          local_plate: [
+            { required: true, message: '计重吨数不能为空'},
+            { validator: check_local_plate, trigger: 'blur'},
+          ],
+          out_fee: [
+            { required: true, message: '费用金额不能为空'}
+          ]
+        }
       }
     },
     watch: {
@@ -81,11 +98,21 @@
     },
     methods: {
       onSubmit(formName) {
+        let _self = this;
+        if (!this.$store.state.editSelectedData.length) {
+          return false;
+        }
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            let submitData = [];
+            this.$store.state.editSelectedData.forEach(outer => {
+              let cloneData = Object.assign({},_self.dataModels);
+              cloneData.toll_pid = outer;
+              submitData.push(cloneData);
+            });
             let params = {
               table: 'SC_TOLL_TOLLGATEFEE',
-              data: [this.dataModels]
+              data: submitData
             };
             this.loading = true;
             updateTollGate(params)
@@ -117,9 +144,6 @@
               .catch(err => {
                 console.log(err);
               });
-          } else {
-            console.log('error submit!!');
-            return false;
           }
         });
       }
@@ -127,48 +151,48 @@
     mounted() {
       let _self = this;
       this.mountFlag = true;
-      let param = {
-        table: 'SC_TOLL_TOLLGATEFEE',
-        pid: this.selectedData.id
-      };
-      getTollGate(param)
-        .then(result => {
-          let {errorCode,data} = result;
-          if (data.length) {
-            _self.dataModels = data[0]
-          }
-        })
-        .finally(() => {
-          _self.loading = false;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      if (this.$store.state.handleFlag === 'update') {
+        let param = {
+          table: 'SC_TOLL_TOLLGATEFEE',
+          pid: this.$store.state.editSelectedData[0]
+        };
+        getTollGate(param)
+          .then(result => {
+            let {errorCode,data} = result;
+            if (data.length) {
+              _self.dataModels = data[0]
+            }
+          })
+          .finally(() => {
+            _self.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     }
   }
-
 </script>
 
 <style scoped>
   .grid-content {
     display: flex;
     flex-direction: row;
-    margin: 10px;
+    margin: 0 10px;
   }
-
   .grid-content .labelText {
     width: 110px;
     text-align: right;
   }
-
   .grid-content .inputPart {
     flex: 1
   }
-
-  .el-select,
-  .el-select--mini {
+  .footerPart {
+    margin: 0 13px;
+    text-align: right;
+  }
+  .el-select,.el-select--mini {
     display: block;
     width: 100%;
   }
-
 </style>

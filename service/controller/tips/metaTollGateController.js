@@ -51,6 +51,8 @@ class TollGate {
       this.res.send({errorCode: -1});
     }
   }
+
+
   /**
    * 获得update部分语句
    * @param {*} data 
