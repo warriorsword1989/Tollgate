@@ -19,7 +19,7 @@
         <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
       </div>
     </div>
-    <el-form v-for="(dataItem, keys, index) in dataModels" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
+    <el-form v-for="(dataItem, keys, index) in dataModels" :rules="carRules" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
       <div class="grid-content">
         <div class="grid-wraper">
           <div class="grid-list">
@@ -39,8 +39,13 @@
                   <div class="labelText">各车型座位数区间：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input v-model="dataItem.seat_num_min" size="mini"></el-input> -
-                      <el-input v-model="dataItem.seat_num_max" size="mini"></el-input>
+                      <el-form-item prop="seat_num_min">
+                        <el-input v-model="dataItem.seat_num_min" :disabled="index == 0" size="mini"></el-input>
+                      </el-form-item>
+                       -
+                      <el-form-item prop="seat_num_max">
+                        <el-input v-model="dataItem.seat_num_max" :disabled="index == 4" size="mini"></el-input>
+                      </el-form-item>
                     </div>
                   </div>
                 </div>
@@ -49,7 +54,9 @@
                 <div class="grid-list">
                   <div class="labelText">费率(元/公里)非桥隧道：</div>
                   <div class="inputPart">
-                    <el-input v-model="dataItem.rate" size="mini"></el-input>
+                    <el-form-item prop="rate">
+                      <el-input v-model="dataItem.rate" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -66,13 +73,17 @@
                 <div class="grid-list">
                   <div class="labelText">桥隧道费率(元/车次)：</div>
                   <div class="inputPart">
-                    <el-input v-model="dataItem.rate_bt" size="mini"></el-input>
+                    <el-form-item prop="rate_bt">
+                      <el-input v-model="dataItem.rate_bt" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
-                <div class="grid-list">
+                <div class="grid-list" v-show="isZheJiang">
                   <div class="labelText">车次加费(元)：</div>
                   <div class="inputPart">
-                    <el-input v-model="dataItem.fee_add" size="mini"></el-input>
+                    <el-form-item prop="fee_add">
+                      <el-input v-model="dataItem.fee_add" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
@@ -80,14 +91,17 @@
                 <div class="grid-list">
                   <div class="labelText">最低收费(元)：</div>
                   <div class="inputPart">
-                    <el-input v-model="dataItem.charge_min" size="mini"></el-input> -
-                    <el-input v-model="dataItem.charge_max" size="mini"></el-input>
+                    <el-form-item prop="charge_min">
+                      <el-input v-model="dataItem.charge_min" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div class="labelText">费率1(元/公里)：</div>
                   <div class="inputPart">
-                    <el-input :disabled="isGuangdong" v-model="dataItem.rate1" size="mini"></el-input>
+                    <el-form-item prop="rate1">
+                      <el-input :disabled="isGuangdong" v-model="dataItem.rate1" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
@@ -104,7 +118,9 @@
                 <div class="grid-list">
                   <div class="labelText">固定收费站对应次费：</div>
                   <div class="inputPart">
-                    <el-input v-model="dataItem.fix_fee" size="mini"></el-input>
+                    <el-form-item prop="fix_fee">
+                      <el-input v-model="dataItem.fix_fee" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
@@ -130,10 +146,110 @@
     name: 'scTollCar',
     props: ['tableName', 'selectedData'],
     data() {
+      let validateFeeAdd = (rule, value, callback) => {
+        let self = this;
+        if (value > 20) {
+          this.$confirm('车次加费大于20, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            return callback();
+          }).catch(() => {
+            return callback(new Error('车次加费不能大于20'));         
+          });
+        }
+      };
+      // 费率
+      let validateRate = (rule, value, callback) => {
+        let self = this;
+        if (value < 0 || value > 3) {
+          this.$confirm('费率值小于0或者大于3, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            return callback();
+          }).catch(() => {
+            return callback(new Error('费率值必须大于0或者小于3'));         
+          });
+        }
+      };
+      // 费率1
+      let validateRate1 = (rule, value, callback) => {
+        let self = this;
+        if (value > 20) {
+          this.$confirm('费率1大于20, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            callback();
+          }).catch(() => {
+            callback(new Error('费率1必须小于20'));         
+          });
+        }
+      };
+      // 隧道桥费率
+      let validateRateBt = (rule, value, callback) => {
+        let self = this;
+        if (value > 20) {
+          this.$confirm('隧道桥费率值大于20, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            callback();
+          }).catch(() => {
+            callback(new Error('隧道桥费率值必须小于20'));         
+          });
+        }
+      };
+      // 最低收费
+      let validateChargeMin = (rule, value, callback) => {
+        let self = this;
+        if (value > 20) {
+          this.$confirm('最低收费值大于20, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            callback();
+          }).catch(() => {
+            callback(new Error('最低收费值必须小于20'));         
+          });
+        }
+      };
+      // 固定收费站对应次费
+      let validateFixFee = (rule, value, callback) => {
+        let self = this;
+        if (value > 10 || value < 0) {
+          this.$confirm('固定收费站对应次费值大于10或者小于0, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            callback();
+          }).catch(() => {
+            callback(new Error('固定收费站对应次费值必须大于0小于10'));         
+          });
+        }
+      };
+      // 车位
+      let validateSeatNum = (rule, value, callback) => {
+        let self = this;
+        if (value >55 || value < 0) {
+          callback(new Error('座位数必须大于0小于55')); 
+        } else {
+          callback();
+        }
+      };
       return {
         isGuangdong: false,
+        isZheJiang: false,
         loading: true,
         dataModels: [],
+        formIndex: 0,
         originModel: {
           group_id: this.selectedData.id,
           car_class: 1,
@@ -148,6 +264,30 @@
           charge_min: 3,
           fix_fee: 3,
           source: 0
+        },
+        carRules: {
+          rate: [
+            { validator: validateRate, trigger: 'blur' }
+          ],
+          rate_bt: [
+            { validator: validateRateBt, trigger: 'blur' }
+          ],
+          fee_add: [
+            { validator: validateFeeAdd, trigger: 'blur' }
+          ],
+          charge_min: [
+            { validator: validateChargeMin, trigger: 'blur' }
+          ],
+          fix_fee: [
+            { validator: validateFixFee, trigger: 'blur' }
+          ],
+          seat_num_min: [
+            { validator: validateSeatNum, trigger: 'blur' }
+          ],
+          seat_num_max: [
+            { validator: validateSeatNum, trigger: 'blur' }
+          ],
+          rate1: [{ validator: validateRate1, trigger: 'blur' }]
         },
         mountFlag: false,
         feeOptions: [{
@@ -194,12 +334,37 @@
       addItem() {
         let _self = this;
         let existsKeys = Object.keys(this.dataModels);
-        let allKeys = ['1', '2', '3', '4', '5'];
+        let allKeys = ['1', '2', '3', '4'];
         let leftKeys = _.difference(allKeys, existsKeys);
-        if (leftKeys.length) {
+        let validFlag = true;
+        for (let i = 0; i < this.$refs.dataItem.length; i++) {
+          this.$refs.dataItem[i].validate((valid) => {
+            if (!valid) {
+              validFlag = false;
+            }
+          })
+        }
+        if (validFlag && leftKeys.length) {
           let newObj = Object.assign({}, _self.originModel);
+          if (leftKeys[0] === '1') {
+            newObj.seat_num_min = 0;
+          } else {
+            newObj.seat_num_min = this.dataModels[leftKeys[0] - 1].seat_num_max;
+            // 最后类型的最大值为1000
+            if (leftKeys[0] === allKeys[allKeys.length - 1]) {
+              newObj.seat_num_max = 1000;
+            } else {
+              // 控制最大值比最小值大1
+              newObj.seat_num_max = newObj.seat_num_min + 1;
+            }
+          }
           newObj.car_class = leftKeys[0];
           _self.$set(_self.dataModels, leftKeys[0], newObj);
+        } else {
+          this.$message({
+            type: 'info',
+            message: `输入不合法，请检查输入`
+          });
         }
       },
       removeLimitItem(index) {
@@ -259,6 +424,7 @@
     mounted() {
       let _self = this;
       this.isGuangdong = this.$route.params.adminCode == '440000';
+      this.isZheJiang = this.$route.params.adminCode == '330000';
       this.mountFlag = true;
       let param = {
         table: 'SC_TOLL_CAR',
