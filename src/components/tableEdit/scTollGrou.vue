@@ -310,7 +310,10 @@
     computed: {
       free_type_computed: {
         get: function () {
-          return this.dataModels.free_type.split('|') || ["0"];
+          if (this.dataModels.free_type) {
+            return this.dataModels.free_type.split('|');
+          }
+          return ["0"];
         },
         set: function (newValue) {
           this.dataModels.free_type = newValue!=0 ? newValue.join('|') : "0";
@@ -340,7 +343,8 @@
           });
           let params = {
             table: 'SC_TOLL_GROUP',
-            data: submitData
+            data: submitData,
+            workFlag: this.$store.state.workStatus
           };
           updateTollGate(params)
           .then(result => {
@@ -388,7 +392,7 @@
     mounted(){
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
-        let param = {table: 'SC_TOLL_GROUP', pid: this.$store.state.editSelectedData[0]};
+        let param = {table: 'SC_TOLL_GROUP', pid: this.$store.state.editSelectedData[0],workFlag: this.$store.state.workStatus};
         getTollGate(param)
         .then(result => {
           let {errorCode, data} = result;
