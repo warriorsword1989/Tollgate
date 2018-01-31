@@ -13,6 +13,7 @@ class ConnectMetaOracle {
   }
 
   executeSql (sql){
+    let _self = this;
     oracledb.autoCommit = true;
     return new Promise((resolve, reject) => {
       oracledb

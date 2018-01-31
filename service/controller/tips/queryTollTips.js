@@ -54,6 +54,7 @@ class Tips {
     });
   }
 
+
   async updateTollGateTip() {
     const param = this.req.body;
     const rowkey = param.rowkey;

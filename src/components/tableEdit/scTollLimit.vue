@@ -17,39 +17,43 @@
         <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
       </div>
     </div>
-    <el-form v-for="(dataItem, index) in dataModels" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
+    <el-form  :rules="rules" v-for="(dataItem, index) in dataModels" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
       <div class="grid-content">
         <div class="grid-wraper">
           <div class="grid-list">
-            <fieldset>
+            <fieldset :style="dataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
               <legend>限重标准 {{index + 1}}</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
                   <div class="labelText">轴数限载标准：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input v-model="dataItem.axle_num_limit" size="mini"></el-input>
+                      <el-form-item prop="axle_num_limit">
+                        <el-input type="number" v-model.number="dataItem.axle_num_limit" size="mini"></el-input>
+                      </el-form-item>
                     </div>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div class="labelText">型号限载标准：</div>
                   <div class="inputPart">
-                    <el-input v-model="dataItem.model_limit" size="mini"></el-input>
+                    <el-form-item prop="model_limit">
+                      <el-input type="number" v-model="dataItem.model_limit" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div class="labelText">吨数限载标准：</div>
                   <div class="inputPart">
-                    <div class="inputPart">
-                      <el-input v-model="dataItem.ton_limit" size="mini"></el-input>
-                    </div>
+                    <el-form-item prop="ton_limit">
+                      <el-input type="number" v-model.number="dataItem.ton_limit" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
             </fieldset>
           </div>
-          <el-button @click="removeLimitItem(index)" style="padding: 5px;height: 28px;margin-top: 25px" type="primary" class="btn-icon"
+          <el-button @click="removeLimitItem(index)" style="padding: 5px;height: 28px;margin-top: 40px" type="primary" class="btn-icon"
             icon="el-icon-minus"></el-button>
         </div>
       </div>
@@ -70,18 +74,43 @@
     name: 'scTollCar',
     props: ['tableName', 'selectedData'],
     data() {
+      let _self = this;
+      let check_axle_num_limit = (rule, value, callback) => {
+        if (value < 2 || value > 10) {
+          callback(new Error('轴数不能小于2或大于10'));
+        }
+        callback();
+      };
+      let check_ton_limit = (rule, value, callback) => {
+        if (value < 0 || value > 100) {
+          callback(new Error('吨数不能小于0或大于100'));
+        }
+        callback();
+      };
       return {
         loading: true,
-        dataModels: [],
+        dataModels: {},
         originModel: {
-          system_id: 1,
-          admin_name: '',
-          axle_num_limit: 1,
+          system_id: this.$route.params.adminCode,
+          admin_name: getCityNameByCode(this.$route.params.adminCode),
+          axle_num_limit: 2,
           model_limit: 0,
           ton_limit: 1,
           source: 0
         },
-        mountFlag: false
+        mountFlag: false,
+        rules: {
+          axle_num_limit: [
+            { required: true, message: '轴数不能为空!', trigger: 'blur' },
+            { type: 'number', message: '轴数必须为数字'},
+            { validator: check_axle_num_limit, trigger: 'blur'}
+          ],
+          ton_limit: [
+            { required: true, message: '吨数不能为空!', trigger: 'blur' },
+            { type: 'number', message: '吨数必须为数字'},
+            { validator: check_ton_limit, trigger: 'blur'}
+          ]
+        } 
       }
     },
     watch: {
@@ -104,32 +133,39 @@
 
       },
       addItem() {
-        if (this.dataModels.length > 4) {
-          return console.log('不能大于5');
-        }
-        let addItemData = Object.assign({}, this.originModel);
-        addItemData.system_id = this.$route.params.adminCode;
-        addItemData.admin_name = getCityNameByCode(this.$route.params.adminCode);
+        let addItemData = Object.assign({insertFlag: true}, this.originModel);
         this.dataModels.push(addItemData);
       },
       removeLimitItem(index) {
         this.dataModels.length > 1 && this.dataModels.splice(index, 1);
       },
       onSubmit(formName) {
+        let _self = this;
         let validateFlag = true;
+        if (!this.$store.state.editSelectedData.length) {
+          return false;
+        }
         this.$refs[formName].forEach((formItem, index) => {
           formItem.validate((valid) => {
-            if (valid) {
-              this.loading = true;
-            } else {
+            if (!valid) {
               return validateFlag = false;
             }
           });
         });
         if (validateFlag) {
+          this.loading = true;
+          let submitData = [];
+          this.$store.state.editSelectedData.forEach(outer => {
+            this.dataModels.forEach(item => {
+              let cloneData = Object.assign({},item);
+              delete cloneData.insertFlag;
+              delete item.insertFlag;
+              submitData.push(cloneData);
+            });
+          });
           let params = {
             table: 'SC_TOLL_LIMIT',
-            data: this.dataModels
+            data: submitData
           };
           updateTollGate(params)
           .then(result => {
@@ -187,7 +223,6 @@
 <style scoped>
   fieldset {
     padding: 0;
-    border: 1px dashed #636ef5;
   }
 
   fieldset legend {
