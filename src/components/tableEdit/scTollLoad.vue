@@ -18,9 +18,9 @@
         <el-button @click="addOuter" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
       </div>
     </div>
-    <el-form v-for="(dataItem, outerKey, outerIndex) in dataModels" :model="dataItem" ref="dataItem" :key="outerKey" :inline="true" class="wraper">
+    <div v-for="(dataItem, outerKey, outerIndex) in dataModels" :key="outerKey" :inline="true" class="wraper">
       <div style="margin-bottom: 5x;display:flex;flex-direction:column" class="grid-content">
-        <div v-for="(innerDataItem,innerKey, innerIndex) in dataItem" style="display: flex;flex-direction: column;" class="grid-list">
+        <el-form v-for="(innerDataItem,innerKey, innerIndex) in dataItem" :rules="loadRules" :key="innerKey" :model="dataItem[innerKey]" ref="dataItem" style="display: flex;flex-direction: column;" class="grid-list">
           <div v-show="outerIndex==0 && innerIndex==0" class="grid-wraper">
             <div class="grid-list">
               <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
@@ -49,10 +49,17 @@
               </div>
             </div>
             <div class="grid-list">
-              <div style="width:210px" class="labelText">正常装载级别吨数范围(车货总重)：</div>
+              <div style="width:120px" class="labelText" title="正常装载级别吨数范围(车货总重)">正常装载级别吨数范围(车货总重)：</div>
               <div class="inputPart">
-                <el-input v-model="dataItem[innerKey].tunnage_min" size="mini"></el-input> -
-                <el-input v-model="dataItem[innerKey].tunnage_max" size="mini"></el-input>
+                 > 
+                <el-form-item prop="tunnage_min">
+                  <el-input v-model="dataItem[innerKey].tunnage_min" :disabled="outerKey == 1" size="mini"></el-input>
+                </el-form-item>
+                  <= 
+                <el-form-item prop="tunnage_max" v-show="outerKey != 5">
+                  <el-input v-model="dataItem[innerKey].tunnage_max" size="mini"></el-input>
+                </el-form-item>
+                <el-input v-model="dataItem[innerKey].tunnage_max" v-show="outerKey == 5" :disabled="outerKey == 5" size="mini"></el-input>
               </div>
             </div>
             <el-button @click="addInner(outerKey)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-circle-plus-outline"></el-button>
@@ -85,13 +92,15 @@
                 <div class="grid-list">
                   <div class="labelText">基本费率：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_base" size="mini"></el-input>
+                    <el-form-item prop="rate_base">
+                      <el-input v-model="innerDataItem.rate_base" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_max" size="mini"></el-input>
+                    <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
                   </div>
                 </div>
               </div>
@@ -133,13 +142,17 @@
                 <div class="grid-list">
                   <div class="labelText">最低计重(吨)：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.weight_min" size="mini"></el-input>
+                    <el-form-item prop="weight_min">
+                      <el-input v-model="innerDataItem.weight_min" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div class="labelText">最低收费(元)：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.charge_min" size="mini"></el-input>
+                    <el-form-item prop="charge_min">
+                      <el-input v-model="innerDataItem.charge_min" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
@@ -147,9 +160,9 @@
             <el-button @click="minusInner(outerKey,innerKey)" style="padding:5px;height:25px;width:25px;margin-top:100px"
               type="primary" class="btn-icon" icon="el-icon-remove-outline"></el-button>
           </div>
-        </div>
+        </el-form>
       </div>
-    </el-form>
+    </div>
     <div style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
       <el-row :gutter="5">
         <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
@@ -167,6 +180,60 @@
     props: ['tableName', 'selectedData'],
     components: {searchName},
     data() {
+      // 装载机别数
+      let validateTunnage = (rule, value, callback) => {
+        let self = this;
+        if (value >49 || value < 0) {
+          callback(new Error('座位数必须大于0小于49')); 
+        } else {
+          callback();
+        }
+      };
+      // 最低收费
+      let validateChargeMin = (rule, value, callback) => {
+        let self = this;
+        if (value > 20) {
+          this.$confirm('最低收费值大于20, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            callback();
+          }).catch(() => {
+            callback(new Error('最低收费值必须小于20'));         
+          });
+        }
+      };
+      // 最低计重吨数
+      let validateWeightMin = (rule, value, callback) => {
+        let self = this;
+        if (value > 10) {
+          this.$confirm('最低收费值大于10, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            callback();
+          }).catch(() => {
+            callback(new Error('最低收费值必须小于10'));         
+          });
+        }
+      };
+      // 基本费率
+      let validateRateBase = (rule, value, callback) => {
+        let self = this;
+        if (value > 10 || value < 0) {
+          this.$confirm('基本费率值大于10或者小于0, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            callback();
+          }).catch(() => {
+            callback(new Error('基本费率值必须小于10并且大于0'));         
+          });
+        }
+      };
       return {
         loading: true,
         isGuangdong: false,
@@ -193,6 +260,13 @@
           name_bt_id: 0,
           name_bt: '',
           source: 0
+        },
+        loadRules: {
+          tunnage_min: [{ validator: validateTunnage, trigger: 'blur' }],
+          tunnage_max: [{ validator: validateTunnage, trigger: 'blur' }],
+          charge_min: [{ validator: validateChargeMin, trigger: 'blur' }],
+          weight_min: [{ validator: validateWeightMin, trigger: 'blur' }],
+          rate_base: [{ validator: validateRateBase, trigger: 'blur' }],
         },
         mountFlag: false,
         feeOptions: [{
@@ -264,6 +338,18 @@
         if (leftKeys.length) {
           let newObj = Object.assign({insertFlag: true}, _self.originModel);
           newObj.loading_class = leftKeys[0];
+          if (leftKeys[0] === '1') {
+            newObj.tunnage_min = 0;
+          } else {
+            newObj.tunnage_min = this.dataModels[leftKeys[0] - 1][1].tunnage_max;
+            // 最后类型的最大值为1000
+            if (leftKeys[0] === allKeys[allKeys.length - 1]) {
+              newObj.tunnage_max = 1000;
+            } else {
+              // 控制最大值比最小值大1
+              newObj.tunnage_max = newObj.tunnage_min + 1;
+            }
+          }
           _self.$set(_self.dataModels, leftKeys[0], {'1': newObj});
         }
       },
