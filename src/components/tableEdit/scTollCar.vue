@@ -43,9 +43,10 @@
                         <el-input v-model="dataItem.seat_num_min" :disabled="index == 0" size="mini"></el-input>
                       </el-form-item>
                        -
-                      <el-form-item prop="seat_num_max">
-                        <el-input v-model="dataItem.seat_num_max" :disabled="index == 4" size="mini"></el-input>
+                      <el-form-item prop="seat_num_max" v-show="index != 3">
+                        <el-input v-model="dataItem.seat_num_max" size="mini"></el-input>
                       </el-form-item>
+                      <el-input v-model="dataItem.seat_num_max" v-show="index == 3" :disabled="index == 3" size="mini"></el-input>
                     </div>
                   </div>
                 </div>
