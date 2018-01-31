@@ -33,6 +33,12 @@ export default {
 .dragWindow .el-table__body-wrapper{
   overflow:hidden;
 }
+.dragWindow .el-form-item__content {
+  line-height: 0;
+}
+.dragWindow .el-form--inline .el-form-item__content {
+  display: block;
+}
 /****************复写tab样式********************/  
 .dragWindow .el-tabs__content {
   height: 350px;

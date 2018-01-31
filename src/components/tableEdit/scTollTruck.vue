@@ -22,7 +22,7 @@
       <div class="grid-content">
         <div class="grid-wraper">
           <div class="grid-list">
-            <fieldset>
+            <fieldset :style="dataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
               <legend>{{dataItem.truck_class}} 型车</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
@@ -175,12 +175,7 @@
 </template>
 
 <script>
-  import {
-    updateTollGate
-  } from '../../dataService/api';
-  import {
-    getTollGate
-  } from '../../dataService/api';
+  import {updateTollGate,getTollGate} from '../../dataService/api';
   export default {
     name: 'scTollCar',
     props: ['tableName', 'selectedData'],
@@ -303,7 +298,7 @@
         loading: true,
         dataModels: [],
         originModel: {
-          group_id: this.selectedData.id,
+          group_id: this.$store.state.editSelectedData[0],
           truck_class: 1,
           axle_num: 2,
           wheel_num: 0,
@@ -409,7 +404,7 @@
           })
         }
         if (validFlag && leftKeys.length) {
-          let newObj = Object.assign({}, _self.originModel);
+          let newObj = Object.assign({insertFlag: true}, _self.originModel);
           if (leftKeys[0] === '1') {
             newObj.tunnage_min = 0;
           } else {
@@ -435,7 +430,11 @@
         this.$delete(this.dataModels, index);
       },
       onSubmit(formName) {
+        let _self = this;
         let validateFlag = true;
+        if (!this.$store.state.editSelectedData.length) {
+          return false;
+        }
         this.$refs[formName].forEach((formItem, index) => {
           formItem.validate((valid) => {
             if (valid) {
@@ -447,13 +446,20 @@
         });
         if (validateFlag) {
           let submitData = [];
-          Object.keys(this.dataModels).forEach(item => {
-            submitData.push(this.dataModels[item]);
+          this.$store.state.editSelectedData.forEach(outer => {
+            Object.keys(_self.dataModels).forEach(item => {
+              let cloneData = Object.assign({},_self.dataModels[item]);
+              cloneData.group_id = outer;
+              delete _self.dataModels[item].insertFlag;
+              delete cloneData.insertFlag;
+              submitData.push(cloneData);
+            });
           });
           let params = {
             table: 'SC_TOLL_TRUCK',
             data: submitData
           };
+          this.loading = true;
           updateTollGate(params)
           .then(result => {
             let {
@@ -478,7 +484,6 @@
           })
           .finally(() => {
             this.loading = false;
-            console.log('finally');
           })
           .catch(err => {
             console.log(err);
@@ -491,29 +496,33 @@
       this.isGuangdong = this.$route.params.adminCode == '440000';
       this.isZheJiang = this.$route.params.adminCode == '330000';
       this.mountFlag = true;
-      let param = {
-        table: 'SC_TOLL_TRUCK',
-        pid: this.selectedData.id
-      };
-      getTollGate(param)
-        .then(result => {
-          let {
-            errorCode,
-            data
-          } = result;
-          let transfromData = _.groupBy(data, 'truck_class');
-          Object.keys(transfromData).forEach(item => {
-            transfromData[item] = transfromData[item][0]
+      if (this.$store.state.handleFlag === 'update') {
+        let param = {
+          table: 'SC_TOLL_TRUCK',
+          pid: this.$store.state.editSelectedData[0]
+        };
+        getTollGate(param)
+          .then(result => {
+            let {
+              errorCode,
+              data
+            } = result;
+            let transfromData = _.groupBy(data, 'truck_class');
+            Object.keys(transfromData).forEach(item => {
+              transfromData[item] = transfromData[item][0]
+            });
+            _self.dataModels = transfromData;
+            console.log(transfromData);
+          })
+          .finally(() => {
+            _self.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
           });
-          _self.dataModels = transfromData;
-          console.log(transfromData);
-        })
-        .finally(() => {
-          _self.loading = false;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      } else {
+        this.loading = false;
+      }
     }
   }
 

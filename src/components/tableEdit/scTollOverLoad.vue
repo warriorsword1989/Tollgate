@@ -73,7 +73,7 @@
             <el-button @click="minusOuter(outerKey)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus"></el-button>
           </div>
           <div style="display:flex;flex-direction: row;">
-            <fieldset>
+            <fieldset :style="dataItem[innerKey].insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
               <legend style="font-size:12px">{{innerKey}} 区间</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
@@ -193,9 +193,9 @@
       return {
         loading: true,
         isGuangdong: false,
-        dataModels: [],
+        dataModels: {},
         originModel: {
-          group_id: this.selectedData.id,
+          group_id: this.$store.state.editSelectedData[0],
           overloading_clss: 1,
           rato_flag: 1,
           rato_min: 1,
@@ -266,7 +266,7 @@
         let allKeys = ['1', '2', '3', '4', '5'];
         let leftKeys = _.difference(allKeys, existsKeys);
         if (leftKeys.length) {
-          let newObj = Object.assign({}, _self.originModel);
+          let newObj = Object.assign({insertFlag: true}, _self.originModel);
           newObj.overloading_clss = leftKeys[0];
           _self.$set(_self.dataModels, leftKeys[0], {'1': newObj});
         }
@@ -283,7 +283,7 @@
         let allKeys = [1, 2, 3, 4, 5];
         let leftKeys = _.difference(allKeys, existsKeys);
         if (leftKeys.length) {
-          let newObj = Object.assign({}, _self.originModel);
+          let newObj = Object.assign({insertFlag: true}, _self.originModel);
           newObj.overloading_clss = index;
           newObj.overloading_subclss = leftKeys[0];
           _self.$set(_self.dataModels[index], leftKeys[0], newObj);
@@ -294,27 +294,34 @@
       },
       onSubmit(formName) {
         let validateFlag = true;
+        if (!this.$store.state.editSelectedData.length) {
+          return false;
+        }
         this.$refs[formName].forEach((formItem, index) => {
           formItem.validate((valid) => {
-            if (valid) {
-              this.loading = true;
-            } else {
-              return validateFlag = false;
+            if (!valid) {
+              validateFlag = false;
             }
           });
         });
         if (validateFlag) {
           let submitData = [];
-          Object.keys(this.dataModels).forEach(item => {
-            Object.keys(this.dataModels[item]).forEach(innerItem => {
-              submitData.push(this.dataModels[item][innerItem]);
+          this.$store.state.editSelectedData.forEach(outer => {
+            Object.keys(this.dataModels).forEach(item => {
+              Object.keys(this.dataModels[item]).forEach(innerItem => {
+                let cloneData = Object.assign({},this.dataModels[item][innerItem]);
+                cloneData.group_id = outer;
+                delete this.dataModels[item][innerItem].insertFlag;
+                delete cloneData.insertFlag;
+                submitData.push(cloneData);
+              });
             });
           });
           let params = {
             table: 'SC_TOLL_OVERLOAD',
             data: submitData
           };
-          console.log(submitData)
+          this.loading = true;
           updateTollGate(params)
             .then(result => {
               let {
@@ -350,62 +357,59 @@
       let _self = this;
       this.isGuangdong = this.$route.params.adminCode == '440000';
       this.mountFlag = true;
-      let param = {
-        table: 'SC_TOLL_OVERLOAD',
-        pid: this.selectedData.id
-      };
-      getTollGate(param)
-        .then(result => {
-          let {errorCode,data} = result;
-          let a = _.groupBy(data, 'overloading_clss');
-          Object.keys(a).forEach(item => {
-            a[item] = _.groupBy(a[item], 'overloading_subclss');
-            Object.keys(a[item]).forEach(innerItem => {
-              a[item][innerItem] = a[item][innerItem][0]
+      if (this.$store.state.handleFlag === 'update') {
+        let param = {
+          table: 'SC_TOLL_OVERLOAD',
+          pid: this.$store.state.editSelectedData[0]
+        };
+        getTollGate(param)
+          .then(result => {
+            let {errorCode,data} = result;
+            let a = _.groupBy(data, 'overloading_clss');
+            Object.keys(a).forEach(item => {
+              a[item] = _.groupBy(a[item], 'overloading_subclss');
+              Object.keys(a[item]).forEach(innerItem => {
+                a[item][innerItem] = a[item][innerItem][0]
+              });
             });
+            _self.dataModels = a;
+          })
+          .finally(() => {
+            _self.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
           });
-          _self.dataModels = a;
-        })
-        .finally(() => {
-          _self.loading = false;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      }else {
+        this.loading = false;
+      }
     }
   }
-
 </script>
 
 <style scoped>
   fieldset {
     padding: 0;
-    border: 1px dashed #636ef5;
   }
-
   fieldset legend {
     color: #151616;
     font-size: 14px;
     font-weight: bold;
   }
-
   .grid-wraper {
     display: flex;
     flex-direction: row;
     margin: 10px 0;
   }
-
   .grid-content {
     margin: 0 15px;
   }
-
   .grid-content .grid-list {
     flex: 1;
     padding:  0 5px;
     display: flex;
     flex-direction: row;
   }
-
   .grid-content .labelText {
     width: 120px;
     margin-right: 5px;
@@ -414,13 +418,11 @@
     overflow: hidden;
     text-align: right;
   }
-
   .grid-content .inputPart {
     flex: 1;
     display: flex;
     flex-direction: row;
   }
-
   .el-select,
   .el-select--mini {
     display: block;
