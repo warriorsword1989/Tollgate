@@ -34,7 +34,7 @@
       <i v-if="!leftFloatArrow" class="el-icon-arrow-left"></i>
       <i v-if="leftFloatArrow" class="el-icon-arrow-right"></i>
     </el-button>
-    <table-edit v-if="showDialog" :table-data="tableData" @dialogClose="closeDialog"></table-edit>
+    <table-edit v-if="showDialog" :handle-flag="editFlag" @dialogClose="closeDialog"></table-edit>
   </div>
 </template>
 
@@ -65,10 +65,10 @@
     data() {
       return {
         leftWidth: '25%',
+        editFlag: 'update',
         leftFloatArrow: false,
         showDialog: false,
         rightPanelFlag: false,
-        tableData: [],
         dataModel: {
           uploadTime: '2012-10-7',
           sourceId: '111111',
@@ -115,10 +115,27 @@
       .catch(err => {
         console.log(err)
       });
+      this.eventController.off('ObjectSelected');
       this.eventController.on('ObjectSelected',function(data) {
-        if (data.features) {
-          _self.tableData = [data.features.properties]
+        if (data.features.length) {
           _self.showDialog = true;
+          if (data.flag=='update') {
+            _self.$store.commit('changeHandleFlag', 'update');
+            _self.$store.commit('changeSelectedData', [data.features[0].properties]);
+            _self.$store.commit('changeEditSelectedData', [data.features[0].properties.id]);
+          } else if (data.flag=='insert') {
+            let objs = [];
+            data.features.forEach(item => {
+              objs.push(item.properties);
+            });
+            _self.$store.commit('changeSelectedData', objs);
+            let pids = [];
+            data.features.forEach(item => {
+              pids.push(item.properties.id);
+            });
+            _self.$store.commit('changeEditSelectedData', pids);
+            _self.$store.commit('changeHandleFlag', 'insert');
+          }
         }
       });
       let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();

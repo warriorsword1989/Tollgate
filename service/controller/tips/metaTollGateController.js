@@ -1,4 +1,5 @@
 import ConnectMetaOracle from '../../oracle/connectMetaOracle';
+import connectRenderObj from '../../oracle/connectRenderObj';
 import logger from '../../config/logs';
 import {
   changeResult
@@ -11,6 +12,7 @@ class TollGate {
     this.next = next;
     this.table = 'SC_TOLL_TOLLGATEFEE';
     this.db = new ConnectMetaOracle();
+    this.originDB = connectRenderObj;
   }
 
   /**
@@ -27,6 +29,37 @@ class TollGate {
     this.res.send({
       errorCode: 0,
       data: resultData
+    });
+  }
+  /**
+   * 
+   */
+  async getBtName() {
+    const param = this.req.query;
+    const nameString = param.bridgeName;
+    this.table = param.table;
+    let sql = "SELECT NAME_GROUPID,NAME FROM " + this.table + " WHERE NAME LIKE " + "'%"+ nameString + "%' AND ROWNUM <= 1000";
+    const result = await this.db.executeSql(sql);
+    const resultData = changeResult(result);
+    let temp = resultData.map(item => {
+      return item.name_groupid;
+    });
+    let inString  = "("+temp.join(',')+")";
+    console.log(resultData)
+    let sql2 = "SELECT NAME_GROUPID FROM RD_LINK_NAME WHERE NAME_GROUPID IN "+inString+" AND NAME_TYPE IN (4,5)";
+    const originResult = await this.originDB.executeSql2(sql2)
+    const allGroup = changeResult(originResult);
+    let results = []
+    resultData.forEach(item => {
+      allGroup.forEach(innerItem => {
+        if (item.name_groupid == innerItem.name_groupid) {
+          results.push(item);
+        }
+      })
+    });
+    this.res.send({
+      errorCode: 0,
+      data: results
     });
   }
 
@@ -51,6 +84,8 @@ class TollGate {
       this.res.send({errorCode: -1});
     }
   }
+
+
   /**
    * 获得update部分语句
    * @param {*} data 

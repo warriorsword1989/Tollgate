@@ -59,7 +59,7 @@
             <el-button @click="minusOuter(outerKey)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus"></el-button>
           </div>
           <div style="display:flex;flex-direction: row;">
-            <fieldset>
+            <fieldset :style="dataItem[innerKey].insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
               <legend style="font-size:12px">{{innerKey}} 区间</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
@@ -172,7 +172,7 @@
         isGuangdong: false,
         dataModels: [],
         originModel: {
-          group_id: this.selectedData.id,
+          group_id: this.$store.state.editSelectedData[0],
           loading_class: 1,
           tunnage_flag: 1,
           tunnage_min: 1,
@@ -250,7 +250,7 @@
         let allKeys = ['1', '2', '3', '4', '5'];
         let leftKeys = _.difference(allKeys, existsKeys);
         if (leftKeys.length) {
-          let newObj = Object.assign({}, _self.originModel);
+          let newObj = Object.assign({insertFlag: true}, _self.originModel);
           newObj.loading_class = leftKeys[0];
           _self.$set(_self.dataModels, leftKeys[0], {'1': newObj});
         }
@@ -267,7 +267,7 @@
         let allKeys = [1, 2, 3, 4, 5];
         let leftKeys = _.difference(allKeys, existsKeys);
         if (leftKeys.length) {
-          let newObj = Object.assign({}, _self.originModel);
+          let newObj = Object.assign({insertFlag: true}, _self.originModel);
           newObj.loading_class = index;
           newObj.loading_subclss = leftKeys[0];
           _self.$set(_self.dataModels[index], leftKeys[0], newObj);
@@ -278,6 +278,9 @@
       },
       onSubmit(formName) {
         let validateFlag = true;
+        if (!this.$store.state.editSelectedData.length) {
+          return false;
+        }
         this.$refs[formName].forEach((formItem, index) => {
           formItem.validate((valid) => {
             if (valid) {
@@ -289,16 +292,21 @@
         });
         if (validateFlag) {
           let submitData = [];
-          Object.keys(this.dataModels).forEach(item => {
-            Object.keys(this.dataModels[item]).forEach(innerItem => {
-              submitData.push(this.dataModels[item][innerItem]);
+          this.$store.state.editSelectedData.forEach(outer => {
+            Object.keys(this.dataModels).forEach(item => {
+              Object.keys(this.dataModels[item]).forEach(innerItem => {
+                let cloneData = Object.assign({},this.dataModels[item][innerItem]);
+                cloneData.group_id = outer;
+                delete this.dataModels[item][innerItem].insertFlag;
+                delete cloneData.insertFlag;
+                submitData.push(cloneData);
+              });
             });
           });
           let params = {
             table: 'SC_TOLL_LOAD_GD',
             data: submitData
           };
-          console.log(submitData)
           updateTollGate(params)
             .then(result => {
               let {
@@ -334,28 +342,33 @@
       let _self = this;
       this.isGuangdong = this.$route.params.adminCode == '440000';
       this.mountFlag = true;
-      let param = {
-        table: 'SC_TOLL_LOAD_GD',
-        pid: this.selectedData.id
-      };
-      getTollGate(param)
-        .then(result => {
-          let {errorCode,data} = result;
-          let a = _.groupBy(data, 'loading_class');
-          Object.keys(a).forEach(item => {
-            a[item] = _.groupBy(a[item], 'loading_subclss');
-            Object.keys(a[item]).forEach(innerItem => {
-              a[item][innerItem] = a[item][innerItem][0]
+      if (this.$store.state.handleFlag === 'update') {
+        let param = {
+          table: 'SC_TOLL_LOAD_GD',
+          pid: this.$store.state.editSelectedData[0]
+        };
+        getTollGate(param)
+          .then(result => {
+            let {errorCode,data} = result;
+            let a = _.groupBy(data, 'loading_class');
+            Object.keys(a).forEach(item => {
+              a[item] = _.groupBy(a[item], 'loading_subclss');
+              Object.keys(a[item]).forEach(innerItem => {
+                a[item][innerItem] = a[item][innerItem][0]
+              });
             });
+            _self.dataModels = a;
+          })
+          .finally(() => {
+            _self.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
           });
-          _self.dataModels = a;
-        })
-        .finally(() => {
-          _self.loading = false;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      } else {
+        _self.loading = false;
+      }
+      
     }
   }
 

@@ -28,7 +28,8 @@
     "vue-concise-slider": "^2.4.3",
     "vue-dialog-drag": "^0.1.27",
     "vue-draggable-resizable": "^1.6.0",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

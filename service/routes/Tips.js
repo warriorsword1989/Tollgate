@@ -48,6 +48,17 @@ router.get ('/getTollGate', function (req, res, next) {
   }
 });
 
+// 根据tollgate的pid查询;
+router.get ('/getBtName', function (req, res, next) {
+  "use strict";
+  try {
+    let TollGate = new TollGateCtrl(req, res, next);
+    TollGate['getBtName'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
 // 更新tollgate;
 router.post ('/updateTollGate', function (req, res, next) {
   "use strict";

@@ -34,6 +34,29 @@ class ConnectRenderObj {
         })
     })}
 
+    executeSql2 (sql){
+      let _self = this;
+      oracledb.autoCommit = true;
+      return new Promise((resolve, reject) => {
+        oracledb
+          .getConnection(this.connectionAttrs)
+          .then(connection => {
+            return connection
+              .execute(sql)
+              .then(results => {
+                resolve(results);
+                this.releaseConnections(connection);
+              })
+              .catch(err => {
+                reject(err);
+                this.releaseConnections(connection)
+              })
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })}
+
   releaseConnections(resultSet, connection){
     process.nextTick(() => {
       if (resultSet) {

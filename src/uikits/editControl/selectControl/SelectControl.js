@@ -45,7 +45,7 @@ fastmap.uikit.editControl.SelectControl = fastmap.uikit.editControl.EditControl.
     },
 
     onSelectFinish: function (features, event) {
-        this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: features[0], event: event });
+        this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: features, event: event, flag:'update' });
         // 支持连续选择
         this.run();
     }
