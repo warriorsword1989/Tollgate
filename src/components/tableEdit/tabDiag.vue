@@ -61,6 +61,12 @@
         <el-tab-pane :label="isEdit[8] ? '* 桥隧道收费附加表': '桥隧道收费附加表'">
           <sc-toll-rdlink-bt @tabStatusChange="changeTabStatus"></sc-toll-rdlink-bt>
         </el-tab-pane>
+        <el-tab-pane v-if="workFlag!='static'" :label="isEdit[9] ? '* 节假日收费浮动信息': '节假日收费浮动信息'">
+          <sc-toll-holiday @tabStatusChange="changeTabStatus"></sc-toll-holiday>
+        </el-tab-pane>
+        <el-tab-pane v-if="workFlag!='static'" :label="isEdit[10] ? '* 特殊收费浮动信息': '特殊收费浮动信息'">
+          <sc-toll-special-pay @tabStatusChange="changeTabStatus"></sc-toll-special-pay>
+        </el-tab-pane>
       </el-tabs>
     </el-collapse-item>
   </el-collapse>
@@ -99,6 +105,7 @@
     },
     data() {
       return {
+        serachShow: false,
         topDis:200,
         leftDis:300,
         activeIndex: 0,
@@ -106,7 +113,8 @@
         isEdit: [false,false,false,false,false,false,false,false,false],
         isTableShow: false,
         multipleSelection: [],
-        tableData: []
+        tableData: [],
+        workFlag: 'static'
       }
     },
     methods: {
@@ -139,6 +147,7 @@
       }
     },
     mounted() {
+      this.workFlag = this.$store.state.workStatus
       this.tableData = this.$store.state.selectedData;
       this.toggleSelection(this.tableData);
     }

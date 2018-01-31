@@ -5,16 +5,16 @@
         <div class="grid-list">
           <div style="width:140px" class="labelText">桥梁或隧道名称组号：</div>
           <div class="inputPart">
-            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].name_bt_id||originModel.name_bt_id" size="mini"></el-input>
+            <el-input :disabled="true" v-model="dataModels[1] && dataModels[1].name_bt_id||originModel.name_bt_id" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div style="width:120px" class="labelText">桥梁或隧道名称：</div>
           <div class="inputPart">
-            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].name_bt||originModel.name_bt" size="mini"></el-input>
+            <el-input :disabled="true" v-model="dataModels[1] && dataModels[1].name_bt||originModel.name_bt" size="mini"></el-input>
           </div>
         </div>
-        <el-button @click="editBrage" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+        <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
         <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
       </div>
     </div>
@@ -151,18 +151,22 @@
         <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
       </el-row>
     </div>
+    <search-name @selectBtName="setBtName" @toggleSearch="toggleSearchPanel" v-if="serachShow"></search-name>
   </div>
 </template>
 
 <script>
+  import searchName from './searchName';
   import {updateTollGate,getTollGate} from '../../dataService/api';
   export default {
     name: 'scTollCar',
+    components: {searchName},
     props: ['tableName', 'selectedData'],
     data() {
       return {
         isGuangdong: false,
         loading: true,
+        serachShow: false,
         dataModels: [],
         originModel: {
           group_id: this.$store.state.editSelectedData[0],
@@ -241,8 +245,16 @@
       }
     },
     methods: {
-      editBrage() {
-
+      toggleSearchPanel(flag){
+        this.serachShow = flag;
+      },
+      setBtName() {
+        this.originModel.name_bt_id = this.$store.state.btData.name_groupid;
+        this.originModel.name_bt = this.$store.state.btData.name;
+        Object.keys(this.dataModels).forEach(item => {
+          this.dataModels[item].name_bt_id = this.$store.state.btData.name_groupid;
+          this.dataModels[item].name_bt = this.$store.state.btData.name;
+        });
       },
       addItem() {
         let _self = this;
@@ -286,7 +298,8 @@
           });
           let params = {
             table: 'SC_TOLL_TRUCK',
-            data: submitData
+            data: submitData,
+            workFlag: this.$store.state.workStatus
           };
           this.loading = true;
           updateTollGate(params)
@@ -323,11 +336,12 @@
     mounted() {
       let _self = this;
       this.mountFlag = true;
-      this.isGuangdong = this.$route.params.adminCode == '440000';
+      this.isGuangdong = this.$store.state.adminCode == '440000';
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: 'SC_TOLL_TRUCK',
-          pid: this.$store.state.editSelectedData[0]
+          pid: this.$store.state.editSelectedData[0],
+          workFlag: this.$store.state.workStatus
         };
         getTollGate(param)
           .then(result => {
