@@ -48,4 +48,6 @@ export const tempLogin = params => { return hbase.get('/man/userInfo/login', {pa
 export const getTollGate = params => { return axios.get('/tollgate/tips/getTollGate', {params})};
 export const getBriageName = params => { return axios.get('/tollgate/tips/getBtName', {params})};
 export const updateTollGate = params => { return axios.post('/tollgate/tips/updateTollGate', params)};
+// 查询功能
+export const getSearchData = params => { return axios.get('/tollgate/search/getSearchData', {params})};
 console.log(window.serviceConfig.tempFsUrl)

@@ -2,6 +2,7 @@ import User from './user'
 import Info from './info'
 import Tips from './Tips'
 import Render from './render'
+import Search from './search'
 import Token from './tokenVerify';
 
 export default app => {
@@ -10,4 +11,5 @@ export default app => {
   app.use ('/tollgate/info', Info);
   app.use ('/tollgate/tips', Tips);
   app.use ('/tollgate/render', Render);
+  app.use ('/tollgate/search', Search);
 }
