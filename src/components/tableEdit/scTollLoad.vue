@@ -269,6 +269,18 @@
         if (leftKeys.length) {
           let newObj = Object.assign({}, _self.originModel);
           newObj.loading_class = index;
+          if (leftKeys[0] === 1) {
+            newObj.interval_min = 0;
+          } else {
+            newObj.interval_min = this.dataModels[index][leftKeys[0] - 1].interval_max;
+            // 最后类型的最大值为1000
+            if (leftKeys[0] === allKeys[allKeys.length - 1]) {
+              newObj.interval_max = 1000;
+            } else {
+              // 控制最大值比最小值大1
+              newObj.interval_max = newObj.interval_min + 1;
+            }
+          }
           newObj.loading_subclss = leftKeys[0];
           _self.$set(_self.dataModels[index], leftKeys[0], newObj);
         }
