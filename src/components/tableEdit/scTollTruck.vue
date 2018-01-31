@@ -42,9 +42,10 @@
                         <el-input v-model="dataItem.tunnage_min" :disabled="index == 0" size="mini"></el-input>
                       </el-form-item>
                        -
-                      <el-form-item prop="tunnage_max">
-                        <el-input v-model="dataItem.tunnage_max" :disabled="index == 5" size="mini"></el-input>
+                      <el-form-item prop="tunnage_max" v-show="index != 4">
+                        <el-input v-model="dataItem.tunnage_max" size="mini"></el-input>
                       </el-form-item>
+                      <el-input v-model="dataItem.tunnage_max" v-show="index == 4" :disabled="index == 4" size="mini"></el-input>
                     </div>
                   </div>
                 </div>
