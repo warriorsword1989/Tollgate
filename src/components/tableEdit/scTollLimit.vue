@@ -89,10 +89,10 @@
       };
       return {
         loading: true,
-        dataModels: {},
+        dataModels: [],
         originModel: {
-          system_id: this.$route.params.adminCode,
-          admin_name: getCityNameByCode(this.$route.params.adminCode),
+          system_id: this.$store.state.adminCode,
+          admin_name: getCityNameByCode(this.$store.state.adminCode),
           axle_num_limit: 2,
           model_limit: 0,
           ton_limit: 1,
@@ -129,9 +129,6 @@
       }
     },
     methods: {
-      editBrage() {
-
-      },
       addItem() {
         let addItemData = Object.assign({insertFlag: true}, this.originModel);
         this.dataModels.push(addItemData);
@@ -165,7 +162,8 @@
           });
           let params = {
             table: 'SC_TOLL_LIMIT',
-            data: submitData
+            data: submitData,
+            workFlag: this.$store.state.workStatus
           };
           updateTollGate(params)
           .then(result => {
@@ -202,7 +200,8 @@
       this.mountFlag = true;
       let param = {
         table: 'SC_TOLL_LIMIT',
-        pid: this.$route.params.adminCode
+        pid: this.$store.state.adminCode,
+        workFlag: this.$store.state.workStatus
       };
       getTollGate(param)
         .then(result => {

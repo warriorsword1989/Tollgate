@@ -1,4 +1,5 @@
 import ConnectMetaOracle from '../../oracle/connectMetaOracle';
+import connectDynamicOracle from '../../oracle/connectDynamicOracle';
 import connectRenderObj from '../../oracle/connectRenderObj';
 import logger from '../../config/logs';
 import {
@@ -22,6 +23,9 @@ class TollGate {
     const param = this.req.query;
     const pid = param.pid;
     this.table = param.table;
+    if (param.workFlag == 'dynamic') {
+      this.db = new connectDynamicOracle();
+    }
     const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
     let sql = "SELECT * FROM " + this.table + " WHERE " + primaryKey + " = '" + pid + "'";
     const result = await this.db.executeSql(sql);
@@ -38,6 +42,9 @@ class TollGate {
     const param = this.req.query;
     const nameString = param.bridgeName;
     this.table = param.table;
+    if (param.workFlag == 'dynamic') {
+      this.db = new connectDynamicOracle();
+    }
     let sql = "SELECT NAME_GROUPID,NAME FROM " + this.table + " WHERE NAME LIKE " + "'%"+ nameString + "%' AND ROWNUM <= 1000";
     const result = await this.db.executeSql(sql);
     const resultData = changeResult(result);
@@ -45,7 +52,6 @@ class TollGate {
       return item.name_groupid;
     });
     let inString  = "("+temp.join(',')+")";
-    console.log(resultData)
     let sql2 = "SELECT NAME_GROUPID FROM RD_LINK_NAME WHERE NAME_GROUPID IN "+inString+" AND NAME_TYPE IN (4,5)";
     const originResult = await this.originDB.executeSql2(sql2)
     const allGroup = changeResult(originResult);
@@ -69,6 +75,9 @@ class TollGate {
   async updateTollGate() {
     const param = this.req.body.data;
     this.table = this.req.body.table;
+    if (this.req.body.workFlag == 'dynamic') {
+      this.db = new connectDynamicOracle();
+    }
     const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
     let delSql = "DELETE FROM " + this.table + " WHERE " + primaryKey + " = " + param[0][primaryKey.toLowerCase()];
     let insertSql = this.getInsertString(param);

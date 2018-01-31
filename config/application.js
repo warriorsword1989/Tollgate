@@ -11,6 +11,10 @@ const oracleService = {
   MetaObjUserName: 'fm_meta_trunk',
   MetaObjPassword: 'fm_meta_trunk',
 
+  connectDynamicObjUrl: '192.168.15.41:1521/orcl', //动态数据库地址
+  DynamicObjUserName: 'metadata_pd_17sum_0913',
+  DynamicObjPassword: 'metadata_pd_17sum_0913',
+
   secret: 'Tollage'
 };
 

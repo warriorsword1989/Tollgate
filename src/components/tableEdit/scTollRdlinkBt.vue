@@ -4,10 +4,8 @@
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(243, 239, 239, 0.5);">
     <el-form
-    v-for="(dataItem, index) in dataModels"
-    :key="index"
-    :model="dataItem"
-    ref="dataItem"
+    :model="dataModels"
+    ref="dataModels"
     :inline="true"
     :rules="rules"
     :inline-message="false"
@@ -18,7 +16,7 @@
             <div class="labelText">桥梁或隧道名称：</div>
             <div class="inputPart">
               <el-form-item prop="name_bt">
-                <el-input :disabled="true" v-model="dataItem.name_bt" size="mini"></el-input>
+                <el-input :disabled="true" v-model="dataModels.name_bt" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -26,18 +24,18 @@
             <div class="labelText">桥梁或隧道名称组号：</div>
             <div class="inputPart">
               <el-form-item prop="name_bt_id">
-                <el-input :disabled="true" v-model="dataItem.name_bt_id" size="mini"></el-input>
+                <el-input :disabled="true" v-model="dataModels.name_bt_id" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
-          <el-button @click="editBrage" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+          <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
             <div class="labelText">收费类型：</div>
             <div class="inputPart">
               <el-form-item prop="rate_class">
-                <el-select size="mini" v-model.number="dataItem.rate_class" placeholder="请选择">
+                <el-select size="mini" v-model.number="dataModels.rate_class" placeholder="请选择">
                   <el-option v-for="item in feeClass" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
@@ -48,7 +46,7 @@
             <div class="labelText">实际收费的长度倍数：</div>
             <div class="inputPart">
               <el-form-item prop="rato">
-                <el-input type="number" :disabled="dataItem.rate_class!=4" v-model="dataItem.rato" size="mini"></el-input>
+                <el-input type="number" :disabled="dataModels.rate_class!=4" v-model="dataModels.rato" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -58,7 +56,7 @@
             <div class="labelText">加费：</div>
             <div class="inputPart">
               <el-form-item prop="rate_add">
-                <el-input type="number" v-model.number="dataItem.rate_add" size="mini"></el-input>
+                <el-input type="number" v-model.number="dataModels.rate_add" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -66,7 +64,7 @@
             <div class="labelText">客车车型编号：</div>
             <div class="inputPart">
               <el-form-item prop="car_class">
-                <el-input type="number" :disabled="dataItem.rate_class!=2" v-model="dataItem.car_class" size="mini"></el-input>
+                <el-input type="number" :disabled="dataModels.rate_class!=2" v-model="dataModels.car_class" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -76,7 +74,7 @@
             <div class="labelText">货车车型编号：</div>
             <div class="inputPart">
               <el-form-item prop="truck_class">
-                <el-input type="number" :disabled="dataItem.rate_class!=2" v-model="dataItem.truck_class" size="mini"></el-input>
+                <el-input type="number" :disabled="dataModels.rate_class!=2" v-model="dataModels.truck_class" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -84,7 +82,7 @@
             <div class="labelText">区间闭合标识：</div>
             <div class="inputPart">
               <el-form-item prop="tunnage_flag">
-                <el-select :disabled="dataItem.rate_class!=2" size="mini" v-model.number="dataItem.tunnage_flag" placeholder="请选择">
+                <el-select :disabled="dataModels.rate_class!=2" size="mini" v-model.number="dataModels.tunnage_flag" placeholder="请选择">
                   <el-option v-for="item in flagOptions" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
@@ -97,11 +95,11 @@
             <div class="labelText">计重吨数区间：</div>
             <div class="inputPart">
               <el-form-item style="flex:5" prop="tunnage_min">
-                <el-input type="number" :disabled="dataItem.rate_class!=2" v-model.number="dataItem.tunnage_min" size="mini"></el-input>
+                <el-input type="number" :disabled="dataModels.rate_class!=2" v-model.number="dataModels.tunnage_min" size="mini"></el-input>
               </el-form-item>
               <div style="flex:1">--</div>
               <el-form-item style="flex:5" prop="tunnage_max">
-                <el-input type="number" :disabled="dataItem.rate_class!=2" v-model.number="dataItem.tunnage_max" size="mini"></el-input>
+                <el-input type="number" :disabled="dataModels.rate_class!=2" v-model.number="dataModels.tunnage_max" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -110,22 +108,25 @@
       </div>
       <div class="footerPart">
         <el-row :gutter="5">
-          <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
+          <el-button type="primary" @click="onSubmit('dataModels')">保 存</el-button>
         </el-row>
       </div>
     </el-form>
+    <search-name @selectBtName="setBtName" @toggleSearch="toggleSearchPanel" v-if="serachShow"></search-name>
   </div>
 </template>
 
 <script>
+  import searchName from './searchName';
   import {updateTollGate, getTollGate} from '../../dataService/api';
   export default {
     name: 'scTollRdlinkBt',
+    components: {searchName},
     props: ['tableName', 'selectedData'],
     data() {
       let _self = this;
       let checkTunage_max = (rule, value, callback) => {
-        if (value <= _self.dataModels[0].tunnage_min) {
+        if (value <= _self.dataModels.tunnage_min) {
           callback(new Error('吨数区间最小值必须小于最大值'));
         }
         if (value <0 || value>1000 || value.toString().split('.').length > 1) {
@@ -134,7 +135,7 @@
         callback();
       };
       let checkTunage_min = (rule, value, callback) => {
-        if (value >= _self.dataModels[0].tunnage_max || value.toString().split('.').length > 1) {
+        if (value >= _self.dataModels.tunnage_max || value.toString().split('.').length > 1) {
           callback(new Error('吨数区间最小值必须小于最大值'));
         }
         if (value < 0 || value > 1000 || value.toString().split('.').length > 1) {
@@ -149,13 +150,13 @@
         callback();
       };
       return {
-        loading: true,
-        dataModels: [],
-        originModel: {
+        loading: false,
+        serachShow: false,
+        dataModels: {
           car_class:null,
-          group_id: this.selectedData.id,
-          name_bt:null,
-          name_bt_id:1,
+          group_id: 0,
+          name_bt:'',
+          name_bt_id:0,
           rate_add:0,
           rate_class:1,
           rato:null,
@@ -228,25 +229,42 @@
       }
     },
     methods: {
-      editBrage(){},
+      toggleSearchPanel(flag){
+        this.serachShow = flag;
+      },
+      setBtName() {
+        this.dataModels.name_bt_id = this.$store.state.btData.name_groupid;
+        this.dataModels.name_bt = this.$store.state.btData.name;
+        let param = {table: 'SC_TOLL_RDLINK_BT', pid: this.dataModels.name_bt_id, workFlag: this.$store.state.workStatus};
+        this.loading = true;
+        getTollGate(param)
+        .then(result => {
+          let {errorCode, data} = result;
+          this.dataModels = data[0];
+        })
+        .finally(() => {
+          this.loading = false;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      },
       onSubmit(formName) {
         let validateFlag = true;
         if (!this.$store.state.editSelectedData.length) {
           return false;
         }
-        this.$refs[formName].forEach((formItem, index) => {
-          formItem.validate((valid) => {
-            if (valid) {
-              this.loading = true;
-            } else {
-              return validateFlag = false;
-            }
-          });
+        this.$refs[formName].validate((valid) => {
+          if (!valid) {
+            validateFlag = false;
+          }
         });
+        this.loading = true;
         if (validateFlag) {
           let params = {
             table: 'SC_TOLL_RDLINK_BT',
-            data: this.dataModels
+            data: [this.dataModels],
+            workFlag: this.$store.state.workStatus
           };
           updateTollGate(params)
           .then(result => {
@@ -280,18 +298,6 @@
     },
     mounted () {
       this.mountFlag = true;
-      let param = {table: 'SC_TOLL_RDLINK_BT', pid: 262558};
-      getTollGate(param)
-      .then(result => {
-        let {errorCode, data} = result;
-        this.dataModels = data;
-      })
-      .finally(() => {
-        this.loading = false;
-      })
-      .catch(err => {
-        console.log(err);
-      });
     }
   }
 </script>

@@ -54,8 +54,8 @@
             <el-table-column prop="isAdoptedName" label="tips反馈" align="center"></el-table-column>
             <el-table-column prop="operation" label="操作" align="center">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="button" size="small">动态作业</el-button>
-                <el-button @click="handleClick(scope.row)" type="button" size="small">静态作业</el-button>
+                <el-button @click="handleClick(scope.row, 'dynamic')" type="button" size="small">动态作业</el-button>
+                <el-button @click="handleClick(scope.row, 'static')" type="button" size="small">静态作业</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -261,9 +261,10 @@
           changePage:function () {
 
           },
-          handleClick:function (data) {
-            console.log(data)
-            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id, point:data.toll_location, adminCode:this.tip.adminCode}});
+          handleClick:function (data, type) {
+            this.$store.commit('changeWorkStatus',type)
+            this.$store.commit('chnageAdminCode',this.tip.adminCode);
+            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id, point:data.toll_location}});
           },
           handleSizeChange:function (val) {
             this.tip.pageSize = val;

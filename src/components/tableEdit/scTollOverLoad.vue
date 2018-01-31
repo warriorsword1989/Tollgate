@@ -14,7 +14,7 @@
             <el-input :disabled="true" v-model="originModel.name_bt" size="mini"></el-input>
           </div>
         </div>
-        <el-button @click="editBrage" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+        <el-button @click="toggleSearchPanel(true)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
         <el-button @click="addOuter" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
       </div>
     </div>
@@ -34,7 +34,7 @@
                 <el-input :disabled="true" v-model="dataItem[innerKey].name_bt" size="mini"></el-input>
               </div>
             </div>
-            <el-button @click="editBrage" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+            <el-button @click="toggleSearchPanel(true)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
             <el-button @click="addOuter" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
           </div>
           <div v-show="innerIndex==0" class="grid-wraper">
@@ -178,6 +178,7 @@
         <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
       </el-row>
     </div>
+    <search-name @selectBtName="setBtName" @toggleSearch="toggleSearchPanel" v-if="serachShow"></search-name>
   </div>
 </template>
 
@@ -186,13 +187,16 @@
     updateTollGate,
     getTollGate
   } from '../../dataService/api';
+  import searchName from './searchName';
   export default {
     name: 'scTollCar',
+    components: {searchName},
     props: ['tableName', 'selectedData'],
     data() {
       return {
         loading: true,
         isGuangdong: false,
+        serachShow: false,
         dataModels: {},
         originModel: {
           group_id: this.$store.state.editSelectedData[0],
@@ -258,7 +262,18 @@
       }
     },
     methods: {
-      editBrage() {
+      toggleSearchPanel(flag){
+        this.serachShow = flag;
+      },
+      setBtName() {
+        this.originModel.name_bt_id = this.$store.state.btData.name_groupid;
+        this.originModel.name_bt = this.$store.state.btData.name;
+        Object.keys(this.dataModels).forEach(item => {
+          Object.keys(this.dataModels[item]).forEach(innerItem => {
+            this.dataModels[item][innerItem].name_bt_id = this.$store.state.btData.name_groupid;
+            this.dataModels[item][innerItem].name_bt = this.$store.state.btData.name;
+          });
+        });
       },
       addOuter() {
         let _self = this;
@@ -319,7 +334,8 @@
           });
           let params = {
             table: 'SC_TOLL_OVERLOAD',
-            data: submitData
+            data: submitData,
+            workFlag: this.$store.state.workStatus
           };
           this.loading = true;
           updateTollGate(params)
@@ -355,12 +371,13 @@
     },
     mounted() {
       let _self = this;
-      this.isGuangdong = this.$route.params.adminCode == '440000';
+      this.isGuangdong = this.$store.state.adminCode == '440000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: 'SC_TOLL_OVERLOAD',
-          pid: this.$store.state.editSelectedData[0]
+          pid: this.$store.state.editSelectedData[0],
+          workFlag: this.$store.state.workStatus
         };
         getTollGate(param)
           .then(result => {

@@ -46,5 +46,6 @@ export const getTipsPhoto = params => { return hbase.get('/fcc/photo/getPhotosBy
 export const tempLogin = params => { return hbase.get('/man/userInfo/login', {params})};
 // 收费站新增编辑相关;
 export const getTollGate = params => { return axios.get('/tollgate/tips/getTollGate', {params})};
+export const getBriageName = params => { return axios.get('/tollgate/tips/getBtName', {params})};
 export const updateTollGate = params => { return axios.post('/tollgate/tips/updateTollGate', params)};
 console.log(window.serviceConfig.tempFsUrl)
