@@ -129,9 +129,10 @@
         Vue.set(this.isEdit,eData.tabIndex,eData.status) 
       },
       toggleSelection(rows){
-        if (rows) {
+        let self = this;
+        if (rows.length) {
           rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
+            self.$refs.multipleTable.toggleRowSelection(row);
           });
         }
       },
@@ -149,7 +150,10 @@
     mounted() {
       this.workFlag = this.$store.state.workStatus
       this.tableData = this.$store.state.selectedData;
-      this.toggleSelection(this.tableData);
+      let self = this;
+      setTimeout(function () {
+        self.toggleSelection(self.tableData);
+      })
     }
   }
 </script>
