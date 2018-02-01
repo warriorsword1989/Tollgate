@@ -83,8 +83,12 @@ export default {
     
     .edit-content {
       height: 28px;
+      padding: 0px 5px;
       input {
         height: 28px;
+      }
+      .el-range__icon {
+        line-height: 0;
       }
       .el-range-input {
         height: auto;
