@@ -33,9 +33,9 @@
           <el-col :span="12">
             <el-form-item label="" class="edit-container">
               <el-switch
-                v-model.number="dataModels.fee_flag"
-                active-value.number="2"
-                inactive-value.number="1"
+                v-model="dataModels.fee_flag"
+                active-value="2"
+                inactive-value="1"
                 active-text="收费"
                 inactive-text="不收费">
               </el-switch>
@@ -65,7 +65,7 @@
           id: 0,
           period: '',
           spec_flag: '3',
-          fee_flag: 1
+          fee_flag: '1'
         },
         dateTypes: [
           { label: '节假日', value: '3'},
@@ -78,11 +78,15 @@
         let _self = this;
         let params = { table: 'SC_TOLL_HOLIDAY', data: [this.dataModels], workFlag: appUtil.getGolbalData().workType };
         this.loading = true;
-        getMaxId({adminCode: appUtil.getGolbalData().adminCode})
+        getMaxId({ table: 'SC_TOLL_HOLIDAY', adminCode: appUtil.getGolbalData().adminCode})
         .then(result => {
           let {data,errorCode} = result;
           if (errorCode!=-1) {
-            params.data[0].id = parseInt(data[0].maxnum)+1;
+            if (!data[0].maxnum) {
+              params.data[0].id = parseInt(appUtil.getGolbalData().adminCode.substr(0,2)+'000000');
+            } else {
+              params.data[0].id = parseInt(data[0].maxnum)+1;
+            }
           }
           return params;
         }).then(params => {
@@ -94,7 +98,7 @@
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
                 status: false,
-                tabIndex: 0
+                tabIndex: 9
               });
               return this.$message({
                 message: '数据更新成功！',

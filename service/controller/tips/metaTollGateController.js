@@ -43,9 +43,10 @@ class TollGate {
    */
   async getHolidayMax() {
     const param = this.req.query;
+    this.table = param.table;
     const queryNum = param.adminCode.substr(0,2);
     this.db = new connectDynamicOracle();
-    let sql = "SELECT max(ID) as maxNum from SC_TOLL_HOLIDAY where ID LIKE '"+queryNum+"%'";
+    let sql = "SELECT max(ID) as maxNum from "+this.table+" where ID LIKE '"+queryNum+"%'";
     const result = await this.db.executeSql(sql);
     const resultData = changeResult(result);
     this.res.send({
@@ -140,6 +141,8 @@ class TollGate {
               let insertResult = await this.selfDB.executeSql(insertsSql);
             }
           }
+          this.res.send({errorCode: 0});
+        } else {
           this.res.send({errorCode: 0});
         }
       } else {
