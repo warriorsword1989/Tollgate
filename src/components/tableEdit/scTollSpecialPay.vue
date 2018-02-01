@@ -8,11 +8,9 @@
               <el-input v-model="dataModels.systemId" class="edit-content" disabled></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="表达区域要求的车牌范围：" title="表达区域要求的车牌范围" class="edit-container">
-              <el-input v-model="dataModels.systemId" class="edit-content"></el-input>
+              <el-input v-model="dataModels.localPlate" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -20,7 +18,8 @@
           <el-col :span="12">
             <el-form-item label="时间段：" title="时间段" class="edit-container">
               <el-date-picker
-                v-model="dataModels.timeDomain"
+                v-model="dataModels.timeDomainFmt"
+                value-format="yyyyMMdd"
                 type="daterange"
                 class="edit-content"
                 range-separator="至"
@@ -38,29 +37,29 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="客车车型：" title="客车车型" class="edit-container">
-              <el-input v-model="dataModels.carClass" class="edit-content"></el-input>
+              <el-input v-model.number="dataModels.carClass" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="货车车型：" title="货车车型" class="edit-container">
-              <el-input v-model="dataModels.truckClass" class="edit-content"></el-input>
+              <el-input v-model.number="dataModels.truckClass" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" justify="start">
           <el-col :span="8">
             <el-form-item label="正常装载类型：" title="正常装载类型" class="edit-container">
-              <el-input v-model="dataModels.loadingClass" class="edit-content"></el-input>
+              <el-input v-model.number="dataModels.loadingClass" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="超载类型：" title="超载类型" class="edit-container">
-              <el-input v-model="dataModels.overloadingClass" class="edit-content"></el-input>
+              <el-input v-model.number="dataModels.overloadingClass" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="打折：" title="打折" class="edit-container">
-              <el-input v-model="dataModels.discount" class="edit-content">
+              <el-input v-model.number="dataModels.discount" class="edit-content">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
@@ -69,14 +68,14 @@
         <el-row type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="优惠上限：" title="优惠上限" class="edit-container">
-              <el-input v-model="dataModels.preMax" class="edit-content">
+              <el-input v-model.number="dataModels.preMax" class="edit-content">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="优惠金额：" title="优惠金额" class="edit-container">
-              <el-input v-model="dataModels.preFee" class="edit-content">
+              <el-input v-model.number="dataModels.preFee" class="edit-content">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>
@@ -86,9 +85,9 @@
           <el-col :span="12">
             <el-form-item label="" class="edit-container">
               <el-switch
-                v-model="dataModels.fee"
-                active-value=2
-                inactive-value=1
+                v-model.number="dataModels.fee"
+                active-value.number="2"
+                inactive-value.number="1"
                 active-text="收费"
                 inactive-text="不收费">
               </el-switch>
@@ -117,6 +116,7 @@
           systemId: '',
           id: '',
           localPlate: '',
+          timeDomainFmt: '',
           timeDomain: '',
           cardType: '',
           carClass: '',
@@ -132,7 +132,37 @@
     },
     methods: {
       onSubmit(formName) {
-       
+        let _self = this;
+        this.dataModels.timeDomain = this.dataModels.timeDomainFmt.join('-');
+        delete this.dataModels.timeDomainFmt;
+        let params = { table: 'SC_TOLL_SPEFLOAT', data: [this.dataModels], workFlag: this.$store.state.workStatus };
+        this.loading = true;
+        updateTollGate(params)
+        .then(result => {
+          let {errorCode} = result;
+          const h = this.$createElement;
+          if (errorCode === 0) {
+            this.$emit('tabStatusChange', {
+              status: false,
+              tabIndex: 0
+            });
+            return this.$message({
+              message: '数据更新成功！',
+              type: 'success'
+            });
+          } else {
+            return this.$message({
+              message: '数据更新失败！',
+              type: 'warning'
+            });
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        })
+        .catch(err => {
+          console.log(err);
+        });
       }
     },
     mounted() {

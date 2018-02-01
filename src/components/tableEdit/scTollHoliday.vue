@@ -8,6 +8,7 @@
               <el-date-picker
                 class="edit-content"
                 v-model="dataModels.date"
+                value-format="yyyy-MM-dd"
                 type="date"
                 placeholder="选择日期">
               </el-date-picker>
@@ -32,9 +33,9 @@
           <el-col :span="12">
             <el-form-item label="" class="edit-container">
               <el-switch
-                v-model="dataModels.feeFlag"
-                active-value=2
-                inactive-value=1
+                v-model.number="dataModels.feeFlag"
+                active-value.number="2"
+                inactive-value.number="1"
                 active-text="收费"
                 inactive-text="不收费">
               </el-switch>
@@ -75,11 +76,36 @@
         console.log(this.dataModels.feeFlag);
       },
       onSubmit(formName) {
-       
+        let _self = this;
+        let params = { table: 'SC_TOLL_HOLIDAY', data: [this.dataModels], workFlag: this.$store.state.workStatus };
+        this.loading = true;
+        updateTollGate(params)
+        .then(result => {
+          let {errorCode} = result;
+          const h = this.$createElement;
+          if (errorCode === 0) {
+            this.$emit('tabStatusChange', {
+              status: false,
+              tabIndex: 0
+            });
+            return this.$message({
+              message: '数据更新成功！',
+              type: 'success'
+            });
+          } else {
+            return this.$message({
+              message: '数据更新失败！',
+              type: 'warning'
+            });
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        })
+        .catch(err => {
+          console.log(err);
+        });
       }
-    },
-    mounted() {
-      
     }
   }
 </script>
