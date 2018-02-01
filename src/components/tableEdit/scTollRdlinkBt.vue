@@ -285,7 +285,8 @@
           let params = {
             table: 'SC_TOLL_RDLINK_BT',
             data: [this.dataModels],
-            workFlag: this.$store.state.workStatus
+            workFlag: this.$store.state.workStatus,
+            adminCode: this.$store.state.adminCode
           };
           updateTollGate(params)
           .then(result => {

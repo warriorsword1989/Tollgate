@@ -156,7 +156,8 @@
         let param = {
           table: 'SC_TOLL_TOLLGATEFEE',
           pid: this.$store.state.editSelectedData[0],
-          workFlag: this.$store.state.workStatus
+          workFlag: this.$store.state.workStatus,
+          adminCode: this.$store.state.adminCode
         };
         this.loading = true;
         getTollGate(param)

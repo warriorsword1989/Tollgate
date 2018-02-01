@@ -344,7 +344,8 @@
           let params = {
             table: 'SC_TOLL_GROUP',
             data: submitData,
-            workFlag: this.$store.state.workStatus
+            workFlag: this.$store.state.workStatus,
+            adminCode: this.$store.state.adminCode
           };
           updateTollGate(params)
           .then(result => {

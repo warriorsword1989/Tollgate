@@ -472,7 +472,8 @@
           let params = {
             table: 'SC_TOLL_TRUCK',
             data: submitData,
-            workFlag: this.$store.state.workStatus
+            workFlag: this.$store.state.workStatus,
+            adminCode: this.$store.state.adminCode
           };
           this.loading = true;
           updateTollGate(params)
