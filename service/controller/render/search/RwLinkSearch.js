@@ -14,9 +14,6 @@ class RwLinkSearch extends Search{
 
     const result = await this.connection.executeSql(sql, {wkt: wkt});
 
-    console.log(sql);
-    console.log(wkt);
-
     const px = MercatorProjection.tileXToPixelX(x);
 
     const py = MercatorProjection.tileYToPixelY(y);
