@@ -44,7 +44,7 @@
           let param = {
             table: 'RD_NAME',
             bridgeName: this.searchValue,
-            workFlag: this.$store.state.workStatus
+            workFlag: appUtil.getGolbalData().workType
           };
           getBriageName(param)
           .then(result=> {

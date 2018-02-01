@@ -59,6 +59,17 @@ router.get ('/getBtName', function (req, res, next) {
   }
 });
 
+// 查询最大值
+router.get ('/getMaxId', function (req, res, next) {
+  "use strict";
+  try {
+    let TollGate = new TollGateCtrl(req, res, next);
+    TollGate['getHolidayMax'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
 // 更新tollgate;
 router.post ('/updateTollGate', function (req, res, next) {
   "use strict";

@@ -2,7 +2,7 @@
   <div class="tableEditPanel sc-toll-edit" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <el-form :model="dataModels" ref="dataModels" label-position="right" label-width="100px" :inline="false" class="wraper">
       <el-main>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="区域标识：" class="edit-container">
               <el-input v-model="dataModels.systemId" class="edit-content" disabled></el-input>
@@ -14,7 +14,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="时间段：" title="时间段" class="edit-container">
               <el-date-picker
@@ -29,7 +29,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="8">
             <el-form-item label="特殊持卡：" title="特殊持卡" class="edit-container">
               <el-input v-model="dataModels.cardType" class="edit-content"></el-input>
@@ -46,7 +46,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="8">
             <el-form-item label="正常装载类型：" title="正常装载类型" class="edit-container">
               <el-input v-model.number="dataModels.loadingClass" class="edit-content"></el-input>
@@ -65,7 +65,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="优惠上限：" title="优惠上限" class="edit-container">
               <el-input v-model.number="dataModels.preMax" class="edit-content">
@@ -81,7 +81,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="" class="edit-container">
               <el-switch
@@ -106,6 +106,7 @@
 
 <script>
   import { updateTollGate, getTollGate} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollHoliday',
     props: [],
@@ -113,7 +114,7 @@
       return {
         loading: false,
         dataModels: {
-          systemId: '',
+          systemId: appUtil.getGolbalData().adminCode,
           id: '',
           localPlate: '',
           timeDomainFmt: '',
@@ -135,7 +136,7 @@
         let _self = this;
         this.dataModels.timeDomain = this.dataModels.timeDomainFmt.join('-');
         delete this.dataModels.timeDomainFmt;
-        let params = { table: 'SC_TOLL_SPEFLOAT', data: [this.dataModels], workFlag: this.$store.state.workStatus };
+        let params = { table: 'SC_TOLL_SPEFLOAT', data: [this.dataModels], workFlag: appUtil.getGolbalData().workType };
         this.loading = true;
         updateTollGate(params)
         .then(result => {

@@ -262,9 +262,13 @@
 
           },
           handleClick:function (data, type) {
-            this.$store.commit('changeWorkStatus',type)
-            this.$store.commit('chnageAdminCode',this.tip.adminCode);
-            this.$router.push({name:'mainMap', params:{rowkey:data.rowkey, photoId:data.photo_id, point:data.toll_location}});
+            this.$router.push({name:'mainMap', params:{point:data.toll_location}});
+            appUtil.setGolbalData({
+              workType: type,
+              adminCode: this.tip.adminCode,
+              rowkey: data.rowkey,
+              photo_id: data.photo_id
+            });
           },
           handleSizeChange:function (val) {
             this.tip.pageSize = val;

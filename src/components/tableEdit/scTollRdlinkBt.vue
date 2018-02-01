@@ -119,6 +119,7 @@
 <script>
   import searchName from './searchName';
   import {updateTollGate, getTollGate} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollRdlinkBt',
     components: {searchName},
@@ -250,7 +251,7 @@
       setBtName() {
         this.dataModels.name_bt_id = this.$store.state.btData.name_groupid;
         this.dataModels.name_bt = this.$store.state.btData.name;
-        let param = {table: 'SC_TOLL_RDLINK_BT', pid: this.dataModels.name_bt_id, workFlag: this.$store.state.workStatus};
+        let param = {table: 'SC_TOLL_RDLINK_BT', pid: this.dataModels.name_bt_id, workFlag: appUtil.getGolbalData().workType};
         this.loading = true;
         getTollGate(param)
         .then(result => {
@@ -285,8 +286,8 @@
           let params = {
             table: 'SC_TOLL_RDLINK_BT',
             data: [this.dataModels],
-            workFlag: this.$store.state.workStatus,
-            adminCode: this.$store.state.adminCode
+            workFlag: appUtil.getGolbalData().workType,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           updateTollGate(params)
           .then(result => {

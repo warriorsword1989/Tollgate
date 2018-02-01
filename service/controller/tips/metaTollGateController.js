@@ -37,6 +37,22 @@ class TollGate {
       data: resultData
     });
   }
+
+  /**
+   * 
+   */
+  async getHolidayMax() {
+    const param = this.req.query;
+    const queryNum = param.adminCode.substr(0,2);
+    this.db = new connectDynamicOracle();
+    let sql = "SELECT max(ID) as maxNum from SC_TOLL_HOLIDAY where ID LIKE '"+queryNum+"%'";
+    const result = await this.db.executeSql(sql);
+    const resultData = changeResult(result);
+    this.res.send({
+      errorCode: 0,
+      data: resultData
+    });
+  }
   /**
    * 
    */
@@ -82,7 +98,10 @@ class TollGate {
     if (this.req.body.workFlag == 'dynamic') {
       this.db = new connectDynamicOracle();
     }
-    const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
+    let primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
+    if (this.table == 'SC_TOLL_HOLIDAY' || this.table == 'SC_TOLL_SPEFLOAT') {
+      primaryKey = 'ID';
+    }
     let delSql = "DELETE FROM " + this.table + " WHERE " + primaryKey + " = " + param[0][primaryKey.toLowerCase()];
     let insertSql = this.getInsertString(param);
     const delResult = await this.db.executeSql(delSql);

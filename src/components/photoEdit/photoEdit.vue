@@ -26,6 +26,7 @@
 
 <script>
   import { updateTollGateTip, getTollGateTip } from '../../dataService/api';
+  import { appUtil } from '../../Application';
   export default {
     name: 'photoEdit',
     components: { },
@@ -74,7 +75,7 @@
      mounted () {
        let _self = this;
        // 加载tips信息；
-        let param = {rowkey: this.$route.params.rowkey};
+        let param = {rowkey: appUtil.getGolbalData().rowkey};
         getTollGateTip(param)
         .then(result => {
           let { errorCode, data } = result;

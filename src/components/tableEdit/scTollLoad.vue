@@ -175,6 +175,7 @@
 <script>
   import searchName from './searchName';
   import {updateTollGate,getTollGate} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollCar',
     props: ['tableName', 'selectedData'],
@@ -406,8 +407,8 @@
           let params = {
             table: 'SC_TOLL_LOAD',
             data: submitData,
-            workFlag: this.$store.state.workStatus,
-            adminCode: this.$store.state.adminCode
+            workFlag: appUtil.getGolbalData().workType,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           this.loading = true;
           updateTollGate(params)
@@ -443,13 +444,13 @@
     },
     mounted() {
       let _self = this;
-      this.isGuangdong = this.$store.state.adminCode == '440000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: 'SC_TOLL_LOAD',
           pid: this.$store.state.editSelectedData[0],
-          workFlag: this.$store.state.workStatus
+          workFlag: appUtil.getGolbalData().workType
         };
         this.loading = true;
         getTollGate(param)

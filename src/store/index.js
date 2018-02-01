@@ -6,20 +6,12 @@ let state = {
   handleFlag: 'update',
   selectedData: [],
   editSelectedData: [],
-  workStatus: 'static',
   btData: {name: '',name_groupid:0},
-  adminCode:null,
 };
 
 const mutations = {
-  chnageAdminCode(context, value) {
-    context.adminCode = value;
-  },
   changeBtData(context, value) {
     context.btData = value;
-  },
-  changeWorkStatus(context, value){
-    context.workStatus = value;
   },
   changeHandleFlag(context, value) {
     context.handleFlag = value;

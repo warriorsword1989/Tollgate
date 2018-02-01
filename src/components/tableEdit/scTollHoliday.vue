@@ -2,12 +2,12 @@
   <div class="tableEditPanel sc-toll-edit" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <el-form :model="dataModels" ref="dataModels" label-position="right" label-width="100px" :inline="false" class="wraper">
       <el-main>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="日期：" class="edit-container">
               <el-date-picker
                 class="edit-content"
-                v-model="dataModels.date"
+                v-model="dataModels.period"
                 value-format="yyyy-MM-dd"
                 type="date"
                 placeholder="选择日期">
@@ -15,10 +15,10 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="日期类型：" class="edit-container">
-              <el-select v-model="dataModels.specFlag" class="edit-content" placeholder="请选择">
+              <el-select v-model="dataModels.spec_flag" class="edit-content" placeholder="请选择">
                 <el-option
                   v-for="item in dateTypes"
                   :key="item.value"
@@ -29,11 +29,11 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row type="flex" justify="start">
+        <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="12">
             <el-form-item label="" class="edit-container">
               <el-switch
-                v-model.number="dataModels.feeFlag"
+                v-model.number="dataModels.fee_flag"
                 active-value.number="2"
                 inactive-value.number="1"
                 active-text="收费"
@@ -53,7 +53,8 @@
 </template>
 
 <script>
-  import { updateTollGate, getTollGate} from '../../dataService/api';
+  import { updateTollGate, getTollGate, getMaxId} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollHoliday',
     props: [],
@@ -61,50 +62,58 @@
       return {
         loading: false,
         dataModels: {
-          date: '',
-          specFlag: '1',
-          feeFlag: ''
+          id: 0,
+          period: '',
+          spec_flag: '3',
+          fee_flag: 1
         },
         dateTypes: [
-          { label: '节假日', value: '1'},
-          { label: '特殊日期', value: '2'}
+          { label: '节假日', value: '3'},
+          { label: '特殊日期', value: '4'}
         ]
       }
     },
     methods: {
-      switchFeeFlag () {
-        console.log(this.dataModels.feeFlag);
-      },
       onSubmit(formName) {
         let _self = this;
-        let params = { table: 'SC_TOLL_HOLIDAY', data: [this.dataModels], workFlag: this.$store.state.workStatus };
+        let params = { table: 'SC_TOLL_HOLIDAY', data: [this.dataModels], workFlag: appUtil.getGolbalData().workType };
         this.loading = true;
-        updateTollGate(params)
+        getMaxId({adminCode: appUtil.getGolbalData().adminCode})
         .then(result => {
-          let {errorCode} = result;
-          const h = this.$createElement;
-          if (errorCode === 0) {
-            this.$emit('tabStatusChange', {
-              status: false,
-              tabIndex: 0
-            });
-            return this.$message({
-              message: '数据更新成功！',
-              type: 'success'
-            });
-          } else {
-            return this.$message({
-              message: '数据更新失败！',
-              type: 'warning'
-            });
+          let {data,errorCode} = result;
+          if (errorCode!=-1) {
+            params.data[0].id = parseInt(data[0].maxnum)+1;
           }
+          return params;
+        }).then(params => {
+          params.adminCode = appUtil.getGolbalData().adminCode;
+          updateTollGate(params)
+          .then(result => {
+            let {errorCode} = result;
+            const h = this.$createElement;
+            if (errorCode === 0) {
+              this.$emit('tabStatusChange', {
+                status: false,
+                tabIndex: 0
+              });
+              return this.$message({
+                message: '数据更新成功！',
+                type: 'success'
+              });
+            } else {
+              return this.$message({
+                message: '数据更新失败！',
+                type: 'warning'
+              });
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
+          });
         })
-        .finally(() => {
-          this.loading = false;
-        })
-        .catch(err => {
-          console.log(err);
-        });
       }
     }
   }

@@ -87,10 +87,9 @@
       }
     },
     mounted() {
-      console.log(window.serviceConfig.tempFsUrl)
        // 加载tips照片；
       let _self = this;
-      let photoIds = this.$route.params.photoId.split(';');
+      let photoIds = appUtil.getGolbalData().photo_id.split(';');
       this.renderToken = appUtil.getRenderToken();
       getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: this.renderToken})
       .then((results) => {
