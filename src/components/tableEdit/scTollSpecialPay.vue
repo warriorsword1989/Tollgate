@@ -85,9 +85,9 @@
           <el-col :span="12">
             <el-form-item label="" class="edit-container">
               <el-switch
-                v-model.number="dataModels.fee"
-                active-value.number="2"
-                inactive-value.number="1"
+                v-model="dataModels.free"
+                active-value="2"
+                inactive-value="1"
                 active-text="收费"
                 inactive-text="不收费">
               </el-switch>
@@ -125,7 +125,7 @@
           overloadingClass: '',
           discount: '',
           preMax: '',
-          free: 1,
+          free: '1',
           preFee: ''
         }
       }
@@ -133,8 +133,10 @@
     methods: {
       onSubmit(formName) {
         let _self = this;
-        this.dataModels.timeDomain = this.dataModels.timeDomainFmt.join('-');
-        delete this.dataModels.timeDomainFmt;
+        if (this.dataModels.timeDomainFmt) {
+          this.dataModels.timeDomain = this.dataModels.timeDomainFmt.join('-');
+          delete this.dataModels.timeDomainFmt;
+        }
         let params = { table: 'SC_TOLL_SPEFLOAT', data: [this.dataModels], workFlag: this.$store.state.workStatus };
         this.loading = true;
         updateTollGate(params)

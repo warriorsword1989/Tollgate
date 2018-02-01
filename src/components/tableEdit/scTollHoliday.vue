@@ -33,9 +33,9 @@
           <el-col :span="12">
             <el-form-item label="" class="edit-container">
               <el-switch
-                v-model.number="dataModels.feeFlag"
-                active-value.number="2"
-                inactive-value.number="1"
+                v-model="dataModels.feeFlag"
+                active-value="2"
+                inactive-value="1"
                 active-text="收费"
                 inactive-text="不收费">
               </el-switch>
@@ -62,12 +62,12 @@
         loading: false,
         dataModels: {
           date: '',
-          specFlag: '1',
-          feeFlag: ''
+          specFlag: '3',
+          feeFlag: '1'
         },
         dateTypes: [
-          { label: '节假日', value: '1'},
-          { label: '特殊日期', value: '2'}
+          { label: '节假日', value: '3'},
+          { label: '特殊日期', value: '4'}
         ]
       }
     },
