@@ -191,7 +191,7 @@
         callback();
       }
       return {
-        loading: true,
+        loading: false,
         mountFlag: false,
         dataModels: {
           axle_num_limit:null,
@@ -393,6 +393,7 @@
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {table: 'SC_TOLL_GROUP', pid: this.$store.state.editSelectedData[0],workFlag: this.$store.state.workStatus};
+        this.loading = true;
         getTollGate(param)
         .then(result => {
           let {errorCode, data} = result;

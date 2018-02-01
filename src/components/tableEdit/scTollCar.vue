@@ -143,7 +143,7 @@
 </template>
 
 <script>
-  import {updateTollGate, getTollGate} from '../../dataService/api';
+  import {updateTollGate, getTollGate, updateMetaIndex} from '../../dataService/api';
   import searchName from './searchName';
   export default {
     name: 'scTollCar',
@@ -252,7 +252,7 @@
         serachShow: false,
         isGuangdong: false,
         isZheJiang: false,
-        loading: true,
+        loading: false,
         formIndex: 0,
         dataModels: {},
         btGroupId:0,
@@ -351,12 +351,14 @@
         let allKeys = ['1', '2', '3', '4'];
         let leftKeys = _.difference(allKeys, existsKeys);
         let validFlag = true;
-        for (let i = 0; i < this.$refs.dataItem.length; i++) {
-          this.$refs.dataItem[i].validate((valid) => {
-            if (!valid) {
-              validFlag = false;
-            }
-          })
+        if (this.$refs.dataItem) {
+          for (let i = 0; i < this.$refs.dataItem.length; i++) {
+            this.$refs.dataItem[i].validate((valid) => {
+              if (!valid) {
+                validFlag = false;
+              }
+            })
+          }
         }
         if (validFlag && leftKeys.length) {
           let newObj = Object.assign({insertFlag: true}, _self.originModel);
@@ -410,7 +412,12 @@
               submitData.push(cloneData);
             });
           });
-          let params = { table: 'SC_TOLL_CAR', data: submitData,workFlag: this.$store.state.workStatus };
+          let params = {
+            table: 'SC_TOLL_CAR',
+            data: submitData,
+            workFlag: this.$store.state.workStatus,
+            adminCode: this.$store.state.adminCode
+          };
           this.loading = true;
           updateTollGate(params)
           .then(result => {
@@ -453,6 +460,7 @@
           pid: this.$store.state.editSelectedData[0],
           workFlag: this.$store.state.workStatus
         };
+        this.loading = true;
         getTollGate(param)
           .then(result => {
             let {
@@ -471,8 +479,6 @@
           .catch(err => {
             console.log(err);
           });
-      } else {
-         this.loading = false;
       }
     }
   }
@@ -480,6 +486,9 @@
 </script>
 
 <style scoped>
+  .content {
+    margin: 0 15px;
+  }
   fieldset legend {
     color: #151616;
     font-size: 14px;

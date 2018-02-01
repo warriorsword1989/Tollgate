@@ -152,13 +152,11 @@
         if (validateFlag) {
           this.loading = true;
           let submitData = [];
-          this.$store.state.editSelectedData.forEach(outer => {
-            this.dataModels.forEach(item => {
-              let cloneData = Object.assign({},item);
-              delete cloneData.insertFlag;
-              delete item.insertFlag;
-              submitData.push(cloneData);
-            });
+          this.dataModels.forEach(item => {
+            let cloneData = Object.assign({},item);
+            delete cloneData.insertFlag;
+            delete item.insertFlag;
+            submitData.push(cloneData);
           });
           let params = {
             table: 'SC_TOLL_LIMIT',

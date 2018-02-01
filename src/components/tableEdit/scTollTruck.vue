@@ -298,9 +298,9 @@
       return {
         isGuangdong: false,
         isZheJiang: false,
-        loading: true,
+        loading: false,
         serachShow: false,
-        dataModels: [],
+        dataModels: {},
         originModel: {
           group_id: this.$store.state.editSelectedData[0],
           truck_class: 1,
@@ -408,12 +408,14 @@
         let allKeys = ['1', '2', '3', '4', '5'];
         let leftKeys = _.difference(allKeys, existsKeys);
         let validFlag = true;
-        for (let i = 0; i < this.$refs.dataItem.length; i++) {
-          this.$refs.dataItem[i].validate((valid) => {
-            if (!valid) {
-              validFlag = false;
-            }
-          })
+        if (this.$refs.dataItem) {
+          for (let i = 0; i < this.$refs.dataItem.length; i++) {
+            this.$refs.dataItem[i].validate((valid) => {
+              if (!valid) {
+                validFlag = false;
+              }
+            })
+          }
         }
         if (validFlag && leftKeys.length) {
           let newObj = Object.assign({insertFlag: true}, _self.originModel);
@@ -515,6 +517,7 @@
           pid: this.$store.state.editSelectedData[0],
           workFlag: this.$store.state.workStatus
         };
+        this.loading = true;
         getTollGate(param)
           .then(result => {
             let {
@@ -543,11 +546,13 @@
 </script>
 
 <style scoped>
+  .content {
+    margin: 0 15px;
+  }
   fieldset {
     padding: 0;
     border: 1px dashed #636ef5;
   }
-
   fieldset legend {
     color: #151616;
     font-size: 14px;

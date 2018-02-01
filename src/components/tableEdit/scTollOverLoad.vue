@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <div class="grid-content">
-      <div v-show="!Object.keys(dataModels).length" class="grid-wraper">
+      <div v-show="!dataModels[1] || !Object.keys(dataModels[1]).length" class="grid-wraper">
         <div class="grid-list">
           <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
           <div class="inputPart">
@@ -194,7 +194,7 @@
     props: ['tableName', 'selectedData'],
     data() {
       return {
-        loading: true,
+        loading: false,
         isGuangdong: false,
         serachShow: false,
         dataModels: {},
@@ -306,6 +306,9 @@
       },
       minusInner(outerIndex, innerIndex) {
         this.$delete(this.dataModels[outerIndex], innerIndex);
+        if (!Object.keys(this.dataModels[outerIndex]).length) {
+          this.$delete(this.dataModels, outerIndex);
+        }
       },
       onSubmit(formName) {
         let validateFlag = true;
@@ -379,6 +382,7 @@
           pid: this.$store.state.editSelectedData[0],
           workFlag: this.$store.state.workStatus
         };
+        this.loading = true;
         getTollGate(param)
           .then(result => {
             let {errorCode,data} = result;

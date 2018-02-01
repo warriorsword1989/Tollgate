@@ -156,7 +156,7 @@
           car_class:null,
           group_id: 0,
           name_bt:'',
-          name_bt_id:0,
+          name_bt_id:null,
           rate_add:0,
           rate_class:1,
           rato:null,
@@ -165,6 +165,20 @@
           tunnage_flag:null,
           tunnage_max:null,
           tunnage_min:1,
+        },
+        originModel: {
+          car_class:null,
+          group_id: 0,
+          name_bt:'',
+          name_bt_id:0,
+          rate_add:0,
+          rate_class:1,
+          rato:null,
+          source:1,
+          truck_class:null,
+          tunnage_flag:null,
+          tunnage_max:null,
+          tunnage_min:null,
         },
         mountFlag: false,
         options: [{
@@ -232,6 +246,7 @@
       toggleSearchPanel(flag){
         this.serachShow = flag;
       },
+
       setBtName() {
         this.dataModels.name_bt_id = this.$store.state.btData.name_groupid;
         this.dataModels.name_bt = this.$store.state.btData.name;
@@ -240,7 +255,13 @@
         getTollGate(param)
         .then(result => {
           let {errorCode, data} = result;
-          this.dataModels = data[0];
+          if (data.length) {
+            this.dataModels = Object.assign({},data[0]);
+          } else {
+            this.dataModels = Object.assign({},this.originModel);
+            this.dataModels.name_bt_id = this.$store.state.btData.name_groupid;
+            this.dataModels.name_bt = this.$store.state.btData.name;
+          }
         })
         .finally(() => {
           this.loading = false;

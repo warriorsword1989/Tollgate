@@ -51,7 +51,7 @@
         callback();
       }
       return {
-        loading: true,
+        loading: false,
         dataModels: {
           local_plate: '',
           out_fee: 0,
@@ -158,6 +158,7 @@
           pid: this.$store.state.editSelectedData[0],
           workFlag: this.$store.state.workStatus
         };
+        this.loading = true;
         getTollGate(param)
           .then(result => {
             let {errorCode,data} = result;
@@ -180,7 +181,7 @@
   .grid-content {
     display: flex;
     flex-direction: row;
-    margin: 0 10px;
+    margin: 15px 10px;
   }
   .grid-content .labelText {
     width: 110px;

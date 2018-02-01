@@ -1,6 +1,6 @@
 <template>
   <vue-draggable-resizable class="dragWindow" style="background:#fff;box-shadow:0 4px 20px #5c78a7;position:fixed;height:auto" :w="400" :h="300" :x="700"
-    :y="300" :z="11" :parent="false" :drag-handle="'.drag'" :resizable="false" :handles="['br']" :append-to-body="true">
+    :y="300" :z="100001" :parent="false" :drag-handle="'.drag'" :resizable="false" :handles="['br']" :append-to-body="true">
     <div style="display:flex;flex-direction:row;" class="windowTitle">
       <div style="flex:1">
         <i class="el-icon-edit-outline drag"> 桥梁/隧道名称查询</i>
