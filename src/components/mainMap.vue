@@ -26,6 +26,8 @@
       <scene-tool></scene-tool>
       <img class="right-float-close" @click="closeRightPanel()" src="../assets/toolIcon/icon/button-close-normal.png" />
     </div>
+    <search-tool class="searchToolbar" v-bind:style="{right: rightPanelFlag ? '540px': '240px'}">
+    </search-tool>
     <!-- 显示隐藏按钮 -->
     <el-button :class="{ 'enter-active': leftFloatArrow,  'enter-start': !leftFloatArrow, 'left-toggle': true }" :round.boolean=false
       @click="toggleLeftPanel" type="primary">
@@ -48,9 +50,11 @@
   import UserTool from './UserTool';
   import SceneTool from './SceneTool';
   import '../uikits/controllers/EventController';
+  import SearchTool from './SearchTool';
   export default {
     name: 'mainMap',
     components: {
+      SearchTool,
       SceneTool,
       UserTool,
       EditTool,
@@ -251,6 +255,14 @@
     text-align: center;
     padding-bottom: 10px;
     z-index: 10;
+  }
+
+  .searchToolbar {
+    position: absolute;
+    width: 250px;
+    height: 30px;
+    top: 10px;
+    z-index: 9;
   }
 
   .sceneToolbar {

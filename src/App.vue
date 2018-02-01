@@ -70,4 +70,45 @@ export default {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.4);  
     background-color: #ccc;  
 }
+.sc-toll-edit {
+  .edit-container {
+    height: 28px;
+    label {
+      height: 28px;
+      line-height: 2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .edit-content {
+      height: 28px;
+      input {
+        height: 28px;
+      }
+      .el-range-input {
+        height: auto;
+      }
+      .el-input__inner {
+        height: 28px;
+      }
+      .el-date-editor {
+        padding: 0;
+        display: flex;
+        align-items: center;
+      }
+      .el-range-separator {
+        line-height: 2;
+      }
+      .el-range__close-icon {
+        line-height: 0;
+      }
+    }
+  }
+  .edit-footer {
+    .btn-submit {
+      float: right;
+    }
+  }
+}
 </style>
