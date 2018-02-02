@@ -13,13 +13,13 @@
       <div class="grid-content">
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">区域标识：</div>
+            <div title="区域标识：" class="labelText">区域标识：</div>
             <div class="inputPart">
               <el-input :disabled="true" v-model="dataModels.system_id" size="mini"></el-input>
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">ETC打折类型：</div>
+            <div title="ETC打折类型：" class="labelText">ETC打折类型：</div>
             <div class="inputPart">
             <el-form-item prop="etc_type">
               <el-select size="mini" v-model.number="dataModels.etc_type" placeholder="请选择">
@@ -32,7 +32,7 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">ETC打折：</div>
+            <div title="ETC打折：" class="labelText">ETC打折：</div>
             <div class="inputPart">
               <el-form-item prop="etc_d">
                 <el-input placeholder="%" type="number" v-model.number="dataModels.etc_d" size="mini"></el-input>
@@ -40,7 +40,7 @@
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">免费车型：</div>
+            <div title="免费车型：" class="labelText">免费车型：</div>
             <div class="inputPart">
               <el-form-item prop="free_type">
                 <el-select size="mini" v-model="free_type_computed" multiple placeholder="请选择">
@@ -52,7 +52,7 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">是否有绿色通道：</div>
+            <div title="是否有绿色通道：" class="labelText">是否有绿色通道：</div>
             <div class="inputPart">
               <el-form-item prop="green_path">
                 <el-select size="mini" v-model.number="dataModels.green_path" placeholder="请选择">
@@ -63,7 +63,7 @@
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">客车优惠车型：</div>
+            <div title="客车优惠车型：" class="labelText">客车优惠车型：</div>
             <div class="inputPart">
               <el-form-item prop="pre_car">
                 <el-select size="mini" v-model.number="dataModels.pre_car" placeholder="请选择">
@@ -76,15 +76,18 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">客车优惠降低量：</div>
+            <div title="客车优惠降低量：" class="labelText">客车优惠降低量：</div>
             <div class="inputPart">
               <el-form-item prop="dec_car">
-                <el-input type="number" v-model.number="dataModels.dec_car" size="mini"></el-input>
+                <el-select size="mini" v-model.number="dataModels.dec_car" placeholder="请选择">
+                  <el-option v-for="item in carTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">货车优惠空载车型：</div>
+            <div title="货车优惠空载车型：" class="labelText">货车优惠空载车型：</div>
             <div class="inputPart">
               <el-form-item prop="pre_truck_0">
                 <el-select size="mini" v-model.number="dataModels.pre_truck_0" placeholder="请选择">
@@ -97,15 +100,18 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">货车空载优惠降低量：</div>
+            <div title="货车空载优惠降低量：" class="labelText">货车空载优惠降低量：</div>
             <div class="inputPart">
               <el-form-item prop="dec_truck">
-                <el-input type="number" v-model.number="dataModels.dec_truck" size="mini"></el-input>
+                <el-select size="mini" v-model.number="dataModels.dec_truck" placeholder="请选择">
+                  <el-option v-for="item in truckTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">货车正常装载优惠吨数区间：</div>
+            <div title="货车正常装载优惠吨数区间：" class="labelText">货车正常装载优惠吨数区间：</div>
             <div class="inputPart">
               <el-form-item style="flex:5" prop="pre_truck_loadmin">
                 <el-input type="number" v-model.number="dataModels.pre_truck_loadmin" size="mini"></el-input>
@@ -119,7 +125,7 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">货车正常装载优惠计费吨数：</div>
+            <div title="货车正常装载优惠计费吨数：" class="labelText">货车正常装载优惠计费吨数：</div>
             <div class="inputPart">
               <el-form-item prop="pre_truck_load">
                 <el-input type="number" v-model.number="dataModels.pre_truck_load" size="mini"></el-input>
@@ -127,7 +133,7 @@
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">最低收费金额：</div>
+            <div title="最低收费金额：" class="labelText">最低收费金额：</div>
             <div class="inputPart">
               <el-form-item prop="fee_limit">
                 <el-input type="number" v-model.number="dataModels.fee_limit" size="mini"></el-input>
@@ -137,7 +143,7 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">收费取整：</div>
+            <div title="收费取整：" class="labelText">收费取整：</div>
             <div class="inputPart">
               <el-form-item prop="round">
               <el-select size="mini" v-model.number="dataModels.round" placeholder="请选择">
@@ -168,28 +174,43 @@
       let _self = this;
       let check_max = (rule, value, callback) => {
         if (value <= _self.dataModels.pre_truck_loadmin) {
-          callback(new Error('区间不合法'));
+          return callback(new Error('区间不合法'));
         }
         callback();
       };
       let check_min = (rule, value, callback) => {
         if (value >= _self.dataModels.pre_truck_loadmax) {
-          callback(new Error('区间不合法'));
+          return callback(new Error('区间不合法'));
         }
         callback();
       };
       let check_etc_type = (rule, value, callback) => {
         if ((value && !_self.dataModels.etc_d) || (!value && _self.dataModels.etc_d)) {
-          callback(new Error('etc类型与etc打折必须同时有值或同时为空'));
+          return callback(new Error('etc类型与etc打折必须同时有值或同时为空'));
         }
         callback();
       };
       let check_etc_d = (rule, value, callback) => {
         if ((value && !_self.dataModels.etc_type) || (!value && _self.dataModels.etc_type)) {
-          callback(new Error('etc类型与etc打折必须同时有值或同时为空'));
+          return callback(new Error('etc类型与etc打折必须同时有值或同时为空'));
         }
         callback();
       }
+      
+      let check_fee_limit = (rule, value, callback) => {
+        if (value > 20) {
+          this.$confirm('最低收费金额大于20, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            return callback();
+          }).catch(() => {
+            return callback(new Error('最低收费金额大于20'));         
+          });
+        }
+        return callback();
+      };
       return {
         loading: false,
         mountFlag: false,
@@ -242,6 +263,9 @@
           label: '鲜活农产品'
         }],
         carTypeOptions: [{
+          value: null,
+          label: '空'
+        },{
           value: 1,
           label: '1'
         }, {
@@ -255,6 +279,9 @@
           label: '4'
         }],
         truckTypeOptions: [{
+          value: null,
+          label: '空'
+        },{
           value: 1,
           label: '1'
         }, {
@@ -303,6 +330,9 @@
           ],
           etc_d: [
             { validator: check_etc_d, trigger: 'blur'}
+          ],
+          fee_limit: [
+            { validator: check_fee_limit, trigger: 'change'}
           ]
         }
       }
@@ -429,7 +459,7 @@
     flex-direction: row;
   }
   .grid-content .labelText {
-    width: 100px;
+    flex: 1;
     margin-right: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -437,7 +467,7 @@
     text-align: right;
   }
   .grid-content .inputPart {
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: row;
   }

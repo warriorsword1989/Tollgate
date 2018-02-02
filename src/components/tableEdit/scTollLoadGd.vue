@@ -105,7 +105,7 @@
                 <div class="grid-list">
                   <div class="labelText">基本费率车道数：</div>
                   <div class="inputPart">
-                    <el-select :disabled="isGuangdong" size="mini" v-model.number="innerDataItem.lane_num" placeholder="请选择">
+                    <el-select :disabled="!isGuangdong" size="mini" v-model.number="innerDataItem.lane_num" placeholder="请选择">
                       <el-option v-for="item in feeOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -116,13 +116,13 @@
                 <div class="grid-list">
                   <div class="labelText">费 率 1：</div>
                   <div class="inputPart">
-                    <el-input :disabled="isGuangdong" v-model="innerDataItem.rate_base1" size="mini"></el-input>
+                    <el-input :disabled="!isGuangdong" v-model="innerDataItem.rate_base1" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div class="labelText">费率1车道数：</div>
                   <div class="inputPart">
-                    <el-select :disabled="isGuangdong" size="mini" v-model.number="innerDataItem.lane_num1" placeholder="请选择">
+                    <el-select :disabled="!isGuangdong" size="mini" v-model.number="innerDataItem.lane_num1" placeholder="请选择">
                       <el-option v-for="item in feeOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -400,6 +400,7 @@
 <style scoped>
   fieldset {
     padding: 0;
+    width:100%;
     border: 1px dashed #636ef5;
   }
 
@@ -427,7 +428,7 @@
   }
 
   .grid-content .labelText {
-    width: 120px;
+    flex: 1;
     margin-right: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -436,7 +437,7 @@
   }
 
   .grid-content .inputPart {
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: row;
   }
@@ -446,5 +447,8 @@
     display: block;
     width: 100%;
   }
-
+.inputPart .el-form-item {
+    width: 100%;
+    margin-bottom: 0
+  }
 </style>

@@ -13,7 +13,7 @@
       <div class="grid-content">
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">桥梁或隧道名称：</div>
+            <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
             <div class="inputPart">
               <el-form-item prop="name_bt">
                 <el-input :disabled="true" v-model="dataModels.name_bt" size="mini"></el-input>
@@ -21,7 +21,7 @@
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">桥梁或隧道名称组号：</div>
+            <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
             <div class="inputPart">
               <el-form-item prop="name_bt_id">
                 <el-input :disabled="true" v-model="dataModels.name_bt_id" size="mini"></el-input>
@@ -32,7 +32,7 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">收费类型：</div>
+            <div title="收费类型：" class="labelText">收费类型：</div>
             <div class="inputPart">
               <el-form-item prop="rate_class">
                 <el-select size="mini" v-model.number="dataModels.rate_class" placeholder="请选择">
@@ -43,7 +43,7 @@
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">实际收费的长度倍数：</div>
+            <div title="实际收费的长度倍数：" class="labelText">实际收费的长度倍数：</div>
             <div class="inputPart">
               <el-form-item prop="rato">
                 <el-input type="number" :disabled="dataModels.rate_class!=4" v-model="dataModels.rato" size="mini"></el-input>
@@ -53,7 +53,7 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">加费：</div>
+            <div title="加费：" class="labelText">加费：</div>
             <div class="inputPart">
               <el-form-item prop="rate_add">
                 <el-input type="number" v-model.number="dataModels.rate_add" size="mini"></el-input>
@@ -61,7 +61,7 @@
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">客车车型编号：</div>
+            <div title="客车车型编号：" class="labelText">客车车型编号：</div>
             <div class="inputPart">
               <el-form-item prop="car_class">
                 <el-input type="number" :disabled="dataModels.rate_class!=2" v-model="dataModels.car_class" size="mini"></el-input>
@@ -71,7 +71,7 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">货车车型编号：</div>
+            <div title="货车车型编号：" class="labelText">货车车型编号：</div>
             <div class="inputPart">
               <el-form-item prop="truck_class">
                 <el-input type="number" :disabled="dataModels.rate_class!=2" v-model="dataModels.truck_class" size="mini"></el-input>
@@ -79,7 +79,7 @@
             </div>
           </div>
           <div class="grid-list">
-            <div class="labelText">区间闭合标识：</div>
+            <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
             <div class="inputPart">
               <el-form-item prop="tunnage_flag">
                 <el-select :disabled="dataModels.rate_class!=2" size="mini" v-model.number="dataModels.tunnage_flag" placeholder="请选择">
@@ -92,7 +92,7 @@
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
-            <div class="labelText">计重吨数区间：</div>
+            <div title="计重吨数区间：" class="labelText">计重吨数区间：</div>
             <div class="inputPart">
               <el-form-item style="flex:5" prop="tunnage_min">
                 <el-input type="number" :disabled="dataModels.rate_class!=2" v-model.number="dataModels.tunnage_min" size="mini"></el-input>
@@ -130,22 +130,22 @@
         if (value && value <= _self.dataModels.tunnage_min) {
           callback(new Error('吨数区间最小值必须小于最大值'));
         }
-        if (value && value <0 || value>1000 || value.toString().split('.').length > 1) {
+        if (value && (value <0 || value>1000 || value.toString().split('.').length > 1)) {
           callback(new Error('吨数区间最小值必须是0-1000内的整数'));
         }
         callback();
       };
       let checkTunage_min = (rule, value, callback) => {
-        if (value && value >= _self.dataModels.tunnage_max || value.toString().split('.').length > 1) {
+        if (value && (value >= _self.dataModels.tunnage_max || value.toString().split('.').length > 1)) {
           callback(new Error('吨数区间最小值必须小于最大值'));
         }
-        if (value && value < 0 || value > 1000 || value.toString().split('.').length > 1) {
+        if (value && (value < 0 || value > 1000 || value.toString().split('.').length > 1)) {
           callback(new Error('吨数区间最大值必须是0-1000内的整数'));
         }
         callback();
       };
       let check_addFee = (rule, value, callback) => {
-        if (value && value < 0 || value > 10) {
+        if (value && (value < 0 || value > 10)) {
           callback(new Error('加费字段值域错误,必须为0-10的数字'));
         }
         callback();
@@ -155,9 +155,9 @@
         serachShow: false,
         dataModels: {
           car_class:null,
-          group_id: 0,
+          group_id: 1,
           name_bt:'',
-          name_bt_id:null,
+          name_bt_id:1,
           rate_add:0,
           rate_class:1,
           rato:null,
@@ -169,9 +169,9 @@
         },
         originModel: {
           car_class:null,
-          group_id: 0,
+          group_id: 1,
           name_bt:'',
-          name_bt_id:0,
+          name_bt_id:1,
           rate_add:0,
           rate_class:1,
           rato:null,
@@ -340,7 +340,7 @@
     flex-direction: row;
   }
   .grid-content .labelText {
-    width:100px;
+    flex: 1;
     margin-right: 5px;
     white-space:nowrap;
     text-overflow:ellipsis; 
@@ -348,7 +348,7 @@
     text-align: right;
   }
   .grid-content .inputPart {
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: row;
   }
