@@ -8,7 +8,7 @@
   class="photoEdit">
     <el-form :inline="true" :model="dataModel" label-position="right" size="mini" label-width="80px" class="demo-form-inline">
       <el-form-item label="Tips反馈:">
-        <el-select v-model="dataModel.tipsLifecycle">
+        <el-select v-model.number="dataModel.is_adopted">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
@@ -34,18 +34,18 @@
       return {
         loading: true,
         dataModel: {
-          tipsLifecycle: '1',
+          is_adopted: 1,
           memo: '描述信息',
           rowkey: ''
         },
         options: [{
-          value: '1',
+          value: 1,
           label: '未处理'
         }, {
-          value: '2',
+          value: 2,
           label: '已处理'
         }, {
-          value: '3',
+          value: 3,
           label: '无法处理'
         }]
       }
@@ -65,7 +65,6 @@
         })
         .finally(() => {
           this.loading = false;
-          console.log('finally')
         })
         .catch(err => {
           console.log(err);
@@ -81,7 +80,7 @@
           let { errorCode, data } = result;
           if (errorCode == 0) {
               _self.dataModel = {
-                tipsLifecycle: data[0].tips_lifecycle,
+                is_adopted: data[0].is_adopted,
                 rowkey: data[0].rowkey,
                 memo: data[0].memo || ''
               }
@@ -89,7 +88,6 @@
         })
         .finally(() => {
           this.loading = false;
-          console.log('finally');
         }).catch(err => {
           console.log(err);
         });

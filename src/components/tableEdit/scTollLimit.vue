@@ -78,13 +78,30 @@
       let _self = this;
       let check_axle_num_limit = (rule, value, callback) => {
         if (value < 2 || value > 10) {
-          callback(new Error('轴数不能小于2或大于10'));
+          this.$confirm('轴数小于2或大于10, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            return callback();
+          }).catch(() => {
+            return callback(new Error('轴数不能小于2或大于10'));         
+          });
         }
-        callback();
+        return callback();
       };
+
       let check_ton_limit = (rule, value, callback) => {
         if (value < 0 || value > 100) {
-          callback(new Error('吨数不能小于0或大于100'));
+          this.$confirm('吨数小于0或大于100, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            return callback();
+          }).catch(() => {
+            return callback(new Error('吨数不能小于0或大于100'));         
+          });
         }
         callback();
       };
@@ -104,12 +121,12 @@
           axle_num_limit: [
             { required: true, message: '轴数不能为空!', trigger: 'blur' },
             { type: 'number', message: '轴数必须为数字'},
-            { validator: check_axle_num_limit, trigger: 'blur'}
+            { validator: check_axle_num_limit, trigger: 'change'}
           ],
           ton_limit: [
             { required: true, message: '吨数不能为空!', trigger: 'blur' },
             { type: 'number', message: '吨数必须为数字'},
-            { validator: check_ton_limit, trigger: 'blur'}
+            { validator: check_ton_limit, trigger: 'change'}
           ]
         } 
       }
@@ -222,8 +239,8 @@
 <style scoped>
   fieldset {
     padding: 0;
+    width:100%;
   }
-
   fieldset legend {
     color: #151616;
     font-size: 14px;

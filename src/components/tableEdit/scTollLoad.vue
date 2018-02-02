@@ -3,13 +3,13 @@
     <div class="grid-content">
       <div v-show="!dataModels[1] || !Object.keys(dataModels[1]).length" class="grid-wraper">
         <div class="grid-list">
-          <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
+          <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
           <div class="inputPart">
             <el-input :disabled="true" v-model="originModel.name_bt_id" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
-          <div style="width:120px" class="labelText">桥梁或隧道名称：</div>
+          <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
           <div class="inputPart">
             <el-input :disabled="true" v-model="originModel.name_bt" size="mini"></el-input>
           </div>
@@ -23,13 +23,13 @@
         <el-form v-for="(innerDataItem,innerKey, innerIndex) in dataItem" :rules="loadRules" :key="innerKey" :model="dataItem[innerKey]" ref="dataItem" style="display: flex;flex-direction: column;" class="grid-list">
           <div v-show="outerIndex==0 && innerIndex==0" class="grid-wraper">
             <div class="grid-list">
-              <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
+              <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
               <div class="inputPart">
                 <el-input :disabled="true" v-model="dataItem[innerKey].name_bt_id" size="mini"></el-input>
               </div>
             </div>
             <div class="grid-list">
-              <div style="width:120px" class="labelText">桥梁或隧道名称：</div>
+              <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
               <div class="inputPart">
                 <el-input :disabled="true" v-model="dataItem[innerKey].name_bt" size="mini"></el-input>
               </div>
@@ -49,7 +49,7 @@
               </div>
             </div>
             <div class="grid-list">
-              <div style="width:120px" class="labelText" title="正常装载级别吨数范围(车货总重)">正常装载级别吨数范围(车货总重)：</div>
+              <div class="labelText" title="正常装载级别吨数范围(车货总重)">正常装载级别吨数范围(车货总重)：</div>
               <div class="inputPart">
                  > 
                 <el-form-item prop="tunnage_min">
@@ -70,7 +70,7 @@
               <legend style="font-size:12px">{{innerKey}} 区间</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">区间闭合标识：</div>
+                  <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
                   <div class="inputPart">
                     <el-select size="mini" v-model.number="innerDataItem.interval_flag" placeholder="请选择">
                       <el-option v-for="item in seatFlagClass" :key="item.value" :label="item.label" :value="item.value">
@@ -79,7 +79,7 @@
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">正常装载区间吨数范围：</div>
+                  <div title="正常装载区间吨数范围：" class="labelText">正常装载区间吨数范围：</div>
                   <div class="inputPart">
                     <div class="inputPart">
                       <el-input v-model="innerDataItem.interval_min" size="mini"></el-input> -
@@ -90,7 +90,7 @@
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">基本费率：</div>
+                  <div title="基本费率：" class="labelText">基本费率：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_base">
                       <el-input v-model="innerDataItem.rate_base" size="mini"></el-input>
@@ -98,7 +98,7 @@
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">费率上限(广东为倍数)：</div>
+                  <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
                     <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
                   </div>
@@ -106,15 +106,15 @@
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">费率下限(广东为倍数)：</div>
+                  <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
                     <el-input v-model="innerDataItem.rate_max" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">基本费率车道数：</div>
+                  <div title="基本费率车道数：" class="labelText">基本费率车道数：</div>
                   <div class="inputPart">
-                    <el-select :disabled="isGuangdong" size="mini" v-model.number="innerDataItem.lane_num" placeholder="请选择">
+                    <el-select :disabled="!isGuangdong" size="mini" v-model.number="innerDataItem.lane_num" placeholder="请选择">
                       <el-option v-for="item in feeOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -123,15 +123,15 @@
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">费 率 1：</div>
+                  <div title="费 率 1：" class="labelText">费 率 1：</div>
                   <div class="inputPart">
-                    <el-input :disabled="isGuangdong" v-model="innerDataItem.rate_base1" size="mini"></el-input>
+                    <el-input :disabled="!isGuangdong" v-model="innerDataItem.rate_base1" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">费率1车道数：</div>
+                  <div title="费率1车道数：" class="labelText">费率1车道数：</div>
                   <div class="inputPart">
-                    <el-select :disabled="isGuangdong" size="mini" v-model.number="innerDataItem.lane_num1" placeholder="请选择">
+                    <el-select :disabled="!isGuangdong" size="mini" v-model.number="innerDataItem.lane_num1" placeholder="请选择">
                       <el-option v-for="item in feeOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -140,7 +140,7 @@
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">最低计重(吨)：</div>
+                  <div title="最低计重(吨)：" class="labelText">最低计重(吨)：</div>
                   <div class="inputPart">
                     <el-form-item prop="weight_min">
                       <el-input v-model="innerDataItem.weight_min" size="mini"></el-input>
@@ -148,7 +148,7 @@
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">最低收费(元)：</div>
+                  <div title="最低收费(元)：" class="labelText">最低收费(元)：</div>
                   <div class="inputPart">
                     <el-form-item prop="charge_min">
                       <el-input v-model="innerDataItem.charge_min" size="mini"></el-input>
@@ -482,6 +482,7 @@
 <style scoped>
   fieldset {
     padding: 0;
+    width:100%;
   }
 
   fieldset legend {
@@ -508,7 +509,7 @@
   }
 
   .grid-content .labelText {
-    width: 120px;
+    flex: 1;
     margin-right: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -517,7 +518,7 @@
   }
 
   .grid-content .inputPart {
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: row;
   }
@@ -526,6 +527,10 @@
   .el-select--mini {
     display: block;
     width: 100%;
+  }
+  .inputPart .el-form-item {
+    width: 100%;
+    margin-bottom: 0
   }
 
 </style>

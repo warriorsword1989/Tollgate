@@ -3,13 +3,13 @@
     <div class="grid-content">
       <div class="grid-wraper">
         <div class="grid-list">
-          <div style="width:140px" class="labelText">桥梁或隧道名称组号：</div>
+          <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
           <div class="inputPart">
             <el-input :disabled="true" v-model="dataModels[1] && dataModels[1].name_bt_id||originModel.name_bt_id" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
-          <div style="width:120px" class="labelText">桥梁或隧道名称：</div>
+          <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
           <div class="inputPart">
             <el-input :disabled="true" v-model="dataModels[1] && dataModels[1].name_bt||originModel.name_bt" size="mini"></el-input>
           </div>
@@ -26,7 +26,7 @@
               <legend>{{dataItem.truck_class}} 型车</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">区间闭合标识：</div>
+                  <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
                   <div class="inputPart">
                     <el-select size="mini" v-model.number="dataItem.tunnage_flag" placeholder="请选择">
                       <el-option v-for="item in tunnageFlagClass" :key="item.value" :label="item.label" :value="item.value">
@@ -35,24 +35,29 @@
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">各车型吨数区间：</div>
+                  <div title="各车型吨数区间：" class="labelText">各车型吨数区间：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-form-item prop="tunnage_min">
-                        <el-input v-model="dataItem.tunnage_min" :disabled="index == 0" size="mini"></el-input>
+                      <el-form-item v-show="['1','5'].indexOf(keys) != -1" prop="tunnage_min">
+                        <el-input v-model="dataItem.tunnage_min" :disabled="keys == 1" size="mini"></el-input>
+                      </el-form-item>
+                      <el-form-item prop="tunnage_min" v-show="['2','3','4'].indexOf(keys) != -1" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
+                        <el-input v-model="dataItem.tunnage_min" :disabled="keys == 1" size="mini"></el-input>
                       </el-form-item>
                        -
-                      <el-form-item prop="tunnage_max" v-show="index != 4">
+                      <el-form-item prop="tunnage_max" v-show="['1','2','3'].indexOf(keys) != -1" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
                         <el-input v-model="dataItem.tunnage_max" size="mini"></el-input>
                       </el-form-item>
-                      <el-input v-model="dataItem.tunnage_max" v-show="index == 4" :disabled="index == 4" size="mini"></el-input>
+                      <el-form-item prop="tunnage_max" v-show="['4','5'].indexOf(keys) != -1">
+                        <el-input v-model="dataItem.tunnage_max" :disabled="keys == 4" size="mini"></el-input>
+                      </el-form-item>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">费率（元/公里）非桥隧道：</div>
+                  <div title="费率（元/公里）非桥隧道：" class="labelText">费率（元/公里）非桥隧道：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate">
                       <el-input v-model="dataItem.rate" size="mini"></el-input>
@@ -60,9 +65,9 @@
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">费率车道数：</div>
+                  <div title="费率车道数：" class="labelText">费率车道数：</div>
                   <div class="inputPart">
-                    <el-select :disabled="isGuangdong" size="mini" v-model.number="dataItem.lane_num" placeholder="请选择">
+                    <el-select :disabled="!isGuangdong" size="mini" v-model.number="dataItem.lane_num" placeholder="请选择">
                       <el-option v-for="item in laneNumOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
@@ -71,7 +76,7 @@
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">集装箱尺寸数：</div>
+                  <div title="集装箱尺寸数：" class="labelText">集装箱尺寸数：</div>
                   <div class="inputPart">
                     <el-form-item prop="container">
                       <el-input v-model="dataItem.container" size="mini"></el-input>
@@ -79,7 +84,7 @@
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">轴数：</div>
+                  <div title="轴数：" class="labelText">轴数：</div>
                   <div class="inputPart">
                     <el-select size="mini" v-model.number="dataItem.axle_num" placeholder="请选择">
                       <el-option v-for="item in axleOptions" :key="item.value" :label="item.label" :value="item.value">
@@ -90,13 +95,13 @@
               </div>
               <div class="grid-wraper">
                <div class="grid-list">
-                  <div class="labelText">轮数：</div>
+                  <div title="轮数：" class="labelText">轮数：</div>
                   <div class="inputPart">
                     <el-input v-model="dataItem.wheel_num" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">型号：</div>
+                  <div title="型号：" class="labelText">型号：</div>
                   <div class="inputPart">
                     <el-input v-model="dataItem.model" size="mini"></el-input>
                   </div>
@@ -105,7 +110,7 @@
               </div>
               <div class="grid-wraper">
                  <div class="grid-list">
-                  <div class="labelText">桥隧道费率（元/车次）：</div>
+                  <div title="桥隧道费率（元/车次）：" class="labelText">桥隧道费率（元/车次）：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_bt">
                       <el-input v-model="dataItem.rate_bt" size="mini"></el-input>
@@ -113,18 +118,18 @@
                   </div>
                 </div>
                 <div class="grid-list" v-show="isZheJiang">
-                  <div class="labelText">车次加费（元）：</div>
+                  <div title="车次加费（元）：" class="labelText">车次加费（元）：</div>
                   <div class="inputPart">
                     <el-form-item prop="fee_add">
                       <el-input v-model="dataItem.fee_add" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
-                
+                <div class="grid-list" v-show="!isZheJiang"></div>
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">最低收费（元）：</div>
+                  <div title="最低收费（元）：" class="labelText">最低收费（元）：</div>
                   <div class="inputPart">
                     <el-form-item prop="charge_min">
                       <el-input v-model="dataItem.charge_min" size="mini"></el-input>
@@ -132,26 +137,26 @@
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">费率1(元/公里)：</div>
+                  <div title="费率1(元/公里)：" class="labelText">费率1(元/公里)：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate1">
-                      <el-input :disabled="isGuangdong" v-model="dataItem.rate1" size="mini"></el-input>
+                      <el-input :disabled="!isGuangdong" v-model="dataItem.rate1" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div class="labelText">费率1车道数：</div>
+                  <div title="费率1车道数：" class="labelText">费率1车道数：</div>
                   <div class="inputPart">
-                    <el-select :disabled="isGuangdong" size="mini" v-model.number="dataItem.lane_num1" placeholder="请选择">
+                    <el-select :disabled="!isGuangdong" size="mini" v-model.number="dataItem.lane_num1" placeholder="请选择">
                       <el-option v-for="item in laneNumOptions" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="grid-list">
-                  <div class="labelText">固定收费站对应次费：</div>
+                  <div title="固定收费站对应次费：" class="labelText">固定收费站对应次费：</div>
                   <div class="inputPart">
                     <el-form-item prop="fix_fee">
                       <el-input v-model="dataItem.fix_fee" size="mini"></el-input>
@@ -186,7 +191,7 @@
     data() {
       let validateContainer = (rule, value, callback) => {
         let self = this;
-        if (value != 20 || value != 40) {
+        if (value != 20 && value != 40) {
           this.$confirm('集装箱尺寸数不等于20或40, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -392,6 +397,12 @@
       }
     },
     methods: {
+      validateSeat0_55(rule, value, callback){
+        if (value >55 || value < 0) {
+          callback(new Error('座位数必须在0-55之间')); 
+        }
+        callback();
+      },
       toggleSearchPanel(flag){
         this.serachShow = flag;
       },
@@ -408,38 +419,21 @@
         let existsKeys = Object.keys(this.dataModels);
         let allKeys = ['1', '2', '3', '4', '5'];
         let leftKeys = _.difference(allKeys, existsKeys);
-        let validFlag = true;
-        if (this.$refs.dataItem) {
-          for (let i = 0; i < this.$refs.dataItem.length; i++) {
-            this.$refs.dataItem[i].validate((valid) => {
-              if (!valid) {
-                validFlag = false;
-              }
-            })
-          }
-        }
-        if (validFlag && leftKeys.length) {
-          let newObj = Object.assign({insertFlag: true}, _self.originModel);
-          if (leftKeys[0] === '1') {
-            newObj.tunnage_min = 0;
-          } else {
-            newObj.tunnage_min = this.dataModels[leftKeys[0] - 1].tunnage_max;
-            // 最后类型的最大值为1000
-            if (leftKeys[0] === allKeys[allKeys.length - 1]) {
-              newObj.tunnage_max = 1000;
-            } else {
-              // 控制最大值比最小值大1
-              newObj.tunnage_max = newObj.tunnage_min + 1;
-            }
-          }
-          newObj.truck_class = leftKeys[0];
-          _self.$set(_self.dataModels, leftKeys[0], newObj);
+        let newObj = Object.assign({insertFlag: true}, _self.originModel);
+        if (leftKeys[0] === '1') {
+          newObj.tunnage_min = 0;
         } else {
-          this.$message({
-            type: 'info',
-            message: `输入不合法，请检查输入`
-          });
+          newObj.tunnage_min = this.dataModels[leftKeys[0] - 1].tunnage_max;
+          // 最后类型的最大值为1000
+          if (leftKeys[0] == 4) {
+            newObj.tunnage_max = 1000;
+          } else {
+            // 控制最大值比最小值大1
+            newObj.tunnage_max = newObj.tunnage_min + 1;
+          }
         }
+        newObj.truck_class = leftKeys[0];
+        _self.$set(_self.dataModels, leftKeys[0], newObj);
       },
       removeLimitItem(index) {
         this.$delete(this.dataModels, index);
@@ -551,6 +545,7 @@
     margin: 0 15px;
   }
   fieldset {
+    width:100%;
     padding: 0;
     border: 1px dashed #636ef5;
   }
@@ -563,7 +558,7 @@
   .grid-wraper {
     display: flex;
     flex-direction: row;
-    margin: 10px 0;
+    margin: 15px 0;
   }
 
   .grid-content {
@@ -578,7 +573,7 @@
   }
 
   .grid-content .labelText {
-    width: 100px;
+    flex:1;
     margin-right: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -587,7 +582,7 @@
   }
 
   .grid-content .inputPart {
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: row;
   }
@@ -596,6 +591,10 @@
   .el-select--mini {
     display: block;
     width: 100%;
+  }
+  .inputPart .el-form-item {
+    width: 100%;
+    margin-bottom: 0
   }
 
 </style>

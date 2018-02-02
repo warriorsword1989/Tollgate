@@ -57,10 +57,10 @@ class Tips {
   async updateTollGateTip() {
     const param = this.req.body;
     const rowkey = param.rowkey;
-    const lifeCycle = param.tipsLifecycle;
+    const is_adopted = param.is_adopted;
     const memo = param.memo;
     let sql = "UPDATE " + this.table + " SET"+
-    " TIPS_LIFECYCLE='" + lifeCycle +
+    " IS_ADOPTED='" + is_adopted +
     "', MEMO='"+ memo +
     "' WHERE ROWKEY='" + rowkey+ "'";
     const result = await this.db.executeSql(sql);
