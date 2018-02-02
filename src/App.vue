@@ -33,6 +33,9 @@ export default {
 .dragWindow .el-table__body-wrapper{
   overflow:hidden;
 }
+.dragWindow .el-form-item {
+  margin-bottom: 0;
+}
 .dragWindow .el-form-item__content {
   line-height: 0;
 }

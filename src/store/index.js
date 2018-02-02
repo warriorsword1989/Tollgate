@@ -3,23 +3,15 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 // 这里定义初始值
 let state = {
-  handleFlag: 'edit',
+  handleFlag: 'update',
   selectedData: [],
   editSelectedData: [],
-  workStatus: 'static',
   btData: {name: '',name_groupid:0},
-  adminCode:null,
 };
 
 const mutations = {
-  chnageAdminCode(context, value) {
-    context.adminCode = value;
-  },
   changeBtData(context, value) {
     context.btData = value;
-  },
-  changeWorkStatus(context, value){
-    context.workStatus = value;
   },
   changeHandleFlag(context, value) {
     context.handleFlag = value;

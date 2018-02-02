@@ -16,6 +16,12 @@ export const appConfig = {
 };
 
 export const appUtil = {
+  setGolbalData: function (data) {
+    sessionStorage.setItem(`${appConfig.appName}-globalData`, JSON.stringify(data));
+  },
+  getGolbalData: function () {
+    return JSON.parse(sessionStorage.getItem(`${appConfig.appName}-globalData`));
+  },
   setTollgateToken: function (token) {
     sessionStorage.setItem(`${appConfig.appName}-token`, token);
   },

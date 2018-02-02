@@ -119,6 +119,7 @@
 <script>
   import searchName from './searchName';
   import {updateTollGate, getTollGate} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollRdlinkBt',
     components: {searchName},
@@ -126,25 +127,25 @@
     data() {
       let _self = this;
       let checkTunage_max = (rule, value, callback) => {
-        if (value <= _self.dataModels.tunnage_min) {
+        if (value && value <= _self.dataModels.tunnage_min) {
           callback(new Error('吨数区间最小值必须小于最大值'));
         }
-        if (value <0 || value>1000 || value.toString().split('.').length > 1) {
+        if (value && value <0 || value>1000 || value.toString().split('.').length > 1) {
           callback(new Error('吨数区间最小值必须是0-1000内的整数'));
         }
         callback();
       };
       let checkTunage_min = (rule, value, callback) => {
-        if (value >= _self.dataModels.tunnage_max || value.toString().split('.').length > 1) {
+        if (value && value >= _self.dataModels.tunnage_max || value.toString().split('.').length > 1) {
           callback(new Error('吨数区间最小值必须小于最大值'));
         }
-        if (value < 0 || value > 1000 || value.toString().split('.').length > 1) {
+        if (value && value < 0 || value > 1000 || value.toString().split('.').length > 1) {
           callback(new Error('吨数区间最大值必须是0-1000内的整数'));
         }
         callback();
       };
       let check_addFee = (rule, value, callback) => {
-        if (value < 0 || value > 10) {
+        if (value && value < 0 || value > 10) {
           callback(new Error('加费字段值域错误,必须为0-10的数字'));
         }
         callback();
@@ -156,6 +157,20 @@
           car_class:null,
           group_id: 0,
           name_bt:'',
+          name_bt_id:null,
+          rate_add:0,
+          rate_class:1,
+          rato:null,
+          source:1,
+          truck_class:null,
+          tunnage_flag:null,
+          tunnage_max:null,
+          tunnage_min:null,
+        },
+        originModel: {
+          car_class:null,
+          group_id: 0,
+          name_bt:'',
           name_bt_id:0,
           rate_add:0,
           rate_class:1,
@@ -164,7 +179,7 @@
           truck_class:null,
           tunnage_flag:null,
           tunnage_max:null,
-          tunnage_min:1,
+          tunnage_min:null,
         },
         mountFlag: false,
         options: [{
@@ -232,15 +247,22 @@
       toggleSearchPanel(flag){
         this.serachShow = flag;
       },
+
       setBtName() {
         this.dataModels.name_bt_id = this.$store.state.btData.name_groupid;
         this.dataModels.name_bt = this.$store.state.btData.name;
-        let param = {table: 'SC_TOLL_RDLINK_BT', pid: this.dataModels.name_bt_id, workFlag: this.$store.state.workStatus};
+        let param = {table: 'SC_TOLL_RDLINK_BT', pid: this.dataModels.name_bt_id, workFlag: appUtil.getGolbalData().workType};
         this.loading = true;
         getTollGate(param)
         .then(result => {
           let {errorCode, data} = result;
-          this.dataModels = data[0];
+          if (data.length) {
+            this.dataModels = Object.assign({},data[0]);
+          } else {
+            this.dataModels = Object.assign({},this.originModel);
+            this.dataModels.name_bt_id = this.$store.state.btData.name_groupid;
+            this.dataModels.name_bt = this.$store.state.btData.name;
+          }
         })
         .finally(() => {
           this.loading = false;
@@ -264,7 +286,8 @@
           let params = {
             table: 'SC_TOLL_RDLINK_BT',
             data: [this.dataModels],
-            workFlag: this.$store.state.workStatus
+            workFlag: appUtil.getGolbalData().workType,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           updateTollGate(params)
           .then(result => {
@@ -288,7 +311,6 @@
           })
           .finally(() => {
             this.loading = false;
-            console.log('finally');
           })
           .catch(err => {
             console.log(err);

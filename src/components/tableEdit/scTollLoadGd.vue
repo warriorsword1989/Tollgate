@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <div class="grid-content">
-      <div v-show="!Object.keys(dataModels).length" class="grid-wraper">
+      <div v-show="!dataModels[1] || !Object.keys(dataModels[1]).length" class="grid-wraper">
         <div class="grid-list">
           <div style="width:120px;" class="labelText">桥梁或隧道名称组号：</div>
           <div class="inputPart">
@@ -165,16 +165,17 @@
     getTollGate
   } from '../../dataService/api';
   import searchName from './searchName';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollCar',
     props: ['tableName', 'selectedData'],
     components: {searchName},
     data() {
       return {
-        loading: true,
+        loading: false,
         isGuangdong: false,
         serachShow: false,
-        dataModels: [],
+        dataModels: {},
         originModel: {
           group_id: this.$store.state.editSelectedData[0],
           loading_class: 1,
@@ -271,7 +272,7 @@
         }
       },
       minusOuter(index) {
-        this.$delete(this.dataModels, index);
+        Object.keys(this.dataModels).length > 1 && this.$delete(this.dataModels, index);
       },
       addInner(index) {
         let _self = this;
@@ -289,7 +290,10 @@
         }
       },
       minusInner(outerIndex, innerIndex) {
-        this.$delete(this.dataModels[outerIndex], innerIndex);
+        (Object.keys(this.dataModels).length > 1 || Object.keys(this.dataModels[outerIndex]).length>1) && this.$delete(this.dataModels[outerIndex], innerIndex);
+        if (!Object.keys(this.dataModels[outerIndex]).length) {
+          this.$delete(this.dataModels, outerIndex);
+        }
       },
       onSubmit(formName) {
         let validateFlag = true;
@@ -321,7 +325,8 @@
           let params = {
             table: 'SC_TOLL_LOAD_GD',
             data: submitData,
-            workFlag: this.$store.state.workStatus
+            workFlag: appUtil.getGolbalData().workType,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           updateTollGate(params)
             .then(result => {
@@ -356,14 +361,15 @@
     },
     mounted() {
       let _self = this;
-      this.isGuangdong = this.$store.state.adminCode == '440000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: 'SC_TOLL_LOAD_GD',
           pid: this.$store.state.editSelectedData[0],
-          workFlag: this.$store.state.workStatus
+          workFlag: appUtil.getGolbalData().workType
         };
+        this.loading = true;
         getTollGate(param)
           .then(result => {
             let {errorCode,data} = result;

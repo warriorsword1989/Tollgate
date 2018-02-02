@@ -42,12 +42,11 @@
           <div class="grid-list">
             <div class="labelText">免费车型：</div>
             <div class="inputPart">
-            <el-form-item prop="free_type">
-              <el-select size="mini" v-model="free_type_computed" multiple placeholder="请选择">
-                <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
+              <el-form-item prop="free_type">
+                <el-select size="mini" v-model="free_type_computed" multiple placeholder="请选择">
+                  <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
             </div>
           </div>
         </div>
@@ -161,6 +160,7 @@
 
 <script>
   import {updateTollGate, getTollGate} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollGrou',
     props: ['tableName', 'selectedData'],
@@ -191,7 +191,7 @@
         callback();
       }
       return {
-        loading: true,
+        loading: false,
         mountFlag: false,
         dataModels: {
           axle_num_limit:null,
@@ -211,7 +211,7 @@
           pre_truck_loadmin:null,
           round:null,
           source:1,
-          system_id:1,
+          system_id:appUtil.getGolbalData().adminCode,
           ton_limit:null
         },
         geenPathOptions: [{
@@ -344,7 +344,8 @@
           let params = {
             table: 'SC_TOLL_GROUP',
             data: submitData,
-            workFlag: this.$store.state.workStatus
+            workFlag: appUtil.getGolbalData().workType,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           updateTollGate(params)
           .then(result => {
@@ -392,7 +393,8 @@
     mounted(){
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
-        let param = {table: 'SC_TOLL_GROUP', pid: this.$store.state.editSelectedData[0],workFlag: this.$store.state.workStatus};
+        let param = {table: 'SC_TOLL_GROUP', pid: this.$store.state.editSelectedData[0],workFlag: appUtil.getGolbalData().workType};
+        this.loading = true;
         getTollGate(param)
         .then(result => {
           let {errorCode, data} = result;

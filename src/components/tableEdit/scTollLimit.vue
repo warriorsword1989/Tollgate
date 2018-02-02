@@ -70,6 +70,7 @@
 <script>
   import {updateTollGate, getTollGate} from '../../dataService/api';
   import {cityList, getCityNameByCode} from '../../config/CityList';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollCar',
     props: ['tableName', 'selectedData'],
@@ -89,10 +90,10 @@
       };
       return {
         loading: true,
-        dataModels: [],
+        dataModels: {},
         originModel: {
-          system_id: this.$store.state.adminCode,
-          admin_name: getCityNameByCode(this.$store.state.adminCode),
+          system_id: appUtil.getGolbalData().adminCode,
+          admin_name: getCityNameByCode(appUtil.getGolbalData().adminCode),
           axle_num_limit: 2,
           model_limit: 0,
           ton_limit: 1,
@@ -152,18 +153,17 @@
         if (validateFlag) {
           this.loading = true;
           let submitData = [];
-          this.$store.state.editSelectedData.forEach(outer => {
-            this.dataModels.forEach(item => {
-              let cloneData = Object.assign({},item);
-              delete cloneData.insertFlag;
-              delete item.insertFlag;
-              submitData.push(cloneData);
-            });
+          this.dataModels.forEach(item => {
+            let cloneData = Object.assign({},item);
+            delete cloneData.insertFlag;
+            delete item.insertFlag;
+            submitData.push(cloneData);
           });
           let params = {
             table: 'SC_TOLL_LIMIT',
             data: submitData,
-            workFlag: this.$store.state.workStatus
+            workFlag: appUtil.getGolbalData().workType,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           updateTollGate(params)
           .then(result => {
@@ -200,8 +200,8 @@
       this.mountFlag = true;
       let param = {
         table: 'SC_TOLL_LIMIT',
-        pid: this.$store.state.adminCode,
-        workFlag: this.$store.state.workStatus
+        pid: appUtil.getGolbalData().adminCode,
+        workFlag: appUtil.getGolbalData().workType
       };
       getTollGate(param)
         .then(result => {

@@ -39,6 +39,7 @@
 
 <script>
   import { updateTollGate, getTollGate} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollGateFee',
     props: ['tableName', 'selectedData'],
@@ -51,7 +52,7 @@
         callback();
       }
       return {
-        loading: true,
+        loading: false,
         dataModels: {
           local_plate: '',
           out_fee: 0,
@@ -113,7 +114,8 @@
             let params = {
               table: 'SC_TOLL_TOLLGATEFEE',
               data: submitData,
-              workFlag: this.$store.state.workStatus
+              workFlag: appUtil.getGolbalData().workType,
+              adminCode: appUtil.getGolbalData().adminCode
             };
             this.loading = true;
             updateTollGate(params)
@@ -156,8 +158,10 @@
         let param = {
           table: 'SC_TOLL_TOLLGATEFEE',
           pid: this.$store.state.editSelectedData[0],
-          workFlag: this.$store.state.workStatus
+          workFlag: appUtil.getGolbalData().workType,
+          adminCode: appUtil.getGolbalData().adminCode
         };
+        this.loading = true;
         getTollGate(param)
           .then(result => {
             let {errorCode,data} = result;
@@ -180,7 +184,7 @@
   .grid-content {
     display: flex;
     flex-direction: row;
-    margin: 0 10px;
+    margin: 15px 10px;
   }
   .grid-content .labelText {
     width: 110px;

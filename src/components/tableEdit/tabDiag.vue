@@ -9,12 +9,12 @@
   :z="10"
   :parent="true"
   :drag-handle="'.drag'"
-  :resizable="false"
-  :handles="['br']"
+  :resizable="true"
+  :handles="['mr']"
   :append-to-body="true">
   <!-- title-->
   <div style="display:flex;flex-direction:row;" class="windowTitle">
-    <div style="flex:1"><i class="el-icon-edit-outline drag"> 收费站信息编辑</i></div>
+    <div style="flex:1"><i class="el-icon-edit-outline drag"> 收费站信息编辑 {{this.workFlag=='static'? '[静态作业]': '[动态作业]'}}</i></div>
     <div style="width=50px"><i @click="closeDialog" class="el-icon-close"></i></div>
   </div>
   <!-- table-->
@@ -87,6 +87,7 @@
   import scTollSpecialPay from './scTollSpecialPay';
   import scTollTruck from './scTollTruck';
   import {getTollGate} from '../../dataService/api';
+  import { appUtil } from '../../Application';
   export default {
     name: 'tabDiag',
     props: ['dialogTableVisible', 'handleFlag'],
@@ -148,12 +149,18 @@
       }
     },
     mounted() {
-      this.workFlag = this.$store.state.workStatus
+      this.workFlag = appUtil.getGolbalData().workType
       this.tableData = this.$store.state.selectedData;
       let self = this;
       setTimeout(function () {
         self.toggleSelection(self.tableData);
       })
+    },
+    beforeMount() {
+      let viewWidth = document.documentElement.clientWidth;
+      let viewHeight = document.documentElement.clientHeight;
+      this.leftDis = (viewWidth - 920) /2;
+      this.topDis = (viewHeight - 525) /2;
     }
   }
 </script>

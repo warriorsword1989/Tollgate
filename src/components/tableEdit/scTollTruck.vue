@@ -178,6 +178,7 @@
 <script>
   import searchName from './searchName';
   import {updateTollGate,getTollGate} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'scTollCar',
     components: {searchName},
@@ -298,9 +299,9 @@
       return {
         isGuangdong: false,
         isZheJiang: false,
-        loading: true,
+        loading: false,
         serachShow: false,
-        dataModels: [],
+        dataModels: {},
         originModel: {
           group_id: this.$store.state.editSelectedData[0],
           truck_class: 1,
@@ -408,12 +409,14 @@
         let allKeys = ['1', '2', '3', '4', '5'];
         let leftKeys = _.difference(allKeys, existsKeys);
         let validFlag = true;
-        for (let i = 0; i < this.$refs.dataItem.length; i++) {
-          this.$refs.dataItem[i].validate((valid) => {
-            if (!valid) {
-              validFlag = false;
-            }
-          })
+        if (this.$refs.dataItem) {
+          for (let i = 0; i < this.$refs.dataItem.length; i++) {
+            this.$refs.dataItem[i].validate((valid) => {
+              if (!valid) {
+                validFlag = false;
+              }
+            })
+          }
         }
         if (validFlag && leftKeys.length) {
           let newObj = Object.assign({insertFlag: true}, _self.originModel);
@@ -470,7 +473,8 @@
           let params = {
             table: 'SC_TOLL_TRUCK',
             data: submitData,
-            workFlag: this.$store.state.workStatus
+            workFlag: appUtil.getGolbalData().workType,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           this.loading = true;
           updateTollGate(params)
@@ -506,15 +510,16 @@
     },
     mounted() {
       let _self = this;
-      this.isGuangdong = this.$store.state.adminCode == '440000';
-      this.isZheJiang = this.$store.state.adminCode == '330000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
+      this.isZheJiang = appUtil.getGolbalData().adminCode == '330000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: 'SC_TOLL_TRUCK',
           pid: this.$store.state.editSelectedData[0],
-          workFlag: this.$store.state.workStatus
+          workFlag: appUtil.getGolbalData().workType
         };
+        this.loading = true;
         getTollGate(param)
           .then(result => {
             let {
@@ -526,7 +531,6 @@
               transfromData[item] = transfromData[item][0]
             });
             _self.dataModels = transfromData;
-            console.log(transfromData);
           })
           .finally(() => {
             _self.loading = false;
@@ -543,11 +547,13 @@
 </script>
 
 <style scoped>
+  .content {
+    margin: 0 15px;
+  }
   fieldset {
     padding: 0;
     border: 1px dashed #636ef5;
   }
-
   fieldset legend {
     color: #151616;
     font-size: 14px;
