@@ -454,7 +454,6 @@
       this.isZheJiang = appUtil.getGolbalData().adminCode == '330000';
       this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
       this.mountFlag = true;
-      console.log(appUtil.getGolbalData().workType)
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: 'SC_TOLL_CAR',

@@ -42,12 +42,11 @@
           <div class="grid-list">
             <div class="labelText">免费车型：</div>
             <div class="inputPart">
-            <el-form-item prop="free_type">
-              <el-select size="mini" v-model="free_type_computed" multiple placeholder="请选择">
-                <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
+              <el-form-item prop="free_type">
+                <el-select size="mini" v-model="free_type_computed" multiple placeholder="请选择">
+                  <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
             </div>
           </div>
         </div>
@@ -212,7 +211,7 @@
           pre_truck_loadmin:null,
           round:null,
           source:1,
-          system_id:1,
+          system_id:appUtil.getGolbalData().adminCode,
           ton_limit:null
         },
         geenPathOptions: [{

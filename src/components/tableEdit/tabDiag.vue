@@ -9,8 +9,8 @@
   :z="10"
   :parent="true"
   :drag-handle="'.drag'"
-  :resizable="false"
-  :handles="['br']"
+  :resizable="true"
+  :handles="['mr']"
   :append-to-body="true">
   <!-- title-->
   <div style="display:flex;flex-direction:row;" class="windowTitle">
@@ -155,6 +155,12 @@
       setTimeout(function () {
         self.toggleSelection(self.tableData);
       })
+    },
+    beforeMount() {
+      let viewWidth = document.documentElement.clientWidth;
+      let viewHeight = document.documentElement.clientHeight;
+      this.leftDis = (viewWidth - 920) /2;
+      this.topDis = (viewHeight - 525) /2;
     }
   }
 </script>

@@ -114,7 +114,8 @@
             let params = {
               table: 'SC_TOLL_TOLLGATEFEE',
               data: submitData,
-              workFlag: appUtil.getGolbalData().workType
+              workFlag: appUtil.getGolbalData().workType,
+              adminCode: appUtil.getGolbalData().adminCode
             };
             this.loading = true;
             updateTollGate(params)

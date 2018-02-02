@@ -272,7 +272,7 @@
         }
       },
       minusOuter(index) {
-        this.$delete(this.dataModels, index);
+        Object.keys(this.dataModels).length > 1 && this.$delete(this.dataModels, index);
       },
       addInner(index) {
         let _self = this;
@@ -290,7 +290,7 @@
         }
       },
       minusInner(outerIndex, innerIndex) {
-        this.$delete(this.dataModels[outerIndex], innerIndex);
+        (Object.keys(this.dataModels).length > 1 || Object.keys(this.dataModels[outerIndex]).length>1) && this.$delete(this.dataModels[outerIndex], innerIndex);
         if (!Object.keys(this.dataModels[outerIndex]).length) {
           this.$delete(this.dataModels, outerIndex);
         }

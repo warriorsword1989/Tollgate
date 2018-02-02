@@ -127,25 +127,25 @@
     data() {
       let _self = this;
       let checkTunage_max = (rule, value, callback) => {
-        if (value <= _self.dataModels.tunnage_min) {
+        if (value && value <= _self.dataModels.tunnage_min) {
           callback(new Error('吨数区间最小值必须小于最大值'));
         }
-        if (value <0 || value>1000 || value.toString().split('.').length > 1) {
+        if (value && value <0 || value>1000 || value.toString().split('.').length > 1) {
           callback(new Error('吨数区间最小值必须是0-1000内的整数'));
         }
         callback();
       };
       let checkTunage_min = (rule, value, callback) => {
-        if (value >= _self.dataModels.tunnage_max || value.toString().split('.').length > 1) {
+        if (value && value >= _self.dataModels.tunnage_max || value.toString().split('.').length > 1) {
           callback(new Error('吨数区间最小值必须小于最大值'));
         }
-        if (value < 0 || value > 1000 || value.toString().split('.').length > 1) {
+        if (value && value < 0 || value > 1000 || value.toString().split('.').length > 1) {
           callback(new Error('吨数区间最大值必须是0-1000内的整数'));
         }
         callback();
       };
       let check_addFee = (rule, value, callback) => {
-        if (value < 0 || value > 10) {
+        if (value && value < 0 || value > 10) {
           callback(new Error('加费字段值域错误,必须为0-10的数字'));
         }
         callback();
@@ -165,7 +165,7 @@
           truck_class:null,
           tunnage_flag:null,
           tunnage_max:null,
-          tunnage_min:1,
+          tunnage_min:null,
         },
         originModel: {
           car_class:null,
@@ -311,7 +311,6 @@
           })
           .finally(() => {
             this.loading = false;
-            console.log('finally');
           })
           .catch(err => {
             console.log(err);

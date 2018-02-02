@@ -1,6 +1,6 @@
 <template>
-  <vue-draggable-resizable class="dragWindow" style="background:#fff;box-shadow:0 4px 20px #5c78a7;position:fixed;height:auto" :w="400" :h="300" :x="700"
-    :y="300" :z="100001" :parent="false" :drag-handle="'.drag'" :resizable="false" :handles="['br']" :append-to-body="true">
+  <vue-draggable-resizable class="dragWindow" style="background:#fff;box-shadow:0 4px 20px #5c78a7;position:fixed;height:auto" :w="400" :h="300" :x="leftDis"
+    :y="topDis" :z="100001" :parent="false" :drag-handle="'.drag'" :resizable="false" :handles="['br']" :append-to-body="true">
     <div style="display:flex;flex-direction:row;" class="windowTitle">
       <div style="flex:1">
         <i class="el-icon-edit-outline drag"> 桥梁/隧道名称查询</i>
@@ -27,11 +27,14 @@
 
 <script>
   import {getBriageName} from '../../dataService/api';
+  import {appUtil} from '../../Application';
   export default {
     name: 'searchName',
     props: [],
     data() {
       return {
+        leftDis:200,
+        topDis: 300,
         searchValue: '',
         tableData: [],
         loading: false,
@@ -68,6 +71,12 @@
       closeSearch() {
         this.$emit('toggleSearch', false)
       }
+    },
+    beforeMount() {
+      let viewWidth = document.documentElement.clientWidth;
+      let viewHeight = document.documentElement.clientHeight;
+      this.leftDis = (viewWidth - 400) /2;
+      this.topDis = (viewHeight - 300) /2;
     }
   }
 

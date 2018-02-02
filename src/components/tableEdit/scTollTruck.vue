@@ -531,7 +531,6 @@
               transfromData[item] = transfromData[item][0]
             });
             _self.dataModels = transfromData;
-            console.log(transfromData);
           })
           .finally(() => {
             _self.loading = false;
