@@ -55,7 +55,7 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
-          limit: 10000,
+          limit: 10000000,
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
         }
       },
@@ -79,18 +79,11 @@ module.exports = {
         test: /\.less$/,
         loader: "style-loader!css-loader!less-loader",
       }
-    ]
+    ],
+    unknownContextCritical: false,
+    unknownContextRegExp: /^.\/.*$/
   },
-  node: {
-    // prevent webpack from injecting useless setImmediate polyfill because Vue
-    // source contains it (although only uses it if it's native).
-    setImmediate: false,
-    // prevent webpack from injecting mocks to Node native modules
-    // that does not make sense for the client
-    dgram: 'empty',
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty'
-  }
+  externals: {
+    fs: true,
+  },
 }

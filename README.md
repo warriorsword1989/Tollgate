@@ -32,7 +32,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 ``` bash
 1、首先监测本机的gcc是不是4.7及以上版本 如果不是按照以下的方式升级
 1)下载gcc 4.8.5的压缩包
-下载地址：http://ftp.gnu.org/gnu/gcc/gcc-4.8.5/gcc-4.8.5.tar.bz2
+下载地址：wef http://ftp.gnu.org/gnu/gcc/gcc-4.8.5/gcc-4.8.5.tar.bz2
 2)找个目录存放，并解压 
 #tar -jxvf gcc-4.8.5.tar.bz2
 3)进入目录，执行命令
@@ -50,7 +50,6 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 7)执行安装
 # make install
 8)完成后，测试
-# reboot//请先重启，切记！
 2 、安装nodejs
 1）上传服务器可以是自己任意路径，目前我的放置路径为  cd /app/software/
 2）解压上传（解压后的文件我这边将名字改为了nodejs，这个地方自己随意，只要在建立软连接的时候写正确就可以）
