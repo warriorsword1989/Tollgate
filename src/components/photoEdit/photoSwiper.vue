@@ -6,19 +6,10 @@
   element-loading-background="rgba(243, 239, 239, 0.5);"
   class="tipsInfos">
     <!-- 照片显示 -->
-    <div class="photoSwiper">
-      <swiper :options="swiperOptionTop" @slideChange="slideChanged" class="gallery-top" ref="swiperTop">
-        <swiper-slide v-for="(item, index) in imageList" :key="index">
-          <img :src="getOriginUrl(item.rowkey)" />
-        </swiper-slide>
-        <div class="swiper-button-next swiper-button-white" slot="button-next"></div>
-        <div class="swiper-button-prev swiper-button-white" slot="button-prev"></div>
-      </swiper>
-      <swiper :options="swiperOptionThumbs" class="gallery-thumbs" ref="swiperThumbs">
-        <swiper-slide v-for="(item, index) in imageList" :key="index">
-          <img style="padding:1px;border:1px solid #eee" :src="getThumbnailUrl(item.rowkey)" />
-        </swiper-slide>
-      </swiper>
+    <div class="photo-viewer-container">
+      <viewer :images="originImages" class="photo-viewer" :options="viewerOptions">
+        <img v-for="src in originImages" :src="src" :key="src" style="display: none;">
+      </viewer>
     </div>
     <!-- 照片详情 -->
     <el-form style="padding-top:10px" :inline="true" :v-model="photoInfo" label-position="right" size="mini" label-width="80px" class="demo-form-inline">
@@ -44,24 +35,14 @@
     data() {
       return {
         loading: true,
-        swiperOptionTop: {
-          spaceBetween: 10,
-          loop: true,
-          loopedSlides: 4,
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev'
-          }
-        },
-        swiperOptionThumbs: {
-          spaceBetween: 10,
-          slidesPerView: 4,
-          touchRatio: 0.2,
-          loop: true,
-          loopedSlides: 4,
-          slideToClickedSlide: true
+        viewerOptions: {
+          inline: true,
+          url: 'img-src',
+          zoomRatio: 0.5,
+          minHeight: 200
         },
         imageList: [],
+        originImages: [],
         renderToken: '',
         photoInfo: {
           uploadDate: '',
@@ -80,10 +61,6 @@
         var url = window.serviceConfig.tempFsUrl+'/fcc/photo/getSnapshotByRowkey';
         return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
             '",type:"origin"}';
-      },
-      slideChanged() {
-        const activeIndex = this.$refs.swiperTop.swiper.activeIndex || 0;
-        this.photoInfo = this.imageList[activeIndex];
       }
     },
     mounted() {
@@ -94,18 +71,13 @@
       getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: this.renderToken})
       .then((results) => {
         _self.imageList = results.data.data ? results.data.data : [];
-        _self.swiperOptionThumbs.loopedSlides = _self.swiperOptionTop.loopedSlides = _self.imageList.length;
+        _self.originImages = [];
+        _self.imageList.forEach ((data) => {
+          _self.originImages.push(_self.getOriginUrl(data.rowkey));
+        });
       })
       .finally(() => {
         this.loading = false;
-        this.$nextTick(() => {
-          const swiperTop = this.$refs.swiperTop.swiper;
-          const swiperThumbs = this.$refs.swiperThumbs.swiper;
-          swiperTop.controller.control = swiperThumbs;
-          swiperThumbs.controller.control = swiperTop;
-          const activeIndex = swiperTop.activeIndex || 0;
-          this.photoInfo = this.imageList[activeIndex];
-        })
       })
       .catch(err => {
         console.log(err);
@@ -160,6 +132,19 @@
     position: absolute;
     left: 50%;
     top: 50%;
+  }
+
+  .photo-viewer-container {
+    height: 80%;
+    .photo-viewer {
+      height: 100%;
+      overflow: auto;
+      img {
+        height: 50%;
+        width: 50%;
+        position: relative;
+      }
+    }
   }
 
 </style>
