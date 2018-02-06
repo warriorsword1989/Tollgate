@@ -1,5 +1,15 @@
-import oracle from './oracle';
+import User from './user'
+import Info from './info'
+import Tips from './Tips'
+import Render from './render'
+import Search from './search'
+import Token from './tokenVerify';
 
 export default app => {
-    app.use('/oracle',oracle);
+  app.use ('/tollgate', Token);
+  app.use ('/tollgate/user', User);
+  app.use ('/tollgate/info', Info);
+  app.use ('/tollgate/tips', Tips);
+  app.use ('/tollgate/render', Render);
+  app.use ('/tollgate/search', Search);
 }
