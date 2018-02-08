@@ -40,9 +40,9 @@ export default {
   line-height: 0;
 }
 .dragWindow .el-form--inline .el-form-item__content {
-  display: block;
+  
 }
-/****************复写tab样式********************/  
+/****************display: block复写tab样式********************/  
 .dragWindow .el-tabs__content {
   height: 350px;
   overflow-y: scroll;

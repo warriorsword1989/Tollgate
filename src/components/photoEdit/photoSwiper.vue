@@ -20,21 +20,26 @@
         </swiper-slide>
       </swiper>
     </div>
-    <!-- 照片详情 -->
-    <el-form style="padding-top:10px" :inline="true" :v-model="photoInfo" label-position="right" size="mini" label-width="80px" class="demo-form-inline">
-      <el-form-item class="inlineBlock" label="上传时间">
-        <el-input :disabled="true" v-model="photoInfo.uploadDate" placeholder="上传时间"></el-input>
-      </el-form-item>
-      <el-form-item class="inlineBlock" label="来源ID">
-        <el-input :disabled="true" v-model="photoInfo.rowkey" placeholder="来源ID"></el-input>
-      </el-form-item>
-      <el-form-item class="inlineBlock" label="照片内容">
-        <el-input :disabled="true" v-model="photoInfo.uploadDate" placeholder="照片内容"></el-input>
-      </el-form-item>
-      <el-form-item class="inlineBlock" label="版本号">
-        <el-input :disabled="true" v-model="photoInfo.version" placeholder="版本号"></el-input>
-      </el-form-item>
-    </el-form>
+    <!-- 显示信息区域 -->
+    <div class="tipsData">
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>上传时间：</label><span>{{photoInfo.uploadDate}}</span>
+        </div>
+        <div class="row-list">
+          <label>来源ID：</label><span>{{photoInfo.uploadDate}}</span>
+        </div>
+      </div>
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>照片内容：</label><span>{{photoInfo.uploadDate}}</span>
+        </div>
+        <div class="row-list">
+          <label>版本号：</label><span>{{photoInfo.version}}</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 <script>
@@ -160,6 +165,33 @@
     position: absolute;
     left: 50%;
     top: 50%;
+  }
+
+  .tipsData {
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .tipsData .row-wraper{
+    height: 30px;
+    line-height: 30px;
+    display: flex;
+    flex-direction: row;
+  }
+  .tipsData .row-wraper .row-list {
+    flex:1
+  }
+  .tipsData .row-wraper .row-list label{
+    font-size: 12px;
+    font-weight: bold;
+    color: #606266;
+    padding: 0 12px 0 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .tipsData .row-wraper .row-list span {
+    font-size: 12px;
+    color: #606266;
   }
 
 </style>

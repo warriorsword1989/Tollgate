@@ -1,26 +1,31 @@
 <template>
   <div
   v-loading="loading"
-  style="overflow:auto"
   element-loading-text="拼命加载中"
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(243, 239, 239, 0.5);"
-  class="photoEdit">
-    <el-form :inline="true" :model="dataModel" label-position="right" size="mini" label-width="80px" class="demo-form-inline">
-      <el-form-item label="Tips反馈:">
-        <el-select v-model.number="dataModel.is_adopted">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-        </el-select>
-      </el-form-item>
-      <el-form-item class="inlineBlock" label="备注">
-        <el-input resize="none" type="textarea" :rows=2 class="remark" v-model="dataModel.memo"></el-input>
-      </el-form-item>
-      <el-form-item class="inlineBlock send">
-        <el-button type="primary" @click.prevent="onSumbit">提 交</el-button>
-      </el-form-item>
-    </el-form>
+  class="tipsEdit">
+    <div  class="row-wraper">
+      <div class="row-list">
+        <label>Tips反馈：</label>
+        <div>
+          <el-select style="width:100%" size="mini" v-model.number="dataModel.is_adopted">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </div>
+      </div>
+    </div>
+    <div  class="row-wraper">
+      <div class="row-list">
+          <label>备注信息：</label>
+          <div>
+            <el-input size="mini" resize="none" type="textarea" v-model="dataModel.memo"></el-input>
+          </div>
+        </div>
+    </div>
+    <div class="row-wraper">
+      <el-button size="mini" type="primary" @click.prevent="onSumbit">提 交</el-button>
+    </div>
   </div>
 </template>
 
@@ -56,7 +61,6 @@
         updateTollGateTip(this.dataModel)
         .then(result => {
           let {errorCode} = result;
-          const h = this.$createElement;
           if (errorCode === 0) {
             return this.$message({message: '数据更新成功！', type: 'success'});
           } else {
@@ -96,19 +100,27 @@
 </script>
 
 <style scoped>
-  .photoEdit .el-form .el-textarea textarea {
-    display: block;
+  .tipsEdit .row-wraper{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
   }
-  .photoEdit .el-form .inputLenght {
-    width: 180px;
+  .tipsEdit .row-wraper .row-list {
+    flex:1;
+    display: flex;
+    flex-direction: row;
   }
-  .photoEdit .el-form--inline .inlineBlock {
-    display: block;
+  .tipsEdit .row-wraper .row-list > div {
+    flex: 1;
   }
-  .photoEdit .el-form--inline .el-form-item .remark {
-    width: 400px;
-  }
-  .photoEdit .el-form--inline .el-form-item.send {
-    float: right;
+  .tipsEdit .row-wraper .row-list label{
+    display:block;
+    width: 100px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #606266;
+    padding: 0 12px 0 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
   }
 </style>
