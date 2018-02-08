@@ -33,12 +33,19 @@ class Tips {
     if (isAdopted.length > 0) {
       sql = sql + " AND IS_ADOPTED IN (" + isAdopted.toString() + ")";
     }
-    const result = await this.db.executeSql(sql);
-    const resultData = changeResult(result);
-    this.res.send({
-      errorCode: 0,
-      data: resultData
-    });
+    try {
+      const result = await this.db.executeSql(sql);
+      const resultData = changeResult(result);
+      this.res.send({
+        errorCode: 0,
+        data: resultData
+      });
+    } catch(error) {
+      this.res.send({
+        errorCode: -1,
+        data: error
+      });
+    }
   }
 
   async getTollGateTip() {

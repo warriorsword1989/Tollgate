@@ -22,11 +22,11 @@ class ConnectRenderObj {
             .execute(sql, params, {fetchInfo: {'GEOMETRY': {type: oracledb.STRING}}})
             .then(results => {
               resolve(results);
-              this.releaseConnections(connection);
+              this.releaseConnections(results.outBinds.UserDetailsCursor, connection);
             })
             .catch(err => {
               reject(err);
-              this.releaseConnections(connection)
+              this.releaseConnections(null, connection)
             })
         })
         .catch(err => {
@@ -45,11 +45,11 @@ class ConnectRenderObj {
               .execute(sql)
               .then(results => {
                 resolve(results);
-                this.releaseConnections(connection);
+                this.releaseConnections(results.outBinds.UserDetailsCursor, connection);
               })
               .catch(err => {
                 reject(err);
-                this.releaseConnections(connection)
+                this.releaseConnections(null, connection)
               })
           })
           .catch(err => {

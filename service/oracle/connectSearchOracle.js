@@ -13,6 +13,7 @@ class ConnectSearchOracle {
   }
 
   executeSql (sql){
+    console.log(sql);
     oracledb.autoCommit = true;
     return new Promise((resolve, reject) => {
       oracledb
@@ -22,11 +23,11 @@ class ConnectSearchOracle {
             .execute(sql)
             .then(results => {
               resolve(results);
-              this.releaseConnections(connection);
+              this.releaseConnections(results.outBinds.UserDetailsCursor, connection);
             })
             .catch(err => {
               reject(err);
-              this.releaseConnections(connection)
+              this.releaseConnections(null, connection)
             })
         })
         .catch(err => {

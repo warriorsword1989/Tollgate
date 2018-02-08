@@ -3,7 +3,10 @@ import bodyParser from 'body-parser';
 // import history from 'connect-history-api-fallback';
 import router from './routes';
 
-
+process.on('unhandledRejection', (reason, p) => {
+  console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
+  // application specific logging, throwing an error, or other logic here
+});
 const cluster = require('cluster');
 const cpuNums = require('os').cpus().length;
 

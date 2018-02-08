@@ -55,12 +55,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-<<<<<<< HEAD
-    assetsPublicPath: './',
-=======
     assetsPublicPath: '',
->>>>>>> tollgate/master
-
     /**
      * Source Maps
      */
