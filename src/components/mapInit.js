@@ -81,6 +81,14 @@ class MapInit {
     this.singletons.push(fastmap.mapApi.symbol.GeometryTransform.getInstance());
     this.singletons.push(fastmap.mapApi.symbol.ResourceFactory.getInstance());
     this.singletons.push(fastmap.mapApi.symbol.Transformation.getInstance());
+    this.singletons.push(fastmap.uikit.Util.getInstance());
+    this.singletons.push(fastmap.uikit.check.CheckController.getInstance());
+    this.singletons.push(fastmap.uikit.complexEdit.ComplexEditor.getInstance());
+    this.singletons.push(fastmap.uikit.relationEdit.RelationEditor.getInstance());
+    this.singletons.push(fastmap.uikit.shapeEdit.ShapeEditor.getInstance());
+    this.singletons.push(fastmap.uikit.topoEdit.TopoEditFactory.getInstance());
+    this.singletons.push(fastmap.uikit.editControl.EditControlFactory.getInstance());
+    this.singletons.push(fastmap.uikit.operation.OperationController.getInstance());
     this.singletons.push(fastmap.uikit.ToolController.getInstance());
     this.singletons.push(FM.mapApi.render.HighlightController.getInstance());
     this.singletons.push(FM.mapApi.render.IDHighlightController.getInstance());

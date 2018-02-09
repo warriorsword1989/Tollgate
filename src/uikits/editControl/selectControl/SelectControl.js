@@ -4,6 +4,7 @@
 
 fastmap.uikit.editControl.SelectControl = fastmap.uikit.editControl.EditControl.extend({
     initialize: function (map, geoLiveType, options) {
+        this.appUtil = require('../../../Application');
         fastmap.uikit.editControl.EditControl.prototype.initialize.apply(this, map);
 
         // 绑定函数作用域
@@ -45,7 +46,17 @@ fastmap.uikit.editControl.SelectControl = fastmap.uikit.editControl.EditControl.
     },
 
     onSelectFinish: function (features, event) {
-        this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: features, event: event, flag:'update' });
+        if (features.length > 0) {
+            if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
+                if (features[0].properties.static === 0 || features[0].properties.static === 1) {
+                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: features, event: event, flag:'update' });
+                }
+            } else {
+                if (features[0].properties.dynamic === 0 || features[0].properties.dynamic === 1) {
+                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: features, event: event, flag:'update' });
+                }
+            }
+        }
         // 支持连续选择
         this.run();
     }
