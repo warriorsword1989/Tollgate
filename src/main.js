@@ -9,7 +9,6 @@ import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import Viewer from 'v-viewer'
 import VueDraggableResizable from 'vue-draggable-resizable'
-import Viewer from 'v-viewer'
 import router from './router'
 
 import App from './App'
