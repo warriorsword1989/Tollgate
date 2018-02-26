@@ -127,7 +127,9 @@
         zoom: 15
       };
       appUtil.setSessionStorage('mapLocation', param);
-      mapInit.initialize();
+      setTimeout(() => {
+        mapInit.initialize();
+      });
     },
     destroyed: function () {
       mapInit.destorySingletons();
