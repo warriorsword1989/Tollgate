@@ -30,7 +30,7 @@ export default new Router({
       name: 'Login'
     },
     {
-      path: '/mainMap/:rowkey/:photoId',
+      path: '/mainMap',
       component: mainMap,
       name: 'mainMap'
     },

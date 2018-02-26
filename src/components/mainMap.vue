@@ -1,21 +1,10 @@
 <template>
   <div class="mainMap">
-    <transition name="el-fade-in-liner">
-      <div class="sideBar" v-show="!leftFloatArrow">
-        <div class="header">
-          <h3 class="title">
-            <i class="el-icon-picture"></i> 照片详情</h3>
-        </div>
-        <!-- 照片显示 -->
-        <div class="photoView">
-          <photo-swiper :image-list="dataModel.imageList"></photo-swiper>
-        </div>
-        <!-- 数据编辑 -->
-        <div class="dataView">
-          <photo-edit></photo-edit>
-        </div>
-      </div>
-    </transition>
+    <!-- 左侧照片面板 -->
+    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'">
+      <photo-swiper slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
+      <photo-edit slot="dataView"></photo-edit>
+    </side-bar>
     <!-- 地图 -->
     <div id="editorMap" class="map">
       <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag ? '390px': '90px'}"></edit-tool>
@@ -28,12 +17,6 @@
     </div>
     <search-tool class="searchToolbar" v-bind:style="{right: rightPanelFlag ? '540px': '240px'}">
     </search-tool>
-    <!-- 显示隐藏按钮 -->
-    <el-button :class="{ 'enter-active': leftFloatArrow,  'enter-start': !leftFloatArrow, 'left-toggle': true }" :round.boolean=false
-      @click="toggleLeftPanel" type="primary">
-      <i v-if="!leftFloatArrow" class="el-icon-arrow-left"></i>
-      <i v-if="leftFloatArrow" class="el-icon-arrow-right"></i>
-    </el-button>
     <table-edit v-if="showDialog" :handle-flag="editFlag" @dialogClose="closeDialog"></table-edit>
   </div>
 </template>
@@ -41,11 +24,12 @@
 
 <script>
   import mapInit from './mapInit';
+  import sideBar from './layout/sideBar';
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
   import tableEdit from './tableEdit/tabDiag';
   import { appUtil } from '../Application';
-  import {tempLogin, getTipsPhoto} from '../dataService/api';
+  import {getTipsPhoto} from '../dataService/api';
   import EditTool from './EditTool';
   import UserTool from './UserTool';
   import SceneTool from './SceneTool';
@@ -60,7 +44,8 @@
       EditTool,
       photoEdit,
       photoSwiper,
-      tableEdit
+      tableEdit,
+      sideBar
     },
     data() {
       return {
@@ -101,20 +86,6 @@
     },
     mounted() {
       let _self = this;
-      tempLogin({parameter:{"userNickName":"fanjingwei01672","userPassword":"016720"}})
-      .then(result => {
-        let {data, errcode} = result.data;
-        if (errcode === 0) {
-          let fmToken = data.access_token;
-          appUtil.setRenderToken(fmToken);
-        }
-      })
-      .finally(() => {
-        console.log('login finally')
-      })
-      .catch(err => {
-        console.log(err)
-      });
       this.eventController.off('ObjectSelected');
       this.eventController.on('ObjectSelected',function(data) {
         if (data.features.length) {
@@ -177,72 +148,6 @@
     height: 100%;
     background: #fff;
   }
-
-  .sideBar {
-    background: #fff;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 600px;
-    display: flex;
-    z-index: 1;
-    flex-direction: column;
-    border-right: 1px solid #ccc;
-    box-shadow: 0 4px 20px #5c78a7;
-  }
-
-  .sideBar .header {
-    height: 40px;
-    background-color: #636ef5;
-    justify-content: space-between;
-  }
-
-  .sideBar .header .rectButton {
-    border-radius: 4px;
-  }
-
-  .sideBar .header h3 {
-    color: #fff;
-    margin: 0;
-    padding: 0 10px;
-    line-height: 40px;
-    letter-spacing: 1px;
-  }
-
-  .left-toggle {
-    border-radius: 0;
-  }
-
-  .enter-start {
-    position: absolute;
-    top: 0px;
-    left: 544px;
-    z-index: 2;
-  }
-
-  .enter-active {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 2;
-    transition: all .4s liner;
-  }
-
-  .sideBar .photoView {
-    flex: 8;
-    display: flex;
-    flex-direction: column
-  }
-
-  .sideBar .dataView {
-    height: 150px;
-    padding-top: 10px;
-    border-top: 1px solid #8b8d9c;
-    text-align: justify;
-  }
-
   .toolsToolbar {
     position: absolute;
     top: 10px;

@@ -5,45 +5,86 @@
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(243, 239, 239, 0.5);"
   class="tipsInfos">
-    <!-- 照片显示 -->
-    <div class="photo-viewer-container">
-      <viewer :images="originImages" class="photo-viewer" :options="viewerOptions">
-        <img v-for="src in originImages" :src="src" :key="src" style="display: none;">
-      </viewer>
+    <!-- 图片浏览 -->
+    <div class="photoSwiper">
+      <div class="gallery-top"></div>
+      <swiper v-viewer="options" :options="swiperOptionThumbs" class="gallery-thumbs" ref="swiperThumbs">
+        <swiper-slide v-for="(item, index) in imageList" :key="index">
+          <img @click="clickPhoto(index)" :src="item.imageUrl" />
+        </swiper-slide>
+        <div @click="nextPhoto()" class="swiper-button-next swiper-button-white" slot="button-next"></div>
+        <div @click="prePhoto()" class="swiper-button-prev swiper-button-white" slot="button-prev"></div>
+      </swiper>
     </div>
-    <!-- 照片详情 -->
-    <el-form style="padding-top:10px" :inline="true" :v-model="photoInfo" label-position="right" size="mini" label-width="80px" class="demo-form-inline">
-      <el-form-item class="inlineBlock" label="上传时间">
-        <el-input :disabled="true" v-model="photoInfo.uploadDate" placeholder="上传时间"></el-input>
-      </el-form-item>
-      <el-form-item class="inlineBlock" label="来源ID">
-        <el-input :disabled="true" v-model="photoInfo.rowkey" placeholder="来源ID"></el-input>
-      </el-form-item>
-      <el-form-item class="inlineBlock" label="照片内容">
-        <el-input :disabled="true" v-model="photoInfo.uploadDate" placeholder="照片内容"></el-input>
-      </el-form-item>
-      <el-form-item class="inlineBlock" label="版本号">
-        <el-input :disabled="true" v-model="photoInfo.version" placeholder="版本号"></el-input>
-      </el-form-item>
-    </el-form>
+    <!-- 图片信息显示 -->
+    <div class="tipsData">
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>上传时间：</label><span>{{currentActivePhoto.properties.a_uploadDate}}</span>
+        </div>
+        <div class="row-list">
+          <label>来源ID：</label><span>{{currentActivePhoto.properties.a_sourceId}}</span>
+        </div>
+      </div>
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>照片内容：</label><span>{{currentActivePhoto.properties.a_content}}</span>
+        </div>
+        <div class="row-list">
+          <label>版本号：</label><span>{{currentActivePhoto.properties.a_version}}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
+  import fastXmlParser from 'fast-xml-parser';
   import { getTipsPhoto } from '../../dataService/api';
-  import { appUtil } from '../../Application';
+  import { appUtil, appConfig } from '../../Application';
   export default {
     data() {
       return {
         loading: true,
-        viewerOptions: {
-          inline: true,
-          url: 'img-src',
-          zoomRatio: 0.5,
-          minHeight: 200
-        },
         imageList: [],
-        originImages: [],
-        renderToken: '',
+        options: {
+          inline: true,
+          title: false,
+          button: false,
+          navbar: false,
+          toolbar: {
+            zoomIn: 4,
+            zoomOut: 4,
+            oneToOne: 4,
+            reset: 4,
+            prev: false,
+            play: {
+              show: false
+            },
+            next: false,
+            rotateLeft: 4,
+            rotateRight: 4,
+            flipHorizontal: 4,
+            flipVertical: 4,
+          }
+        },
+        swiperOptionThumbs: {
+          spaceBetween: 5,
+          slidesPerView: 4,
+          touchRatio: 0.2,
+          loop: false,
+          loopedSlides: 4,
+          slideToClickedSlide: false,
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev'
+          }
+        },
+        currentActivePhoto: {imageUrl: '', properties: {
+          a_uploadDate: '',
+          a_sourceId: '',
+          a_content: '',
+          a_version: ''
+        }},
         photoInfo: {
           uploadDate: '',
           rowkey: '',
@@ -52,40 +93,47 @@
       }
     },
     methods: {
-      getThumbnailUrl(rowkey) {
-        var url = window.serviceConfig.tempFsUrl+'/fcc/photo/getSnapshotByRowkey';
-        return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
-          '",type:"thumbnail"}';
+      nextPhoto() {
+        const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
+        viewer.next();
       },
-      getOriginUrl(rowkey) {
-        var url = window.serviceConfig.tempFsUrl+'/fcc/photo/getSnapshotByRowkey';
-        return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
-            '",type:"origin"}';
+      prePhoto() {
+        const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
+        viewer.prev();
+      },
+      clickPhoto(index) {
+        const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
+        viewer.view(index);
       }
     },
     mounted() {
        // 加载tips照片；
-      let _self = this;
       let photoIds = appUtil.getGolbalData().photo_id.split(';');
-      this.renderToken = appUtil.getRenderToken();
-      getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: this.renderToken})
-      .then((results) => {
-        _self.imageList = results.data.data ? results.data.data : [];
-        _self.originImages = [];
-        _self.imageList.forEach ((data) => {
-          _self.originImages.push(_self.getOriginUrl(data.rowkey));
-        });
-      })
-      .finally(() => {
-        this.loading = false;
-      })
-      .catch(err => {
-        console.log(err);
+      let promises = photoIds.map(item => {
+        return getTipsPhoto({rowKey: item, url: appConfig.hbaseUrl});
       });
-      
+      Promise.all(promises).then(posts => {
+        var i=1;
+        this.imageList = posts.map(item => {
+          let result = fastXmlParser.validate(item);
+          if(!result) throw new Error(result.err);
+          let xmlJson = fastXmlParser.parse(item)
+          let photoObj = {};
+          photoObj.properties = JSON.parse(new Buffer(xmlJson.CellSet.Row.Cell[0], 'base64').toString());
+          photoObj.imageUrl = `data:image/jpeg;base64,${xmlJson.CellSet.Row.Cell[1]}`;
+          return photoObj;
+        });
+        this.imageList.length = 3;
+        this.loading = false;
+        setTimeout(() => {
+          let activeIndex = this.$refs.swiperThumbs.swiper.activeIndex;
+          this.currentActivePhoto = this.imageList[activeIndex];
+        });
+      }).catch(function(err){
+        throw new Error(err);
+      });
     }
   }
-
 </script>
 
 <style lang="less" scoped>
@@ -97,7 +145,9 @@
   .tipsInfos .photoSwiper{
     flex: 1;
   }
- 
+  .viewer-footer {
+    bottom: 20% !important;
+  }
   .swiper-container {
     background-color: #000;
   }
@@ -112,15 +162,7 @@
   .gallery-thumbs {
     height: 20%!important;
     box-sizing: border-box;
-    padding: 10px 0;
-  }
-  .gallery-thumbs .swiper-slide {
-    width: 25%;
-    height: 100%;
-    opacity: 0.4;
-  }
-  .gallery-thumbs .swiper-slide-active {
-    opacity: 1;
+    padding: 5px 0;
   }
    .swiper-slide img {
     width: 100%;
@@ -134,17 +176,31 @@
     top: 50%;
   }
 
-  .photo-viewer-container {
-    height: 80%;
-    .photo-viewer {
-      height: 100%;
-      overflow: auto;
-      img {
-        height: 50%;
-        width: 50%;
-        position: relative;
-      }
-    }
+  .tipsData {
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .tipsData .row-wraper{
+    height: 30px;
+    line-height: 30px;
+    display: flex;
+    flex-direction: row;
+  }
+  .tipsData .row-wraper .row-list {
+    flex:1
+  }
+  .tipsData .row-wraper .row-list label{
+    font-size: 12px;
+    font-weight: bold;
+    color: #606266;
+    padding: 0 12px 0 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .tipsData .row-wraper .row-list span {
+    font-size: 12px;
+    color: #606266;
   }
 
 </style>

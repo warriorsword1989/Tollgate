@@ -12,7 +12,8 @@ export const appConfig = {
   renderName: 'mapRender',
   // serviceUrl: 'http://192.168.15.220:3000' // 正式环境的服务地址
   // serviceUrl: 'http://192.168.4.189:3000' // 开发环境的服务地址
-  serviceUrl: window.serviceConfig.serviceUrl // 开发环境的服务地址
+  serviceUrl: window.serviceConfig.serviceUrl, // 开发环境的服务地址
+  hbaseUrl: window.serviceConfig.habaseUrl // habse环境地址
 };
 
 export const appUtil = {
@@ -25,20 +26,11 @@ export const appUtil = {
   setTollgateToken: function (token) {
     sessionStorage.setItem(`${appConfig.appName}-token`, token);
   },
-  setRenderToken: function (token) {
-    sessionStorage.setItem(`${appConfig.renderName}-token`, token);
-  },
   getTollgateToken: function () {
     return sessionStorage.getItem(`${appConfig.appName}-token`);
   },
-  getRenderToken: function () {
-    return sessionStorage.getItem(`${appConfig.renderName}-token`);
-  },
   removeTollgateToken: function () {
     sessionStorage.removeItem(`${appConfig.appName}-token`);
-  },
-  removeRenderToken: function () {
-    sessionStorage.removeItem(`${appConfig.renderName}-token`);
   },
   setSessionStorage: function (name, param) {
     sessionStorage.setItem(`${appConfig.appName}-${name}`, JSON.stringify(param));
