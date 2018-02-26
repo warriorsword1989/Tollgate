@@ -70,6 +70,12 @@ export default {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.4);  
     background-color: #ccc;  
 }
+/****************复写图片浏览工具样式********************/  
+.viewer-container .viewer-footer{
+  bottom: 20%!important;
+  right: 10px;
+  left: auto;
+}
 .sc-toll-edit {
   .edit-container {
     height: 28px;

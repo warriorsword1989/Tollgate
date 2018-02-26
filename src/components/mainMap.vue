@@ -29,7 +29,7 @@
   import photoSwiper from './photoEdit/photoSwiper';
   import tableEdit from './tableEdit/tabDiag';
   import { appUtil } from '../Application';
-  import {tempLogin, getTipsPhoto} from '../dataService/api';
+  import {getTipsPhoto} from '../dataService/api';
   import EditTool from './EditTool';
   import UserTool from './UserTool';
   import SceneTool from './SceneTool';
@@ -86,20 +86,6 @@
     },
     mounted() {
       let _self = this;
-      tempLogin({parameter:{"userNickName":"fanjingwei01672","userPassword":"016720"}})
-      .then(result => {
-        let {data, errcode} = result.data;
-        if (errcode === 0) {
-          let fmToken = data.access_token;
-          appUtil.setRenderToken(fmToken);
-        }
-      })
-      .finally(() => {
-        console.log('login finally')
-      })
-      .catch(err => {
-        console.log(err)
-      });
       this.eventController.off('ObjectSelected');
       this.eventController.on('ObjectSelected',function(data) {
         if (data.features.length) {

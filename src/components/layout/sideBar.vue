@@ -1,29 +1,31 @@
 <template>
-  <transition name="el-fade-in-liner">
     <div class="sidebar-layout">
-      <!-- 左侧主面板 -->
-      <div class="sidbar-panel" v-show="showPanel">
-        <!-- 左侧主面板头部 -->
-        <div class="header">
-          <h3 class="title"><i :class="sideBarIcon"></i> {{sideBarTitle}}</h3>
+      <transition name="el-fade-in-linear">
+        <!-- 左侧主面板 -->
+        <div class="sidbar-panel transition-box" v-show="showPanel">
+          <!-- 左侧主面板头部 -->
+          <div class="header">
+            <h3 class="title"><i :class="sideBarIcon"></i> {{sideBarTitle}}</h3>
+          </div>
+          <div class="photoView">
+            <slot name="photoView">照片控件的插槽</slot>
+          </div>
+          <div class="dataView">
+            <slot name="dataView">tips编辑表单插槽</slot>
+          </div>
         </div>
-        <div class="photoView">
-          <slot name="photoView">照片控件的插槽</slot>
-        </div>
-        <div class="dataView">
-          <slot name="dataView">tips编辑表单插槽</slot>
-        </div>
-      </div>
+      </transition>
       <!-- 显示隐藏按钮 -->
-      <el-button type="primary"
-        :class="{ 'sidebar-ctrl-btn': true, 'active':showPanel, 'unActive':!showPanel }"
-        :round.boolean="false"
-        @click="toggleSideBar()">
-        <i v-if="showPanel" class="el-icon-arrow-left"></i>
-        <i v-if="!showPanel" class="el-icon-arrow-right"></i>
-      </el-button>
+      <transition name="el-fade-in-linear">
+        <el-button type="primary"
+          :class="{ 'sidebar-ctrl-btn  transition-box': true, 'active':showPanel, 'unActive':!showPanel }"
+          :round.boolean="false"
+          @click="showPanel = !showPanel">
+          <i v-show="showPanel" class="el-icon-arrow-left"></i>
+          <i v-show="!showPanel" class="el-icon-arrow-right"></i>
+        </el-button>
+      </transition>
     </div>
-  </transition>
 </template>
 
 <script>
@@ -32,25 +34,18 @@
     props: {    
       sideBarTitle: { 
         type: String,  
-        default: '照片详情'
+        default: '头标题'
       },
       sideBarIcon: {
         type: String,  
         default: 'el-icon-picture'
       }
     },
-    components: {},
     data() {
       return {
         showPanel: true
       }
-    },
-    methods: {
-      toggleSideBar() {
-        this.showPanel = !this.showPanel
-      }
-    },
-    mounted() {}
+    }
   }
 </script>
 <style scoped>
@@ -58,14 +53,14 @@
      position:absolute;
      z-index:10;
      height:100%;
-     box-shadow: 0 4px 20px #5c78a7;
   }
   .sidbar-panel {
     width: 600px;
     height:100%;
-    background: #fff;
+    background: transparent;
     display: flex;
-    flex-direction: column
+    flex-direction: column;
+    box-shadow: 0 4px 20px #5c78a7;
   }
   .sidbar-panel .header {
     background: #636ef5;
@@ -83,7 +78,7 @@
     border-bottom: 1px dashed #ccc;
   }
   .sidbar-panel .dataView {
-    height: 180px;
+    height: 150px;
     padding: 10px 0;
   }
   .sidebar-layout .el-button.sidebar-ctrl-btn{
@@ -96,6 +91,6 @@
     right: 0;
   }
   .sidebar-layout .el-button.sidebar-ctrl-btn.unActive {
-    right: -58px;
+    left: 0;
   }
 </style>

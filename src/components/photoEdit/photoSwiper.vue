@@ -5,69 +5,86 @@
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(243, 239, 239, 0.5);"
   class="tipsInfos">
-    <!-- 照片显示 -->
+    <!-- 图片浏览 -->
     <div class="photoSwiper">
-      <swiper :options="swiperOptionTop" @slideChange="slideChanged" class="gallery-top" ref="swiperTop">
+      <div class="gallery-top"></div>
+      <swiper v-viewer="options" :options="swiperOptionThumbs" class="gallery-thumbs" ref="swiperThumbs">
         <swiper-slide v-for="(item, index) in imageList" :key="index">
-          <img :src="getOriginUrl(item.rowkey)" />
+          <img @click="clickPhoto(index)" :src="item.imageUrl" />
         </swiper-slide>
-        <div class="swiper-button-next swiper-button-white" slot="button-next"></div>
-        <div class="swiper-button-prev swiper-button-white" slot="button-prev"></div>
-      </swiper>
-      <swiper :options="swiperOptionThumbs" class="gallery-thumbs" ref="swiperThumbs">
-        <swiper-slide v-for="(item, index) in imageList" :key="index">
-          <img style="padding:1px;border:1px solid #eee" :src="getThumbnailUrl(item.rowkey)" />
-        </swiper-slide>
+        <div @click="nextPhoto()" class="swiper-button-next swiper-button-white" slot="button-next"></div>
+        <div @click="prePhoto()" class="swiper-button-prev swiper-button-white" slot="button-prev"></div>
       </swiper>
     </div>
-    <!-- 显示信息区域 -->
+    <!-- 图片信息显示 -->
     <div class="tipsData">
       <div class="row-wraper">
         <div class="row-list">
-          <label>上传时间：</label><span>{{photoInfo.uploadDate}}</span>
+          <label>上传时间：</label><span>{{currentActivePhoto.properties.a_uploadDate}}</span>
         </div>
         <div class="row-list">
-          <label>来源ID：</label><span>{{photoInfo.uploadDate}}</span>
+          <label>来源ID：</label><span>{{currentActivePhoto.properties.a_sourceId}}</span>
         </div>
       </div>
       <div class="row-wraper">
         <div class="row-list">
-          <label>照片内容：</label><span>{{photoInfo.uploadDate}}</span>
+          <label>照片内容：</label><span>{{currentActivePhoto.properties.a_content}}</span>
         </div>
         <div class="row-list">
-          <label>版本号：</label><span>{{photoInfo.version}}</span>
+          <label>版本号：</label><span>{{currentActivePhoto.properties.a_version}}</span>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 <script>
+  import fastXmlParser from 'fast-xml-parser';
   import { getTipsPhoto } from '../../dataService/api';
-  import { appUtil } from '../../Application';
+  import { appUtil, appConfig } from '../../Application';
   export default {
     data() {
       return {
         loading: true,
-        swiperOptionTop: {
-          spaceBetween: 10,
-          loop: true,
+        imageList: [],
+        options: {
+          inline: true,
+          title: false,
+          button: false,
+          navbar: false,
+          toolbar: {
+            zoomIn: 4,
+            zoomOut: 4,
+            oneToOne: 4,
+            reset: 4,
+            prev: false,
+            play: {
+              show: false
+            },
+            next: false,
+            rotateLeft: 4,
+            rotateRight: 4,
+            flipHorizontal: 4,
+            flipVertical: 4,
+          }
+        },
+        swiperOptionThumbs: {
+          spaceBetween: 5,
+          slidesPerView: 4,
+          touchRatio: 0.2,
+          loop: false,
           loopedSlides: 4,
+          slideToClickedSlide: false,
           navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev'
           }
         },
-        swiperOptionThumbs: {
-          spaceBetween: 10,
-          slidesPerView: 4,
-          touchRatio: 0.2,
-          loop: true,
-          loopedSlides: 4,
-          slideToClickedSlide: true
-        },
-        imageList: [],
-        renderToken: '',
+        currentActivePhoto: {imageUrl: '', properties: {
+          a_uploadDate: '',
+          a_sourceId: '',
+          a_content: '',
+          a_version: ''
+        }},
         photoInfo: {
           uploadDate: '',
           rowkey: '',
@@ -76,49 +93,47 @@
       }
     },
     methods: {
-      getThumbnailUrl(rowkey) {
-        var url = window.serviceConfig.tempFsUrl+'/fcc/photo/getSnapshotByRowkey';
-        return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
-          '",type:"thumbnail"}';
+      nextPhoto() {
+        const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
+        viewer.next();
       },
-      getOriginUrl(rowkey) {
-        var url = window.serviceConfig.tempFsUrl+'/fcc/photo/getSnapshotByRowkey';
-        return url + '?access_token='+this.renderToken+'&parameter={rowkey:"' + rowkey +
-            '",type:"origin"}';
+      prePhoto() {
+        const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
+        viewer.prev();
       },
-      slideChanged() {
-        const activeIndex = this.$refs.swiperTop.swiper.activeIndex || 0;
-        this.photoInfo = this.imageList[activeIndex];
+      clickPhoto(index) {
+        const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
+        viewer.view(index);
       }
     },
     mounted() {
        // 加载tips照片；
-      let _self = this;
       let photoIds = appUtil.getGolbalData().photo_id.split(';');
-      this.renderToken = appUtil.getRenderToken();
-      getTipsPhoto({parameter: {rowkeys: photoIds}, access_token: this.renderToken})
-      .then((results) => {
-        _self.imageList = results.data.data ? results.data.data : [];
-        _self.swiperOptionThumbs.loopedSlides = _self.swiperOptionTop.loopedSlides = _self.imageList.length;
-      })
-      .finally(() => {
-        this.loading = false;
-        this.$nextTick(() => {
-          const swiperTop = this.$refs.swiperTop.swiper;
-          const swiperThumbs = this.$refs.swiperThumbs.swiper;
-          swiperTop.controller.control = swiperThumbs;
-          swiperThumbs.controller.control = swiperTop;
-          const activeIndex = swiperTop.activeIndex || 0;
-          this.photoInfo = this.imageList[activeIndex];
-        })
-      })
-      .catch(err => {
-        console.log(err);
+      let promises = photoIds.map(item => {
+        return getTipsPhoto({rowKey: item, url: appConfig.hbaseUrl});
       });
-      
+      Promise.all(promises).then(posts => {
+        var i=1;
+        this.imageList = posts.map(item => {
+          let result = fastXmlParser.validate(item);
+          if(!result) throw new Error(result.err);
+          let xmlJson = fastXmlParser.parse(item)
+          let photoObj = {};
+          photoObj.properties = JSON.parse(new Buffer(xmlJson.CellSet.Row.Cell[0], 'base64').toString());
+          photoObj.imageUrl = `data:image/jpeg;base64,${xmlJson.CellSet.Row.Cell[1]}`;
+          return photoObj;
+        });
+        this.imageList.length = 3;
+        this.loading = false;
+        setTimeout(() => {
+          let activeIndex = this.$refs.swiperThumbs.swiper.activeIndex;
+          this.currentActivePhoto = this.imageList[activeIndex];
+        });
+      }).catch(function(err){
+        throw new Error(err);
+      });
     }
   }
-
 </script>
 
 <style lang="less" scoped>
@@ -130,7 +145,9 @@
   .tipsInfos .photoSwiper{
     flex: 1;
   }
- 
+  .viewer-footer {
+    bottom: 20% !important;
+  }
   .swiper-container {
     background-color: #000;
   }
@@ -145,15 +162,7 @@
   .gallery-thumbs {
     height: 20%!important;
     box-sizing: border-box;
-    padding: 10px 0;
-  }
-  .gallery-thumbs .swiper-slide {
-    width: 25%;
-    height: 100%;
-    opacity: 0.4;
-  }
-  .gallery-thumbs .swiper-slide-active {
-    opacity: 1;
+    padding: 5px 0;
   }
    .swiper-slide img {
     width: 100%;

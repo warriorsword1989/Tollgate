@@ -3,8 +3,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import ElementUI from 'element-ui'
+import $ from 'jquery'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
+
 import VueAwesomeSwiper from 'vue-awesome-swiper'
+import Viewer from 'v-viewer'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import router from './router'
 
@@ -20,6 +23,7 @@ import 'vue-dialog-drag/dist/dialog-styles.css'
 import store from './store/index.js'
 
 Vue.use(ElementUI);
+Vue.use(Viewer)
 Vue.use(VueAwesomeSwiper);
 Vue.component(CollapseTransition.name, CollapseTransition)
 Vue.component('vue-draggable-resizable', VueDraggableResizable)

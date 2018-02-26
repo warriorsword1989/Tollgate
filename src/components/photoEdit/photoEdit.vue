@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="row-wraper">
-      <el-button size="mini" type="primary" @click.prevent="onSumbit">提 交</el-button>
+      <el-button style="position: absolute;right: 5px;" size="mini" type="primary" @click.prevent="onSumbit">提 交</el-button>
     </div>
   </div>
 </template>
@@ -101,7 +101,7 @@
 
 <style scoped>
   .tipsEdit .row-wraper{
-    padding: 10px;
+    padding: 5px;
     display: flex;
     flex-direction: row;
   }
