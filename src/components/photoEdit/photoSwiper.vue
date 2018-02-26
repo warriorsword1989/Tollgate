@@ -123,7 +123,6 @@
           photoObj.imageUrl = `data:image/jpeg;base64,${xmlJson.CellSet.Row.Cell[1]}`;
           return photoObj;
         });
-        this.imageList.length = 3;
         this.loading = false;
         setTimeout(() => {
           let activeIndex = this.$refs.swiperThumbs.swiper.activeIndex;
