@@ -53,6 +53,7 @@
      position:absolute;
      z-index:10;
      height:100%;
+     background: #fff;
   }
   .sidbar-panel {
     width: 600px;
