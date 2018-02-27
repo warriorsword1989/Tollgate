@@ -105,7 +105,7 @@
       },
       clickPhoto(index) {
         const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
-        viewer.view();
+        viewer.view(index);
         this.setCurrentInfo(index)
       },
       formatTime(str) {
