@@ -129,7 +129,7 @@
       appUtil.setSessionStorage('mapLocation', param);
       setTimeout(() => {
         mapInit.initialize();
-      });
+      }, 1000);
     },
     destroyed: function () {
       mapInit.destorySingletons();

@@ -20,18 +20,18 @@
     <div class="tipsData">
       <div class="row-wraper">
         <div class="row-list">
-          <label>上传时间：</label><span>{{currentActivePhoto.properties.a_uploadDate}}</span>
+          <label>上传时间：</label><span>{{currentActivePhoto.a_uploadDate}}</span>
         </div>
         <div class="row-list">
-          <label>来源ID：</label><span>{{currentActivePhoto.properties.a_sourceId}}</span>
+          <label>来源ID：</label><span>{{currentActivePhoto.a_sourceId}}</span>
         </div>
       </div>
       <div class="row-wraper">
         <div class="row-list">
-          <label>照片内容：</label><span>{{currentActivePhoto.properties.a_content}}</span>
+          <label>照片内容：</label><span>{{currentActivePhoto.a_content}}</span>
         </div>
         <div class="row-list">
-          <label>版本号：</label><span>{{currentActivePhoto.properties.a_version}}</span>
+          <label>版本号：</label><span>{{currentActivePhoto.a_version}}</span>
         </div>
       </div>
     </div>
@@ -79,12 +79,12 @@
             prevEl: '.swiper-button-prev'
           }
         },
-        currentActivePhoto: {imageUrl: '', properties: {
+        currentActivePhoto: {
           a_uploadDate: '',
           a_sourceId: '',
           a_content: '',
           a_version: ''
-        }},
+        },
         photoInfo: {
           uploadDate: '',
           rowkey: '',
@@ -96,14 +96,33 @@
       nextPhoto() {
         const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
         viewer.next();
+        this.setCurrentInfo()
       },
       prePhoto() {
         const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
         viewer.prev();
+        this.setCurrentInfo()
       },
       clickPhoto(index) {
         const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
-        viewer.view(index);
+        viewer.view();
+        this.setCurrentInfo(index)
+      },
+      formatTime(str) {
+        let year = str.substr(0,4);
+        let month = str.substr(4,2);
+        let day = str.substr(6,2);
+        let h = str.substr(8,2);
+        let m = str.substr(10,2);
+        let s = str.substr(12,2);
+        return `${year}-${month}-${day} ${h}:${m}:${s}`;
+      },
+      setCurrentInfo(index) {
+          let activeIndex = index || this.$refs.swiperThumbs.swiper.activeIndex;
+          this.currentActivePhoto.a_uploadDate = this.formatTime(this.imageList[activeIndex].properties.a_uploadDate);
+          this.currentActivePhoto.a_sourceId = this.imageList[activeIndex].properties.a_sourceId;
+          this.currentActivePhoto.a_content = this.imageList[activeIndex].properties.a_content;
+          this.currentActivePhoto.a_version = this.imageList[activeIndex].properties.a_version;
       }
     },
     mounted() {
@@ -125,8 +144,7 @@
         });
         this.loading = false;
         setTimeout(() => {
-          let activeIndex = this.$refs.swiperThumbs.swiper.activeIndex;
-          this.currentActivePhoto = this.imageList[activeIndex];
+          this.setCurrentInfo()
         });
       }).catch(function(err){
         throw new Error(err);
