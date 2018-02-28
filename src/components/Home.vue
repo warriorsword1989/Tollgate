@@ -66,62 +66,60 @@
       </el-tab-pane>
 <!--情报作业-->
       <!--<el-tab-pane label="情报作业" name="second" style="height: 100%">-->
-        <!--<div class="scroll_style" style="height: 200px;">-->
+        <!--<div class="scroll_style" style="height: 190px; padding-top: 20px">-->
           <!--<div class="photoProject_rightDiv_search">-->
             <!--<div class="photoProject_rightDiv_choose">-->
               <!--<span>行政区划：</span>-->
-              <!--<el-select v-model="cityId" placeholder="请选择">-->
-                <!--<el-option v-for="item in cityList" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
+              <!--<el-select v-model="info.adminCode" placeholder="请选择">-->
+                <!--<el-option v-for="item in info.cityList" :key="item.adminCode" :label="item.cityName" :value="item.adminCode"></el-option>-->
               <!--</el-select>-->
             <!--</div>-->
             <!--<div class="photoProject_rightDiv_choose">-->
               <!--<span>情报编码：</span>-->
               <!--<div style="display: inline-block">-->
-                <!--<el-input v-model="versionNum" placeholder="请输入内容"></el-input>-->
+                <!--<el-input v-model="info.infoCode" placeholder="请输入内容"></el-input>-->
               <!--</div>-->
             <!--</div>-->
             <!--<div class="photoProject_rightDiv_choose">-->
               <!--<span>新闻发布日期：</span>-->
-              <!--<el-date-picker v-model="sendBeforeTime" type="date" placeholder="选择日期" :picker-options="sendDateBefore"></el-date-picker>-->
+              <!--<el-date-picker v-model="info.sendBeforeTime" type="date" placeholder="选择日期" :picker-options="sendDateBefore" value-format="yyyy-MM-dd"></el-date-picker>-->
               <!--<span>至</span>-->
-              <!--<el-date-picker v-model="sendAfterTime" type="date" placeholder="选择日期" :picker-options="sendDateAfter"></el-date-picker>-->
+              <!--<el-date-picker v-model="info.sendAfterTime" type="date" placeholder="选择日期" :picker-options="sendDateAfter" value-format="yyyy-MM-dd"></el-date-picker>-->
             <!--</div>-->
-              <!--<el-checkbox-group class="photoProject_rightDiv_choose" v-model="checkList">-->
+              <!--<el-checkbox-group class="photoProject_rightDiv_choose" v-model="info.complete">-->
                 <!--<span>完成状态：</span>-->
-                <!--<el-checkbox label="未处理"></el-checkbox>-->
-                <!--<el-checkbox label="已处理"></el-checkbox>-->
-                <!--<el-checkbox label="无法处理"></el-checkbox>-->
+                <!--<el-checkbox label="1">未处理</el-checkbox>-->
+                <!--<el-checkbox label="2">已处理</el-checkbox>-->
+                <!--<el-checkbox label="3">无法处理</el-checkbox>-->
               <!--</el-checkbox-group>-->
             <!--<div class="photoProject_rightDiv_choose">-->
               <!--<span>推送日期：</span>-->
-              <!--<el-date-picker v-model="pushBeforeTime" type="date" placeholder="选择日期" :picker-options="pushBefore"></el-date-picker>-->
+              <!--<el-date-picker v-model="info.pushBeforeTime" type="date" placeholder="选择日期" :picker-options="pushBefore"></el-date-picker>-->
               <!--<span>至</span>-->
-              <!--<el-date-picker v-model="pushAfterTime" type="date" placeholder="选择日期" :picker-options="pushAfter"></el-date-picker>-->
+              <!--<el-date-picker v-model="info.pushAfterTime" type="date" placeholder="选择日期" :picker-options="pushAfter"></el-date-picker>-->
             <!--</div>-->
             <!--<div>-->
-              <!--<div style="float: right;margin-right: 100px" @click="searchList()">-->
+              <!--<div style="float: right;margin-right: 100px" @click="getTollGateInfoList()">-->
                 <!--<el-button>查询</el-button>-->
               <!--</div>-->
             <!--</div>-->
           <!--</div>-->
         <!--</div>-->
-        <!--<div  style="height:calc(100% - 300px);">-->
-          <!--<div class="scroll_style">-->
-            <!--<el-table  :data="genData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border style="width: 100%;">-->
-              <!--<el-table-column prop="id" label="序号" width="180" type="index" align="center"></el-table-column>-->
-              <!--<el-table-column prop="tollGateName" label="收费站名称" width="180" align="center"></el-table-column>-->
-              <!--<el-table-column prop="tollGateType" label="收费站类型" align="center"></el-table-column>-->
-              <!--<el-table-column prop="passagewayNum" label="通道总数" align="center"></el-table-column>-->
-              <!--<el-table-column prop="provinceFee" label="是否跨省收费" align="center"></el-table-column>-->
-              <!--<el-table-column prop="feedback" label="tips反馈" align="center"></el-table-column>-->
-              <!--<el-table-column prop="operation" label="操作" align="center">-->
-                <!--<template slot-scope="scope">-->
-                  <!--<el-button @click="handleClick(scope.row)" type="button" size="small">动态作业</el-button>-->
-                  <!--<el-button @click="handleClick(scope.row)" type="button" size="small">静态作业</el-button>-->
-                <!--</template>-->
-              <!--</el-table-column>-->
-            <!--</el-table>-->
-          <!--</div>-->
+        <!--<div style="height:calc(100% - 300px);padding-right: 10px">-->
+          <!--<el-table  :data="genData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border style="width: 100%;">-->
+            <!--<el-table-column prop="id" label="序号" width="180" type="index" align="center"></el-table-column>-->
+            <!--<el-table-column prop="tollGateName" label="收费站名称" width="180" align="center"></el-table-column>-->
+            <!--<el-table-column prop="tollGateType" label="收费站类型" align="center"></el-table-column>-->
+            <!--<el-table-column prop="passagewayNum" label="通道总数" align="center"></el-table-column>-->
+            <!--<el-table-column prop="provinceFee" label="是否跨省收费" align="center"></el-table-column>-->
+            <!--<el-table-column prop="feedback" label="tips反馈" align="center"></el-table-column>-->
+            <!--<el-table-column prop="operation" label="操作" align="center">-->
+              <!--<template slot-scope="scope">-->
+                <!--<el-button @click="handleClick(scope.row)" type="button" size="small">动态作业</el-button>-->
+                <!--<el-button @click="handleClick(scope.row)" type="button" size="small">静态作业</el-button>-->
+              <!--</template>-->
+            <!--</el-table-column>-->
+          <!--</el-table>-->
         <!--</div>-->
         <!--<div class="block">-->
           <!--<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="4" layout="total, prev, pager, next" :total="20"></el-pagination>-->
@@ -195,10 +193,27 @@
               currentPage:1,
               cityList: cityList
             },
-            sendBeforeTime:preTime,
-            sendAfterTime:time,
-            pushBeforeTime:preTime,
-            pushAfterTime:time,
+            info: {
+              tollType: [
+                '未调查', '领卡', '交卡付费', '固定收费(次费)',
+                '交卡付费后再领卡', '交卡付费并代收固定费用',
+                '验票(无票收费)', '领卡并代收固定费用', '持卡打标识不收费',
+                '验票领卡', '交卡不收费'
+              ],
+              tipsVersion:'',
+              sendBeforeTime:preTime,
+              sendAfterTime:time,
+              pushBeforeTime:preTime,
+              pushAfterTime:time,
+              tollName:'',
+              adminCode:'110000',
+              complete: ['1', '2', '3'],
+              photoData: [],
+              pageSize:10,
+              currentPage:1,
+              cityList: cityList,
+              infoCode: ''
+            },
             tollGateNames:[{}],
             genDataPagesize:10,
             genDataCurrentPage:1,
@@ -225,7 +240,7 @@
             // 时间控件
             sendDateBefore:{
               disabledDate: (time) => {
-                let beginDateVal = this.sendAfterTime;
+                let beginDateVal = this.info.sendAfterTime;
                 if (beginDateVal) {
                   return time.getTime() > beginDateVal;
                 }
@@ -233,7 +248,7 @@
             },
             sendDateAfter:{
               disabledDate: (time) => {
-                let beginDateVal = this.sendBeforeTime;
+                let beginDateVal = this.info.sendBeforeTime;
                 if (beginDateVal) {
                   return time.getTime() < beginDateVal;
                 }
@@ -241,7 +256,7 @@
             },
             pushBefore:{
               disabledDate: (time) => {
-                let beginDateVal = this.pushAfterTime;
+                let beginDateVal = this.info.pushAfterTime;
                 if (beginDateVal) {
                   return time.getTime() > beginDateVal;
                 }
@@ -249,7 +264,7 @@
             },
             pushAfter:{
               disabledDate: (time) => {
-                let beginDateVal = this.pushBeforeTime;
+                let beginDateVal = this.info.pushBeforeTime;
                 if (beginDateVal) {
                   return time.getTime() < beginDateVal;
                 }

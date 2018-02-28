@@ -19,6 +19,10 @@
     <!-- 地图 -->
     <div id="editorMap" class="map">
       <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag ? '390px': '90px'}"></edit-tool>
+      <div class="mapZoomBar" v-bind:style="{right: rightPanelFlag ? '360px': '60px'}">
+        缩放等级：
+        <span>{{zoom}}</span>
+      </div>
     </div>
     <user-tool class="userToolbar" v-bind:style="{right: rightPanelFlag ? '350px': '50px'}"></user-tool>
     <div class="sceneToolbar" @click="openRightPanel()" v-bind:style="{right: rightPanelFlag ? '310px': '10px'}"><div></div></div>
@@ -64,6 +68,7 @@
     },
     data() {
       return {
+        zoom: 15,
         leftWidth: '25%',
         editFlag: 'update',
         leftFloatArrow: false,
@@ -116,6 +121,7 @@
         console.log(err)
       });
       this.eventController.off('ObjectSelected');
+      this.eventController.off('CHANGECOORDNITES');
       this.eventController.on('ObjectSelected',function(data) {
         if (data.features.length) {
           _self.showDialog = true;
@@ -141,10 +147,12 @@
       let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
       let point = this.$route.params.point;
       const mapLocation = appUtil.getSessionStorage('mapLocation');
+      let zoom = 15;
       if (point) {
         point = geometryAlgorithm.wktToGeojson(point).coordinates;
       } else if (mapLocation) {
-        point = [mapLocation.point.lng, mapLocation.point.lat]
+        point = [mapLocation.point.lng, mapLocation.point.lat];
+        zoom = mapLocation.zoom;
       } else {
         point = [116.33333, 40.88888];
       }
@@ -153,8 +161,13 @@
           lat: point[1],
           lng: point[0]
         },
-        zoom: 15
+        zoom: zoom
       };
+      this.zoom = zoom;
+      const self = this;
+      this.eventController.on('CHANGECOORDNITES',function(data) {
+        self.zoom = data.zoom;
+      });
       appUtil.setSessionStorage('mapLocation', param);
       mapInit.initialize();
     },
@@ -293,6 +306,11 @@
     width: 20px;
     height: 20px;
     cursor: pointer;
+  }
+  .mapZoomBar {
+    position: absolute;
+    bottom: 10px;
+    right: 60px;
   }
 
 </style>
