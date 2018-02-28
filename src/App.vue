@@ -79,6 +79,9 @@ export default {
 .dragWindow .el-collapse-item__content {
   padding-bottom: 0;
 }
+.dragWindow .el-collapse-item__content .el-table__body-wrapper{
+  overflow-y: auto;
+}
 .sc-toll-edit {
   .edit-container {
     height: 28px;
