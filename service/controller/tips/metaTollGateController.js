@@ -54,6 +54,22 @@ class TollGate {
       data: resultData
     });
   }
+
+  /**
+   * 根据groupId查询收费站信息;
+   */
+  async getTollName() {
+    const param = this.req.query;
+    const pid = param.pid;
+    this.table = param.table;
+    let sql = `SELECT * FROM ${this.table} WHERE PID=${pid} AND LANG_CODE='CHI'`;
+    const result = await this.originDB.executeSql2(sql);
+    const resultData = changeResult(result);
+    this.res.send({
+      errorCode: 0,
+      data: resultData
+    });
+  }
   /**
    * 
    */

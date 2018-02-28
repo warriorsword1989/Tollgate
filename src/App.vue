@@ -76,6 +76,9 @@ export default {
   right: 10px;
   left: auto;
 }
+.dragWindow .el-collapse-item__content {
+  padding-bottom: 0;
+}
 .sc-toll-edit {
   .edit-container {
     height: 28px;
