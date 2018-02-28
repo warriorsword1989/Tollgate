@@ -40,9 +40,9 @@ export default {
   line-height: 0;
 }
 .dragWindow .el-form--inline .el-form-item__content {
-  display: block;
+  
 }
-/****************复写tab样式********************/  
+/****************display: block复写tab样式********************/  
 .dragWindow .el-tabs__content {
   height: 350px;
   overflow-y: scroll;
@@ -69,6 +69,12 @@ export default {
     border-radius: 3px;  
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.4);  
     background-color: #ccc;  
+}
+/****************复写图片浏览工具样式********************/  
+.viewer-container .viewer-footer{
+  bottom: 20%!important;
+  right: 10px;
+  left: auto;
 }
 .sc-toll-edit {
   .edit-container {

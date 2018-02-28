@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import Tips from '../controller/tips/queryTollTips';
 import TollGateCtrl from '../controller/tips/metaTollGateController';
 const router = express.Router ();
@@ -80,5 +81,25 @@ router.post ('/updateTollGate', function (req, res, next) {
     next (error);
   }
 });
+
+
+// 查询照片;
+router.get ('/photo', function (req, res, next) {
+  "use strict";
+  return http.get(`${req.query.url}photo/${req.query.rowKey}`, httpRes => {
+    let body = '';
+    httpRes.on('data', function(chunk) {
+      httpRes.setEncoding('utf8'); 
+      body += chunk;
+    })
+    httpRes.on('end', function() {
+      res.send(body);
+    })
+    httpRes.on('error', function(e) {
+      next(e);
+    });
+  });
+});
+
 
 export default router;
