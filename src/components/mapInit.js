@@ -227,14 +227,15 @@ class MapInit {
     this.bindToolEvent(map);
 
     const mapLocation = appUtil.getSessionStorage('mapLocation');
-    const zoom = map.getLeafletMap().getZoom();
     map.getLeafletMap().setView([mapLocation.point.lat, mapLocation.point.lng], mapLocation.zoom);
 
+    const self = this;
     map.getLeafletMap().on('moveend', function () {
       appUtil.setSessionStorage('mapLocation', {
-        zoom: zoom,
+        zoom: map.getLeafletMap().getZoom(),
         point: map.getLeafletMap().getCenter()
-      })
+      });
+      fastmap.uikit.EventController().fire('CHANGECOORDNITES', {zoom: map.getLeafletMap().getZoom()});
     });
 
     this.toolCtrl.resetCurrentTool('PanTool', null, null);

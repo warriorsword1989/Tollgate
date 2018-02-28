@@ -39,11 +39,8 @@ export const login = params => { return axios.post('/tollgate/user/login', param
 export const getTollGateTipList = params => { return axios.get('/tollgate/tips/getTollGateTipList', {params})};
 export const getTollGateTip = params => { return axios.get('/tollgate/tips/getTollGateTip', {params})};
 export const updateTollGateTip = params => { return axios.post('/tollgate/tips/updateTollGateTip', params)};
-const hbase = axios.create({
-  baseURL: window.serviceConfig.tempFsUrl
-});
-export const getTipsPhoto = params => { return hbase.get('/fcc/photo/getPhotosByRowkey', {params})};
-export const tempLogin = params => { return hbase.get('/man/userInfo/login', {params})};
+
+export const getTipsPhoto = params => { return axios.get('/tollgate/tips/photo',{params})};
 // 收费站新增编辑相关;
 export const getTollGate = params => { return axios.get('/tollgate/tips/getTollGate', {params})};
 export const getBriageName = params => { return axios.get('/tollgate/tips/getBtName', {params})};
@@ -51,4 +48,3 @@ export const getMaxId = params => { return axios.get('/tollgate/tips/getMaxId', 
 export const updateTollGate = params => { return axios.post('/tollgate/tips/updateTollGate', params)};
 // 查询功能
 export const getSearchData = params => { return axios.get('/tollgate/search/getSearchData', {params})};
-console.log(window.serviceConfig.tempFsUrl)

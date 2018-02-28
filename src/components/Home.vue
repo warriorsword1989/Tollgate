@@ -133,7 +133,7 @@
 <script>
     import UserTool from './UserTool';
     import {appUtil} from '../Application';
-    import { tempLogin, getTollGateTipList } from '../dataService/api';
+    import { getTollGateTipList } from '../dataService/api';
     import { cityList } from '../config/CityList';
     export default {
         name: "Home",
@@ -320,20 +320,6 @@
           },
         },
         mounted: function() {
-          tempLogin({parameter:{"userNickName":"fanjingwei01672","userPassword":"016720"}})
-          .then(result => {
-            let {data, errcode} = result.data;
-            if (errcode === 0) {
-              let fmToken = data.access_token;
-              appUtil.setRenderToken(fmToken);
-            }
-          })
-          .finally(() => {
-            console.log('login finally')
-          })
-          .catch(err => {
-            console.log(err)
-          });
           this.getTollGateTipList();
         }
     }
