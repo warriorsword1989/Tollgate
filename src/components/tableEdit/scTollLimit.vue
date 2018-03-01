@@ -77,6 +77,7 @@
     data() {
       let _self = this;
       let check_axle_num_limit = (rule, value, callback) => {
+        if (this.isClickSave)return;
         if (value < 2 || value > 10) {
           this.$confirm('轴数小于2或大于10, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -92,6 +93,7 @@
       };
 
       let check_ton_limit = (rule, value, callback) => {
+         if (this.isClickSave)return;
         if (value < 0 || value > 100) {
           this.$confirm('吨数小于0或大于100, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -106,6 +108,7 @@
         callback();
       };
       return {
+        isClickSave: false,
         loading: true,
         dataModels: {},
         originModel: {
@@ -114,7 +117,7 @@
           axle_num_limit: 2,
           model_limit: 0,
           ton_limit: 1,
-          source: 0
+          source: 1
         },
         mountFlag: false,
         rules: {
@@ -156,6 +159,7 @@
       },
       onSubmit(formName) {
         let _self = this;
+        this.isClickSave = true;
         let validateFlag = true;
         if (!this.$store.state.editSelectedData.length) {
           return false;
@@ -206,6 +210,7 @@
           })
           .finally(() => {
             this.loading = false;
+            this.isClickSave = false;
           })
           .catch(err => {
             console.log(err);

@@ -79,7 +79,8 @@
           out_fee: [
             { required: true, message: '费用金额不能为空'}
           ]
-        }
+        },
+        sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
       }
     },
     watch: {
@@ -129,6 +130,7 @@
                     status: false,
                     tabIndex: 5
                   });
+                  this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
                   return this.$message({
                     message: '数据更新成功！',
                     type: 'success'

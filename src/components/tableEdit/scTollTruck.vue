@@ -327,7 +327,7 @@
           name_bt_id: 0,
           name_bt: 0,
           fix_fee: 0,
-          source: 0
+          source: 1
         },
         truckRules: {
           container: [
@@ -378,7 +378,8 @@
         }, {
           value: 2,
           label: '6'
-        }]
+        }],
+        sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
       }
     },
     watch: {
@@ -482,6 +483,7 @@
                 status: false,
                 tabIndex: 1
               });
+              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
                 message: '数据更新成功！',
                 type: 'success'
@@ -504,8 +506,8 @@
     },
     mounted() {
       let _self = this;
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
-      this.isZheJiang = appUtil.getGolbalData().adminCode == '330000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '210000';
+      this.isZheJiang = appUtil.getGolbalData().adminCode == '130000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {
