@@ -18,14 +18,7 @@
     <div style="width=50px"><i @click="closeDialog" class="el-icon-close"></i></div>
   </div>
   <!-- table-->
-  <el-table @selection-change="selectChange" ref="multipleTable" :data="tableData" :max-height="100" tooltip-effect="light">
-    <el-table-column label="序号" type="index" width="120"></el-table-column>
-    <el-table-column prop="id" label="收费站ID"></el-table-column>
-    <el-table-column prop="id" label="收费站名称"></el-table-column>
-    <el-table-column prop="kind" label="收费站类型" show-overflow-tooltip></el-table-column>
-    <el-table-column type="selection" width="55"></el-table-column>
-  </el-table>
-  <el-collapse :v-model="'1'" @change="toggleTable" style="flex:1">
+  <el-collapse value="1" :v-model="'1'" @change="toggleTable" style="flex:1">
     <el-collapse-item name="1">
       <template slot="title">
         <div style="text-align:center;background: rgb(241, 241, 241)">
@@ -33,43 +26,50 @@
           <span style="color:#636ef5;">{{isTableShow ? '隐藏编辑面板' : '显示编辑面板'}}</span>
         </div>
       </template>
-      <el-tabs @tab-click='tabOnActive'  :tab-position="tabPosition">
-        <el-tab-pane :label="isEdit[0]?'* 客车车型划分及费率':'客车车型划分及费率'">
-          <sc-toll-car @tabStatusChange="changeTabStatus"></sc-toll-car>
-        </el-tab-pane>
-        <el-tab-pane :label="isEdit[1]?'* 货车车型划分及空载费率': '货车车型划分及空载费率'">
-          <sc-toll-truck @tabStatusChange="changeTabStatus"></sc-toll-truck>
-        </el-tab-pane>
-        <el-tab-pane :label="isEdit[2]?'* 货车计重装载费率(不超限)':'货车计重装载费率(不超限)'">
-          <sc-toll-load @tabStatusChange="changeTabStatus"></sc-toll-load>
-        </el-tab-pane>
-        <el-tab-pane :label="isEdit[3]?'* 货车计重装载费率(广东不超限)':'货车计重装载费率(广东不超限)'">
-          <sc-toll-load-gd @tabStatusChange="changeTabStatus"></sc-toll-load-gd>
-        </el-tab-pane>
-        <el-tab-pane :label="isEdit[4]?'* 货车计重装载费率(超限)':'货车计重装载费率(超限)'">
-          <sc-toll-over-load @tabStatusChange="changeTabStatus"></sc-toll-over-load>
-        </el-tab-pane>
-        <el-tab-pane :label="isEdit[5]?'* 收费站加费信息表':'收费站加费信息表'">
-          <sc-toll-gate-fee @tabStatusChange="changeTabStatus"></sc-toll-gate-fee>
-        </el-tab-pane>
-        <el-tab-pane :label="isEdit[6]?'* 收费站区间表': '收费站区间表'">
-          <sc-toll-grou @tabStatusChange="changeTabStatus"></sc-toll-grou>
-        </el-tab-pane>
-        <el-tab-pane :label="isEdit[7]?'* 限制载重信息表' : '限制载重信息表'">
-          <sc-toll-limit @tabStatusChange="changeTabStatus"></sc-toll-limit>
-        </el-tab-pane>
-        <el-tab-pane :label="isEdit[8] ? '* 桥隧道收费附加表': '桥隧道收费附加表'">
-          <sc-toll-rdlink-bt @tabStatusChange="changeTabStatus"></sc-toll-rdlink-bt>
-        </el-tab-pane>
-        <el-tab-pane v-if="workFlag!='static'" :label="isEdit[9] ? '* 节假日收费浮动信息': '节假日收费浮动信息'">
-          <sc-toll-holiday @tabStatusChange="changeTabStatus"></sc-toll-holiday>
-        </el-tab-pane>
-        <el-tab-pane v-if="workFlag!='static'" :label="isEdit[10] ? '* 特殊收费浮动信息': '特殊收费浮动信息'">
-          <sc-toll-special-pay @tabStatusChange="changeTabStatus"></sc-toll-special-pay>
-        </el-tab-pane>
-      </el-tabs>
+      <el-table v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);" @selection-change="selectChange" ref="multipleTable" :data="tableData" :max-height="100" tooltip-effect="light">
+        <el-table-column label="序号" type="index" width="120"></el-table-column>
+        <el-table-column prop="id" label="收费站ID"></el-table-column>
+        <el-table-column prop="name" label="收费站名称"></el-table-column>
+        <el-table-column prop="kind" label="收费站类型" show-overflow-tooltip></el-table-column>
+        <el-table-column type="selection" width="55"></el-table-column>
+      </el-table>
     </el-collapse-item>
   </el-collapse>
+  <el-tabs @tab-click='tabOnActive'  :tab-position="tabPosition">
+    <el-tab-pane :label="isEdit[0]?'* 客车车型划分及费率':'客车车型划分及费率'">
+      <sc-toll-car @tabStatusChange="changeTabStatus"></sc-toll-car>
+    </el-tab-pane>
+    <el-tab-pane :label="isEdit[1]?'* 货车车型划分及空载费率': '货车车型划分及空载费率'">
+      <sc-toll-truck @tabStatusChange="changeTabStatus"></sc-toll-truck>
+    </el-tab-pane>
+    <el-tab-pane :label="isEdit[2]?'* 货车计重装载费率(不超限)':'货车计重装载费率(不超限)'">
+      <sc-toll-load @tabStatusChange="changeTabStatus"></sc-toll-load>
+    </el-tab-pane>
+    <el-tab-pane :label="isEdit[3]?'* 货车计重装载费率(广东不超限)':'货车计重装载费率(广东不超限)'">
+      <sc-toll-load-gd @tabStatusChange="changeTabStatus"></sc-toll-load-gd>
+    </el-tab-pane>
+    <el-tab-pane :label="isEdit[4]?'* 货车计重装载费率(超限)':'货车计重装载费率(超限)'">
+      <sc-toll-over-load @tabStatusChange="changeTabStatus"></sc-toll-over-load>
+    </el-tab-pane>
+    <el-tab-pane :label="isEdit[5]?'* 收费站加费信息表':'收费站加费信息表'">
+      <sc-toll-gate-fee @tabStatusChange="changeTabStatus"></sc-toll-gate-fee>
+    </el-tab-pane>
+    <el-tab-pane :label="isEdit[6]?'* 收费站区间表': '收费站区间表'">
+      <sc-toll-grou @tabStatusChange="changeTabStatus"></sc-toll-grou>
+    </el-tab-pane>
+    <el-tab-pane :label="isEdit[7]?'* 限制载重信息表' : '限制载重信息表'">
+      <sc-toll-limit @tabStatusChange="changeTabStatus"></sc-toll-limit>
+    </el-tab-pane>
+    <el-tab-pane :label="isEdit[8] ? '* 桥隧道收费附加表': '桥隧道收费附加表'">
+      <sc-toll-rdlink-bt @tabStatusChange="changeTabStatus"></sc-toll-rdlink-bt>
+    </el-tab-pane>
+    <el-tab-pane v-if="workFlag!='static'" :label="isEdit[9] ? '* 节假日收费浮动信息': '节假日收费浮动信息'">
+      <sc-toll-holiday @tabStatusChange="changeTabStatus"></sc-toll-holiday>
+    </el-tab-pane>
+    <el-tab-pane v-if="workFlag!='static'" :label="isEdit[10] ? '* 特殊收费浮动信息': '特殊收费浮动信息'">
+      <sc-toll-special-pay @tabStatusChange="changeTabStatus"></sc-toll-special-pay>
+    </el-tab-pane>
+  </el-tabs>
 </vue-draggable-resizable>
 </template>
 
@@ -88,6 +88,7 @@
   import scTollTruck from './scTollTruck';
   import {getTollGate} from '../../dataService/api';
   import { appUtil } from '../../Application';
+  import {getTollName} from '../../dataService/api';
   export default {
     name: 'tabDiag',
     props: ['dialogTableVisible', 'handleFlag'],
@@ -106,6 +107,7 @@
     },
     data() {
       return {
+        loading: true,
         serachShow: false,
         topDis:200,
         leftDis:300,
@@ -115,7 +117,20 @@
         isTableShow: false,
         multipleSelection: [],
         tableData: [],
-        workFlag: 'static'
+        workFlag: 'static',
+        tollType: {
+          0:'未调查',
+          1:'领卡',
+          2:'交卡付费',
+          3:'固定收费(次费)',
+          4:'交卡付费后再领卡',
+          5:'交卡付费并代收固定费用',
+          6:'验票(无票收费)值先保留',
+          7:'领卡并代收固定费用',
+          8:'持卡打标识不收费',
+          9:'验票领卡',
+          10:'交卡不收费',
+        }
       }
     },
     methods: {
@@ -146,15 +161,26 @@
       },
       tabOnActive(e){
         this.activeIndex = parseInt(e.index);
+      },
+      async transfromSelectedData() {
+        for (let i=0; i<this.tableData.length;i++) {
+          let param = { table: 'RD_TOLLGATE_NAME',pid: this.tableData[i].id};
+          let result = await getTollName(param);
+          this.tableData[i].name = result.data[0].name;
+          this.tableData[i].kind = this.tollType[this.tableData[i].kind];
+        }
       }
     },
     mounted() {
+      // 查询获得收费站名称;
       this.workFlag = appUtil.getGolbalData().workType
-      this.tableData = this.$store.state.selectedData;
-      let self = this;
-      setTimeout(function () {
-        self.toggleSelection(self.tableData);
-      })
+      this.tableData = this.$store.state.selectedData.map(item => {
+        return Object.assign({},item);
+      });
+      this.transfromSelectedData().then(() => {
+        this.loading = false;
+        this.toggleSelection(this.tableData);
+      });
     },
     beforeMount() {
       let viewWidth = document.documentElement.clientWidth;

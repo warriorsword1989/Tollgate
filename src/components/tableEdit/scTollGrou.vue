@@ -334,7 +334,8 @@
           fee_limit: [
             { validator: check_fee_limit, trigger: 'change'}
           ]
-        }
+        },
+        sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
       }
     },
     computed: {
@@ -388,6 +389,7 @@
                 status: false,
                 tabIndex: 6
               });
+              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
                 message: '数据更新成功！',
                 type: 'success'

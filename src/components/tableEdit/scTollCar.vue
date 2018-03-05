@@ -1,25 +1,29 @@
 <template>
   <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
+    <!-- 把这一行拿出来防止没有记录 -->
     <div class="grid-content">
-      <!-- 把这一行拿出来防止没有记录 -->
+      <div style="justify-content: flex-end;" class="grid-wraper">
+        <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus">车型添加</el-button>
+        <el-button @click="removeLimitItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-minus">车型删除</el-button>
+      </div>
       <div class="grid-wraper">
         <div class="grid-list">
           <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
           <div class="inputPart">
-            <el-input :disabled="true" v-model="dataModels[1] && dataModels[1].name_bt_id||originModel.name_bt_id" size="mini"></el-input>
+            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].name_bt_id||originModel.name_bt_id" size="mini"></el-input>
           </div>
         </div>
         <div class="grid-list">
           <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
           <div class="inputPart">
-            <el-input :disabled="true" v-model="dataModels[1] && dataModels[1].name_bt||originModel.name_bt" size="mini"></el-input>
+            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].name_bt||originModel.name_bt" size="mini"></el-input>
           </div>
         </div>
         <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
-        <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
       </div>
     </div>
-    <el-form v-for="(dataItem, keys, index) in dataModels" :rules="carRules" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
+    <!-- 车型循环 -->
+    <el-form v-for="(dataItem, index) in dataModels" :rules="carRules" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
       <div class="grid-content">
         <div class="grid-wraper">
           <div class="grid-list">
@@ -41,18 +45,14 @@
                   <div title="各车型座位数区间：" class="labelText">各车型座位数区间：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-form-item v-show="['1','5'].indexOf(keys) != -1" prop="seat_num_min">
-                        <el-input v-model="dataItem.seat_num_min" :disabled="keys == 1" size="mini"></el-input>
+                      <el-form-item prop="seat_num_min" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
+                        <el-input v-model="dataItem.seat_num_min" disabled size="mini"></el-input>
+                      </el-form-item>-
+                      <el-form-item v-show='dataItem.car_class!=4' prop="seat_num_max" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
+                        <el-input v-model="dataItem.seat_num_max" @change="maxSeatNumChange" size="mini"></el-input>
                       </el-form-item>
-                      <el-form-item prop="seat_num_min" v-show="['2','3','4'].indexOf(keys) != -1" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
-                        <el-input v-model="dataItem.seat_num_min" :disabled="keys == 1" size="mini"></el-input>
-                      </el-form-item>
-                       -
-                      <el-form-item prop="seat_num_max" v-show="['1','2','3'].indexOf(keys) != -1" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
-                        <el-input v-model="dataItem.seat_num_max" size="mini"></el-input>
-                      </el-form-item>
-                      <el-form-item prop="seat_num_max" v-show="['4','5'].indexOf(keys) != -1">
-                        <el-input v-model="dataItem.seat_num_max" :disabled="keys == 4" size="mini"></el-input>
+                      <el-form-item v-show='dataItem.car_class==4'>
+                        <el-input v-model="dataItem.seat_num_max" :disabled="dataItem.car_class==4" size="mini"></el-input>
                       </el-form-item>
                     </div>
                   </div>
@@ -139,14 +139,12 @@
               </div>
             </fieldset>
           </div>
-          <el-button @click="removeLimitItem(keys)" style="padding: 5px;height: 28px;margin: 100px 0;" type="primary" class="btn-icon"
-            icon="el-icon-minus"></el-button>
         </div>
       </div>
     </el-form>
     <div style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
       <el-row :gutter="5">
-        <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
+        <el-button type="primary" @click="onSubmit($event,'dataItem')">保 存</el-button>
       </el-row>
     </div>
     </el-form>
@@ -165,94 +163,83 @@
     data() {
       let validateFeeAdd = (rule, value, callback) => {
         let self = this;
-        if (value > 20) {
-          this.$confirm('车次加费大于20, 是否继续?', '提示', {
+        if (this.isClickSave)return;
+        if (value && value > 20) {
+          this.$alert('车次加费大于20', '提示', {
             confirmButtonText: '确定',
-            cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
             return callback();
-          }).catch(() => {
-            return callback(new Error('车次加费不能大于20'));         
-          });
+          })
         }
       };
       // 费率
       let validateRate = (rule, value, callback) => {
         let self = this;
-        if (value < 0 || value > 3) {
-          this.$confirm('费率值小于0或者大于3, 是否继续?', '提示', {
+        if (this.isClickSave)return;
+        if (value && (value < 0 || value > 3)) {
+          this.$alert('费率值小于0或者大于3', '提示', {
             confirmButtonText: '确定',
-            cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
             return callback();
-          }).catch(() => {
-            return callback(new Error('费率值必须大于0或者小于3'));         
           });
         }
       };
       // 费率1
       let validateRate1 = (rule, value, callback) => {
         let self = this;
-        if (value > 20) {
-          this.$confirm('费率1大于20, 是否继续?', '提示', {
+        if (this.isClickSave)return;
+        if (value && (value > 10 || vlaue < 0)) {
+          this.$alert('费率1大于10小于0', '提示', {
             confirmButtonText: '确定',
-            cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            callback();
-          }).catch(() => {
-            callback(new Error('费率1必须小于20'));         
+            return callback();
           });
         }
       };
       // 隧道桥费率
       let validateRateBt = (rule, value, callback) => {
         let self = this;
-        if (value > 20) {
-          this.$confirm('隧道桥费率值大于20, 是否继续?', '提示', {
+        if (this.isClickSave)return;
+        if (value && value > 20) {
+          this.$alert('隧道桥费率值大于20', '提示', {
             confirmButtonText: '确定',
-            cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            callback();
-          }).catch(() => {
-            callback(new Error('隧道桥费率值必须小于20'));         
+            return callback();
           });
         }
       };
       // 最低收费
       let validateChargeMin = (rule, value, callback) => {
         let self = this;
-        if (value > 20) {
-          this.$confirm('最低收费值大于20, 是否继续?', '提示', {
+        if (this.isClickSave)return;
+        if (value && value > 20) {
+          this.$alert('最低收费值大于20', '提示', {
             confirmButtonText: '确定',
-            cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            callback();
-          }).catch(() => {
-            callback(new Error('最低收费值必须小于20'));         
+            return callback();
           });
         }
       };
       // 固定收费站对应次费
       let validateFixFee = (rule, value, callback) => {
         let self = this;
-        if (value > 10 || value < 0) {
-          this.$confirm('固定收费站对应次费值大于10或者小于0, 是否继续?', '提示', {
+        if (this.isClickSave)return;
+        if (value && (value > 10 || value < 0)) {
+          this.$alert('固定收费站对应次费值大于10或者小于0?', '提示', {
             confirmButtonText: '确定',
-            cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            callback();
-          }).catch(() => {
-            callback(new Error('固定收费站对应次费值必须大于0小于10'));         
+            return callback();
           });
         }
       };
       return {
+        isClickSave: false,
         serachShow: false,
         isGuangdong: false,
         isZheJiang: false,
@@ -270,28 +257,28 @@
           seat_num_max: 10,
           seat_num_min: 1,
           rate_bt: 4,
-          fee_add: 2,
+          fee_add: null,
           charge_min: 3,
           fix_fee: 3,
-          source: 0
+          source: 1
         },
         carRules: {
           rate: [
-            { validator: validateRate, trigger: 'blur' }
+            { validator: validateRate, trigger: 'change' }
           ],
           rate_bt: [
-            { validator: validateRateBt, trigger: 'blur' }
+            { validator: validateRateBt, trigger: 'change' }
           ],
           fee_add: [
-            { validator: validateFeeAdd, trigger: 'blur' }
+            { validator: validateFeeAdd, trigger: 'change' }
           ],
           charge_min: [
-            { validator: validateChargeMin, trigger: 'blur' }
+            { validator: validateChargeMin, trigger: 'change' }
           ],
           fix_fee: [
-            { validator: validateFixFee, trigger: 'blur' }
+            { validator: validateFixFee, trigger: 'change' }
           ],
-          rate1: [{ validator: validateRate1, trigger: 'blur' }]
+          rate1: [{ validator: validateRate1, trigger: 'change' }]
         },
         mountFlag: false,
         feeOptions: [{
@@ -313,7 +300,8 @@
         }, {
           value: 3,
           label: '前闭后闭'
-        }]
+        }],
+        sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
       }
     },
     watch: {
@@ -332,11 +320,20 @@
       }
     },
     methods: {
+      // 检查车型的座位数是否合法;
       validateSeat0_55(rule, value, callback){
         if (value >55 || value < 0) {
-          callback(new Error('座位数必须在0-55之间')); 
+          return callback(new Error('座位数范围在0-55')); 
         }
-        callback();
+        return callback();
+      },
+      // 连续两个车型的最大值和最小值关联控制;
+      maxSeatNumChange (value) {
+        for (let i=0;i<this.dataModels.length;i++) {
+          if (i!=0) {
+            this.dataModels[i].seat_num_min = this.dataModels[i-1].seat_num_max;
+          }
+        }
       },
       toggleSearchPanel(flag){
         this.serachShow = flag;
@@ -350,93 +347,100 @@
         });
       },
       addItem() {
-        let _self = this;
-        let existsKeys = Object.keys(this.dataModels);
-        let allKeys = ['1', '2', '3', '4', '5'];
-        let leftKeys = _.difference(allKeys, existsKeys);
-        let newObj = Object.assign({insertFlag: true}, _self.originModel);
-        if (leftKeys[0] === '1') {
+        if (this.dataModels.length===4)return;
+        let modelLength = this.dataModels.length;
+        let newObj = Object.assign({insertFlag: true}, this.originModel);
+        newObj.car_class = modelLength + 1;
+        if (newObj.car_class == '1') {
           newObj.seat_num_min = 0;
         } else {
-          newObj.seat_num_min = this.dataModels[leftKeys[0] - 1].seat_num_max;
+          newObj.seat_num_min = this.dataModels[modelLength - 1].seat_num_max;
           // 最后类型的最大值为1000
-          if (leftKeys[0] == 4) {
+          if (newObj.car_class == 4) {
             newObj.seat_num_max = 1000;
           } else {
             // 控制最大值比最小值大1
             newObj.seat_num_max = newObj.seat_num_min + 1;
           }
         }
-        newObj.car_class = leftKeys[0];
-        _self.$set(_self.dataModels, leftKeys[0], newObj);
+        this.$set(this.dataModels, this.dataModels.length, newObj);
       },
-      removeLimitItem(index) {
-        this.$delete(this.dataModels, index);
+      removeLimitItem() {
+        this.dataModels.length>1 && this.dataModels.pop();
       },
-      onSubmit(formName) {
-        let _self = this;
+      afterValidate() {
+        let submitData = [];
+        this.$store.state.editSelectedData.forEach(outer => {
+          this.dataModels.forEach(item => {
+            let cloneData = Object.assign({},item);
+            cloneData.group_id = outer;
+            delete item.insertFlag;
+            delete cloneData.insertFlag;
+            submitData.push(cloneData);
+          });
+        });
+        let params = {
+          table: 'SC_TOLL_CAR',
+          data: submitData,
+          workFlag: appUtil.getGolbalData().workType,
+          adminCode: appUtil.getGolbalData().adminCode
+        };
+        this.loading = true;
+        updateTollGate(params)
+        .then(result => {
+          let {errorCode} = result;
+          const h = this.$createElement;
+          if (errorCode === 0) {
+            this.$emit('tabStatusChange', {
+              status: false,
+              tabIndex: 0
+            });
+            this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+            return this.$message({
+              message: '数据更新成功！',
+              type: 'success'
+            });
+          } else {
+            return this.$message({
+              message: '数据更新失败！',
+              type: 'warning'
+            });
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+          this.isClickSave = false;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      },
+      onSubmit(e, formName) {
+        this.isClickSave = true;
         if (!this.$store.state.editSelectedData.length) {
           return false;
         }
         let validateFlag = true;
-        for (let i=0;i<this.$refs[formName].length;i++){
-          this.$refs[formName][i].validate(valid=>{
-            if(!valid) {
-              validateFlag = false;  
-            }
-          });
-        }
+        let alertMessage = '';
+        this.dataModels.forEach((item,index) => {
+          if (item.seat_num_min >= item.seat_num_max) {
+            validateFlag = false;
+            alertMessage += `${index+1}车型最小值必须比最大值小;`;
+          }
+        });
         if (validateFlag) {
-          let submitData = [];
-          this.$store.state.editSelectedData.forEach(outer => {
-            Object.keys(_self.dataModels).forEach(item => {
-              let cloneData = Object.assign({},_self.dataModels[item]);
-              cloneData.group_id = outer;
-              delete _self.dataModels[item].insertFlag;
-              delete cloneData.insertFlag;
-              submitData.push(cloneData);
-            });
-          });
-          let params = {
-            table: 'SC_TOLL_CAR',
-            data: submitData,
-            workFlag: appUtil.getGolbalData().workType,
-            adminCode: appUtil.getGolbalData().adminCode
-          };
-          this.loading = true;
-          updateTollGate(params)
-          .then(result => {
-            let {errorCode} = result;
-            const h = this.$createElement;
-            if (errorCode === 0) {
-              this.$emit('tabStatusChange', {
-                status: false,
-                tabIndex: 0
-              });
-              return this.$message({
-                message: '数据更新成功！',
-                type: 'success'
-              });
-            } else {
-              return this.$message({
-                message: '数据更新失败！',
-                type: 'warning'
-              });
-            }
+          this.afterValidate();
+        } else {
+          this.$alert(alertMessage, '错误提示', {
+            confirmButtonText: '确定',
+            type: 'error'
           })
-          .finally(() => {
-            this.loading = false;
-          })
-          .catch(err => {
-            console.log(err);
-          });
         }
       }
     },
     mounted() {
-      let _self = this;
-      this.isZheJiang = appUtil.getGolbalData().adminCode == '330000';
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
+      this.isZheJiang = appUtil.getGolbalData().adminCode == '130000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '210000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {
@@ -452,13 +456,14 @@
               data
             } = result;
             let transfromData = _.groupBy(data, 'car_class');
+            let tempArray = [];
             Object.keys(transfromData).forEach(item => {
-              transfromData[item] = transfromData[item][0]
+              tempArray.push(transfromData[item][0])
             });
-            _self.dataModels = transfromData;
+            this.dataModels = tempArray;
           })
           .finally(() => {
-            _self.loading = false;
+            this.loading = false;
           })
           .catch(err => {
             console.log(err);
