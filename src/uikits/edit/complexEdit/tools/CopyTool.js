@@ -5,6 +5,7 @@
 fastmap.uikit.complexEdit.CopyTool = fastmap.uikit.complexEdit.RectSelectTool.extend({
     initialize: function () {
         fastmap.uikit.complexEdit.RectSelectTool.prototype.initialize.call(this);
+        this.appUtil = require('../../../../Application');
         // 绑定函数作用域
         FM.Util.bind(this);
 
@@ -74,16 +75,41 @@ fastmap.uikit.complexEdit.CopyTool = fastmap.uikit.complexEdit.RectSelectTool.ex
     },
 
     modifyLinks: function () {
-        var newEditResult = FM.Util.clone(this.editResult);
-        var addItems = FM.Util.differenceBy(this.selectedFeatures, newEditResult.links, 'properties.id');
-        var remainItems = FM.Util.differenceBy(newEditResult.links, this.selectedFeatures, 'properties.id');
-        newEditResult.links = remainItems.concat(addItems);
+        const newEditResult = FM.Util.clone(this.editResult);
+        const addItems = FM.Util.differenceBy(this.selectedFeatures, newEditResult.links, 'properties.id');
+        const remainItems = FM.Util.differenceBy(newEditResult.links, this.selectedFeatures, 'properties.id');
+        const links = [];
+        const selectLinks = remainItems.concat(addItems);
+        for (let i = 0; i < selectLinks.length; i++) {
+            if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
+                if (this.selectedFeatures[i].properties.static === null || this.selectedFeatures[i].properties.static === 2) {
+                    links.push(selectLinks[i]);
+                }
+            } else {
+                if (this.selectedFeatures[i].properties.dynamic === null || this.selectedFeatures[i].properties.dynamic === 2) {
+                    links.push(selectLinks[i]);
+                }
+            }
+        }
+        newEditResult.links = links;
         this.createOperation('框选增加link', newEditResult);
     },
 
     replaceLinks: function () {
-        var newEditResult = FM.Util.clone(this.editResult);
-        newEditResult.links = this.selectedFeatures;
+        const newEditResult = FM.Util.clone(this.editResult);
+        const links = [];
+        for (let i = 0; i < this.selectedFeatures.length; i++) {
+            if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
+                if (this.selectedFeatures[i].properties.static === null || this.selectedFeatures[i].properties.static === 2) {
+                    links.push(this.selectedFeatures[i]);
+                }
+            } else {
+                if (this.selectedFeatures[i].properties.dynamic === null || this.selectedFeatures[i].properties.dynamic === 2) {
+                    links.push(this.selectedFeatures[i]);
+                }
+            }
+        }
+        newEditResult.links = links;
         this.createOperation('框选link', newEditResult);
     },
 

@@ -23,11 +23,11 @@ export default {
   height: 35px;
   line-height: 35px;
 }
-.dragWindow  .el-collapse .el-collapse-item__header i.el-collapse-item__arrow {
+.dragWindow .el-collapse .el-collapse-item__header i.el-collapse-item__arrow {
   display: none;
 }
-/****************复写table样式********************/  
-.el-table td, .el-table th {
+/****************复写table样式********************/
+.dragWindow .el-table td, .dragWindow .el-table th {
   padding: 3px 0;
 }
 .dragWindow .el-table__body-wrapper{
@@ -40,37 +40,37 @@ export default {
   line-height: 0;
 }
 .dragWindow .el-form--inline .el-form-item__content {
-  
+
 }
-/****************display: block复写tab样式********************/  
+/****************display: block复写tab样式********************/
 .dragWindow .el-tabs__content {
   height: 350px;
   overflow-y: scroll;
 }
-/****************复写按钮样式********************/  
-.el-button {
+/****************复写按钮样式********************/
+.dragWindow .el-button {
   border-radius: 0
 }
-/****************自定义全局滚动条样式********************/  
-::-webkit-scrollbar  
-{  
-    width: 6px;  
-    height: 6px;  
-    background-color: #F5F5F5;  
-}  
-::-webkit-scrollbar-track  
-{  
-    -webkit-box-shadow: inset 0 0 6px rgba(99,110,240,0.3);  
-    border-radius: 3px;  
-    background-color: #F5F5F5;  
-}  
-::-webkit-scrollbar-thumb  
-{  
-    border-radius: 3px;  
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.4);  
-    background-color: #ccc;  
+/****************自定义全局滚动条样式********************/
+::-webkit-scrollbar
+{
+    width: 6px;
+    height: 6px;
+    background-color: #F5F5F5;
 }
-/****************复写图片浏览工具样式********************/  
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(99,110,240,0.3);
+    border-radius: 3px;
+    background-color: #F5F5F5;
+}
+::-webkit-scrollbar-thumb
+{
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.4);
+    background-color: #ccc;
+}
+/****************复写图片浏览工具样式********************/
 .viewer-container .viewer-footer{
   bottom: 20%!important;
   right: 10px;
@@ -92,7 +92,7 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    
+
     .edit-content {
       height: 28px;
       padding: 0px 5px;

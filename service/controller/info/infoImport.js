@@ -10,23 +10,78 @@ class InfoData {
     this.db = new connectOracle();
   }
   async getInfoData() {
-    const param = JSON.parse(this.res.req.query.parameter);
     let errorMess = '';
-    for (let i = 0; i < param.info.length; i++) {
-      let sql = "INSERT INTO "+ this.table +" (INFO_INTEL_ID, INFO_CODE, ADMIN_CODE, URL, PUBLIC_TIME," +
-        "NEWS_TIME, INFO_CONTENT, COMPLETE, MEMO) VALUES('" + param.info[i].infoIntelId + "','" + param.info[i].infoCode
-        + "','" + param.info[i].adminCode + "','" + param.info[i].url + "','" + param.info[i].publicTime + "','" + param.info[i].newsTime
-        + "','" + param.info[i].infoContent + "','" + param.info[i].complete + "','" + param.info[i].memo + "')";
-      console.log(sql);
-      try {
-        let result = await this.db.executeSql(sql);
-        // logger.debug("importInfo"+ result.rows.toString());
-      } catch(err) {
-        errorMess += err;
+    let errorCode = 0;
+    try {
+      const param = JSON.parse(this.res.req.query.parameter);
+      const myDate = new Date();
+      const year = myDate.getFullYear();
+      let month = myDate.getMonth() + 1;
+      let day = myDate.getDate();
+      if (month < 10) {
+        month = '0' + month.toString();
+      } else {
+        month = month.toString();
       }
+      if (day < 10) {
+        day = '0' + day.toString();
+      } else {
+        day = day.toString();
+      }
+      const publicTime = year.toString() + month + day;
+      const memo = "";
+      const complete = "1";
+      for (let i = 0; i < param.infos.length; i++) {
+        let sql = "INSERT INTO "+ this.table +" (INFO_INTEL_ID, INFO_CODE, ADMIN_CODE, URL, PUBLIC_TIME," +
+          "NEWS_TIME, INFO_CONTENT, COMPLETE, MEMO) VALUES('" + param.infos[i].infoIntelId + "','" + param.infos[i].infoCode
+          + "','" + param.infos[i].adminCode + "','" + param.infos[i].url + "','" + publicTime + "','" + param.infos[i].newsTime
+          + "','" + param.infos[i].infoContent + "','" + complete + "','" + memo + "')";
+        let result = await this.db.executeSql(sql);
+      }
+    } catch (err) {
+      errorCode = -1;
+      errorMess += err;
     }
     this.res.send({
-      errorCode: 0,
+      errorCode: errorCode,
+      data: errorMess
+    });
+  }
+  async postInfoData() {
+    let errorMess = '';
+    let errorCode = 0;
+    try {
+      const param = JSON.parse(this.req.body.parameter);
+      const myDate = new Date();
+      const year = myDate.getFullYear();
+      let month = myDate.getMonth() + 1;
+      let day = myDate.getDate();
+      if (month < 10) {
+        month = '0' + month.toString();
+      } else {
+        month = month.toString();
+      }
+      if (day < 10) {
+        day = '0' + day.toString();
+      } else {
+        day = day.toString();
+      }
+      const publicTime = year.toString() + month + day;
+      const memo = "";
+      const complete = "1";
+      for (let i = 0; i < param.infos.length; i++) {
+        let sql = "INSERT INTO "+ this.table +" (INFO_INTEL_ID, INFO_CODE, ADMIN_CODE, URL, PUBLIC_TIME," +
+          "NEWS_TIME, INFO_CONTENT, COMPLETE, MEMO) VALUES('" + param.infos[i].infoIntelId + "','" + param.infos[i].infoCode
+          + "','" + param.infos[i].adminCode + "','" + param.infos[i].url + "','" + publicTime + "','" + param.infos[i].newsTime
+          + "','" + param.infos[i].infoContent + "','" + complete + "','" + memo + "')";
+        let result = await this.db.executeSql(sql);
+      }
+    } catch (err) {
+      errorCode = -1;
+      errorMess += err;
+    }
+    this.res.send({
+      errorCode: errorCode,
       data: errorMess
     });
   }

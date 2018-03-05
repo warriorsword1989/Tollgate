@@ -126,6 +126,9 @@
       }
     },
     mounted() {
+      if (appUtil.getGolbalData().dataSource !== 1) {
+        return;
+      }
        // 加载tips照片；
       let photoIds = appUtil.getGolbalData().photo_id.split(';');
       let promises = photoIds.map(item => {
