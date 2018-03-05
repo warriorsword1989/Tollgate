@@ -39,6 +39,9 @@ export const login = params => { return axios.post('/tollgate/user/login', param
 export const getTollGateTipList = params => { return axios.get('/tollgate/tips/getTollGateTipList', {params})};
 export const getTollGateTip = params => { return axios.get('/tollgate/tips/getTollGateTip', {params})};
 export const updateTollGateTip = params => { return axios.post('/tollgate/tips/updateTollGateTip', params)};
+// -- info列表相关
+export const getTollGateInfoList = params => { return axios.get('/tollgate/info/getTollGateInfoList', {params})};
+export const getAdminLoc = params => { return axios.get('/tollgate/info/getAdminLoc', {params})};
 
 export const getTipsPhoto = params => { return axios.get('/tollgate/tips/photo',{params})};
 // 收费站新增编辑相关;
