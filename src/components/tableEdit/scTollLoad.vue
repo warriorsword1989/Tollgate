@@ -260,7 +260,7 @@
           lane_num1: 0,
           name_bt_id: 0,
           name_bt: '',
-          source: 0
+          source: 1
         },
         loadRules: {
           tunnage_min: [{ validator: validateTunnage, trigger: 'blur' }],
@@ -289,7 +289,8 @@
         }, {
           value: 3,
           label: '前闭后闭'
-        }]
+        }],
+        sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
       }
     },
     watch: {
@@ -422,6 +423,7 @@
                   status: false,
                   tabIndex: 2
                 });
+                this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
                 return this.$message({
                   message: '数据更新成功！',
                   type: 'success'
@@ -444,7 +446,7 @@
     },
     mounted() {
       let _self = this;
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '210000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {

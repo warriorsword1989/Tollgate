@@ -60,6 +60,17 @@ router.get ('/getBtName', function (req, res, next) {
   }
 });
 
+// 根据tollgate的pid查询名称;
+router.get ('/getTollName', function (req, res, next) {
+  "use strict";
+  try {
+    let TollGate = new TollGateCtrl(req, res, next);
+    TollGate['getTollName'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
 // 查询最大值
 router.get ('/getMaxId', function (req, res, next) {
   "use strict";

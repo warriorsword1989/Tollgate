@@ -47,6 +47,7 @@ export const getTipsPhoto = params => { return axios.get('/tollgate/tips/photo',
 // 收费站新增编辑相关;
 export const getTollGate = params => { return axios.get('/tollgate/tips/getTollGate', {params})};
 export const getBriageName = params => { return axios.get('/tollgate/tips/getBtName', {params})};
+export const getTollName =  params => { return axios.get('/tollgate/tips/getTollName', {params})};
 export const getMaxId = params => { return axios.get('/tollgate/tips/getMaxId', {params})};
 export const updateTollGate = params => { return axios.post('/tollgate/tips/updateTollGate', params)};
 // 查询功能
