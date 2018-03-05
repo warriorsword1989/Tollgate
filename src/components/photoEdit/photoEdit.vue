@@ -76,6 +76,9 @@
       }
     },
      mounted () {
+       if (appUtil.getGolbalData().dataSource !== 1) {
+         return;
+       }
        let _self = this;
        // 加载tips信息；
         let param = {rowkey: appUtil.getGolbalData().rowkey};
