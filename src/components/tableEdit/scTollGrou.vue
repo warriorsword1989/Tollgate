@@ -136,7 +136,7 @@
             <div title="最低收费金额：" class="labelText">最低收费金额：</div>
             <div class="inputPart">
               <el-form-item prop="fee_limit">
-                <el-input type="number" v-model.number="dataModels.fee_limit" size="mini"></el-input>
+                <el-input @change="check_fee_limit" type="number" v-model.number="dataModels.fee_limit" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -174,13 +174,13 @@
       let _self = this;
       let check_max = (rule, value, callback) => {
         if (value <= _self.dataModels.pre_truck_loadmin) {
-          return callback(new Error('区间不合法'));
+          return callback(new Error('优惠区间不合法'));
         }
         callback();
       };
       let check_min = (rule, value, callback) => {
         if (value >= _self.dataModels.pre_truck_loadmax) {
-          return callback(new Error('区间不合法'));
+          return callback(new Error('优惠区间不合法'));
         }
         callback();
       };
@@ -196,21 +196,6 @@
         }
         callback();
       }
-      
-      let check_fee_limit = (rule, value, callback) => {
-        if (value > 20) {
-          this.$confirm('最低收费金额大于20, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            return callback();
-          }).catch(() => {
-            return callback(new Error('最低收费金额大于20'));         
-          });
-        }
-        return callback();
-      };
       return {
         loading: false,
         mountFlag: false,
@@ -319,20 +304,17 @@
         rules: {
           pre_truck_loadmin: [
             { type: 'number', message: '值必须为数字'},
-            { validator: check_min, trigger: 'blur'}
+            { validator: check_min, trigger: 'change'}
           ],
           pre_truck_loadmax: [
             { type: 'number', message: '值必须为数字'},
-            { validator: check_max, trigger: 'blur'}
+            { validator: check_max, trigger: 'change'}
           ],
           etc_type: [
-            { validator: check_etc_type, trigger: 'blur'}
+            { validator: check_etc_type, trigger: 'change'}
           ],
           etc_d: [
-            { validator: check_etc_d, trigger: 'blur'}
-          ],
-          fee_limit: [
-            { validator: check_fee_limit, trigger: 'change'}
+            { validator: check_etc_d, trigger: 'change'}
           ]
         },
         sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
@@ -352,6 +334,14 @@
       }
     },
     methods: {
+      check_fee_limit(value) {
+        if (value > 20) {
+          this.$confirm('最低收费金额大于20!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          });
+        }
+      },
       onSubmit(formName) {
         let _self = this;
         let validateFlag = true;

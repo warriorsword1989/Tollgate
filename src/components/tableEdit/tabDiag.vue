@@ -2,7 +2,7 @@
 <vue-draggable-resizable
   class="dragWindow"
   style="background:#fff;box-shadow:0 4px 20px #5c78a7;display:flex;flex-direction:column;height:auto"
-  :w="920"
+  :w="980"
   :h="525"
   :x="leftDis"
   :y="topDis"
@@ -185,7 +185,7 @@
     beforeMount() {
       let viewWidth = document.documentElement.clientWidth;
       let viewHeight = document.documentElement.clientHeight;
-      this.leftDis = (viewWidth - 920) /2;
+      this.leftDis = (viewWidth - 980) /2;
       this.topDis = (viewHeight - 525) /2;
     }
   }
