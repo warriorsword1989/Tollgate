@@ -1,7 +1,7 @@
 <template>
   <div class="mainMap">
     <!-- 左侧照片面板 -->
-    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'">
+    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-if="dataSource === 1">
       <photo-swiper slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
       <photo-edit slot="dataView"></photo-edit>
     </side-bar>
@@ -59,6 +59,7 @@
         leftFloatArrow: false,
         showDialog: false,
         rightPanelFlag: false,
+        dataSource: 1,
         dataModel: {
           uploadTime: '2012-10-7',
           sourceId: '111111',
@@ -117,6 +118,7 @@
       });
       let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
       let point = this.$route.params.point;
+      this.dataSource = this.$route.params.dataSource;
       const mapLocation = appUtil.getSessionStorage('mapLocation');
       let zoom = 15;
       if (point) {

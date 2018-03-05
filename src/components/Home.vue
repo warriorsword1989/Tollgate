@@ -54,8 +54,8 @@
             <el-table-column prop="isAdoptedName" label="tips反馈" align="center"></el-table-column>
             <el-table-column prop="operation" label="操作" align="center">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row, 'dynamic')" type="button" size="small">动态作业</el-button>
-                <el-button @click="handleClick(scope.row, 'static')" type="button" size="small">静态作业</el-button>
+                <el-button @click="handleClick(scope.row, 'dynamic', 1)" type="button" size="small">动态作业</el-button>
+                <el-button @click="handleClick(scope.row, 'static', 1)" type="button" size="small">静态作业</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -65,66 +65,68 @@
         </div>
       </el-tab-pane>
 <!--情报作业-->
-      <!--<el-tab-pane label="情报作业" name="second" style="height: 100%">-->
-        <!--<div class="scroll_style" style="height: 190px; padding-top: 20px">-->
-          <!--<div class="photoProject_rightDiv_search">-->
-            <!--<div class="photoProject_rightDiv_choose">-->
-              <!--<span>行政区划：</span>-->
-              <!--<el-select v-model="info.adminCode" placeholder="请选择">-->
-                <!--<el-option v-for="item in info.cityList" :key="item.adminCode" :label="item.cityName" :value="item.adminCode"></el-option>-->
-              <!--</el-select>-->
-            <!--</div>-->
-            <!--<div class="photoProject_rightDiv_choose">-->
-              <!--<span>情报编码：</span>-->
-              <!--<div style="display: inline-block">-->
-                <!--<el-input v-model="info.infoCode" placeholder="请输入内容"></el-input>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div class="photoProject_rightDiv_choose">-->
-              <!--<span>新闻发布日期：</span>-->
-              <!--<el-date-picker v-model="info.sendBeforeTime" type="date" placeholder="选择日期" :picker-options="sendDateBefore" value-format="yyyy-MM-dd"></el-date-picker>-->
-              <!--<span>至</span>-->
-              <!--<el-date-picker v-model="info.sendAfterTime" type="date" placeholder="选择日期" :picker-options="sendDateAfter" value-format="yyyy-MM-dd"></el-date-picker>-->
-            <!--</div>-->
-              <!--<el-checkbox-group class="photoProject_rightDiv_choose" v-model="info.complete">-->
-                <!--<span>完成状态：</span>-->
-                <!--<el-checkbox label="1">未处理</el-checkbox>-->
-                <!--<el-checkbox label="2">已处理</el-checkbox>-->
-                <!--<el-checkbox label="3">无法处理</el-checkbox>-->
-              <!--</el-checkbox-group>-->
-            <!--<div class="photoProject_rightDiv_choose">-->
-              <!--<span>推送日期：</span>-->
-              <!--<el-date-picker v-model="info.pushBeforeTime" type="date" placeholder="选择日期" :picker-options="pushBefore"></el-date-picker>-->
-              <!--<span>至</span>-->
-              <!--<el-date-picker v-model="info.pushAfterTime" type="date" placeholder="选择日期" :picker-options="pushAfter"></el-date-picker>-->
-            <!--</div>-->
-            <!--<div>-->
-              <!--<div style="float: right;margin-right: 100px" @click="getTollGateInfoList()">-->
-                <!--<el-button>查询</el-button>-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div style="height:calc(100% - 300px);padding-right: 10px">-->
-          <!--<el-table  :data="genData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border style="width: 100%;">-->
-            <!--<el-table-column prop="id" label="序号" width="180" type="index" align="center"></el-table-column>-->
-            <!--<el-table-column prop="tollGateName" label="收费站名称" width="180" align="center"></el-table-column>-->
-            <!--<el-table-column prop="tollGateType" label="收费站类型" align="center"></el-table-column>-->
-            <!--<el-table-column prop="passagewayNum" label="通道总数" align="center"></el-table-column>-->
-            <!--<el-table-column prop="provinceFee" label="是否跨省收费" align="center"></el-table-column>-->
-            <!--<el-table-column prop="feedback" label="tips反馈" align="center"></el-table-column>-->
-            <!--<el-table-column prop="operation" label="操作" align="center">-->
-              <!--<template slot-scope="scope">-->
-                <!--<el-button @click="handleClick(scope.row)" type="button" size="small">动态作业</el-button>-->
-                <!--<el-button @click="handleClick(scope.row)" type="button" size="small">静态作业</el-button>-->
-              <!--</template>-->
-            <!--</el-table-column>-->
-          <!--</el-table>-->
-        <!--</div>-->
-        <!--<div class="block">-->
-          <!--<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="4" layout="total, prev, pager, next" :total="20"></el-pagination>-->
-        <!--</div>-->
-      <!--</el-tab-pane>-->
+      <el-tab-pane label="情报作业" name="second" style="height: 100%">
+        <div class="scroll_style" style="height: 190px; padding-top: 20px">
+          <div class="photoProject_rightDiv_search">
+            <div class="photoProject_rightDiv_choose">
+              <span>行政区划：</span>
+              <el-select v-model="info.adminCode" placeholder="请选择">
+                <el-option v-for="item in info.cityList" :key="item.adminCode" :label="item.cityName" :value="item.adminCode"></el-option>
+              </el-select>
+            </div>
+            <div class="photoProject_rightDiv_choose">
+              <span>情报编码：</span>
+              <div style="display: inline-block">
+                <el-input v-model="info.infoCode" placeholder="请输入内容"></el-input>
+              </div>
+            </div>
+            <div class="photoProject_rightDiv_choose">
+              <span>新闻发布日期：</span>
+              <el-date-picker v-model="info.sendBeforeTime" type="date" placeholder="选择日期" :picker-options="sendDateBefore" value-format="yyyy-MM-dd"></el-date-picker>
+              <span>至</span>
+              <el-date-picker v-model="info.sendAfterTime" type="date" placeholder="选择日期" :picker-options="sendDateAfter" value-format="yyyy-MM-dd"></el-date-picker>
+            </div>
+              <el-checkbox-group class="photoProject_rightDiv_choose" v-model="info.complete">
+                <span>完成状态：</span>
+                <el-checkbox label="1">未处理</el-checkbox>
+                <el-checkbox label="2">已处理</el-checkbox>
+                <el-checkbox label="3">无法处理</el-checkbox>
+              </el-checkbox-group>
+            <div class="photoProject_rightDiv_choose">
+              <span>推送日期：</span>
+              <el-date-picker v-model="info.pushBeforeTime" type="date" placeholder="选择日期" :picker-options="pushBefore" value-format="yyyy-MM-dd"></el-date-picker>
+              <span>至</span>
+              <el-date-picker v-model="info.pushAfterTime" type="date" placeholder="选择日期" :picker-options="pushAfter" value-format="yyyy-MM-dd"></el-date-picker>
+            </div>
+            <div>
+              <div style="float: right;margin-right: 100px" @click="getTollGateInfoList()">
+                <el-button>查询</el-button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="height:calc(100% - 300px);padding-right: 10px">
+          <el-table :data="info.infoData.slice((info.currentPage-1)*info.pageSize,info.currentPage*info.pageSize)" border height="500 - 300" style="width: 100%;height: 100%;">
+            <el-table-column prop="id" label="序号" type="index" align="center"></el-table-column>
+            <el-table-column prop="info_code" label="情报编码" align="center"></el-table-column>
+            <el-table-column prop="url" label="来源网址" align="center"></el-table-column>
+            <el-table-column prop="info_content" label="新闻内容" align="center"></el-table-column>
+            <el-table-column prop="news_time" label="发布日期" align="center"></el-table-column>
+            <el-table-column prop="public_time" label="推送日期" align="center"></el-table-column>
+            <el-table-column prop="completeName" label="完成状态" align="center"></el-table-column>
+            <el-table-column prop="memo" label="备注" align="center"></el-table-column>
+            <el-table-column prop="operation" label="操作" align="center" width="200">
+              <template slot-scope="scope">
+                <el-button @click="handleClick(scope.row, 'dynamic', 2)" type="button" size="small">动态作业</el-button>
+                <el-button @click="handleClick(scope.row, 'static', 2)" type="button" size="small">静态作业</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div class="block">
+          <el-pagination @size-change="handleInfoSizeChange" @current-change="handleInfoCurrentChange" :current-page.sync="info.currentPage" :page-size="info.pageSize" layout="total, prev, pager, next" :total="info.infoData.length"></el-pagination>
+        </div>
+      </el-tab-pane>
     </el-tabs>
     <user-tool class="userToolbar" style="50px"></user-tool>
   </div>
@@ -133,7 +135,7 @@
 <script>
     import UserTool from './UserTool';
     import {appUtil} from '../Application';
-    import { getTollGateTipList } from '../dataService/api';
+    import { getTollGateTipList, getTollGateInfoList, getAdminLoc } from '../dataService/api';
     import { cityList } from '../config/CityList';
     export default {
         name: "Home",
@@ -194,25 +196,18 @@
               cityList: cityList
             },
             info: {
-              tollType: [
-                '未调查', '领卡', '交卡付费', '固定收费(次费)',
-                '交卡付费后再领卡', '交卡付费并代收固定费用',
-                '验票(无票收费)', '领卡并代收固定费用', '持卡打标识不收费',
-                '验票领卡', '交卡不收费'
-              ],
-              tipsVersion:'',
               sendBeforeTime:preTime,
               sendAfterTime:time,
               pushBeforeTime:preTime,
               pushAfterTime:time,
-              tollName:'',
               adminCode:'110000',
               complete: ['1', '2', '3'],
-              photoData: [],
+              infoData: [],
               pageSize:10,
               currentPage:1,
               cityList: cityList,
-              infoCode: ''
+              infoCode: '',
+              loc: ''
             },
             tollGateNames:[{}],
             genDataPagesize:10,
@@ -273,23 +268,36 @@
           };
         },
         methods: {
-          changePage:function () {
-
-          },
-          handleClick:function (data, type) {
-            this.$router.push({name:'mainMap', params:{point:data.toll_location}});
-            appUtil.setGolbalData({
-              workType: type,
-              adminCode: this.tip.adminCode,
-              rowkey: data.rowkey,
-              photo_id: data.photo_id
-            });
+          handleClick:function (data, type, dataSource) {
+            if (dataSource === 1) {
+              this.$router.push({name:'mainMap', params:{point:data.toll_location}});
+              appUtil.setGolbalData({
+                workType: type,
+                adminCode: this.tip.adminCode,
+                rowkey: data.rowkey,
+                photo_id: data.photo_id,
+                dataSource: dataSource
+              });
+            } else {
+              this.$router.push({name:'mainMap', params:{point:this.info.loc}});
+              appUtil.setGolbalData({
+                workType: type,
+                adminCode: this.info.adminCode,
+                dataSource: dataSource
+              });
+            }
           },
           handleSizeChange:function (val) {
             this.tip.pageSize = val;
           },
           handleCurrentChange:function (val) {
             this.tip.currentPage = val;
+          },
+          handleInfoSizeChange:function (val) {
+            this.info.pageSize = val;
+          },
+          handleInfoCurrentChange:function (val) {
+            this.info.currentPage = val;
           },
           // 获取数据
           getTollGateTipList() {
@@ -318,6 +326,56 @@
               }
             });
           },
+          getTollGateInfoList: function () {
+            const self = this;
+            const complete = [];
+            for (let i = 0; i < this.info.complete.length; i++) {
+              complete.push(parseInt(this.info.complete[i], 10));
+            }
+            let sendBeforeTime = this.info.sendBeforeTime;
+            let sendAfterTime = this.info.sendAfterTime;
+            let pushBeforeTime = this.info.pushBeforeTime;
+            let pushAfterTime = this.info.pushAfterTime;
+            if (sendBeforeTime) {
+              sendBeforeTime = sendBeforeTime.replace(new RegExp(/(-)/g), '');
+            }
+            if (sendAfterTime) {
+              sendAfterTime = sendAfterTime.replace(new RegExp(/(-)/g), '');
+            }
+            if (pushBeforeTime) {
+              pushBeforeTime = pushBeforeTime.replace(new RegExp(/(-)/g), '');
+            }
+            if (pushAfterTime) {
+              pushAfterTime = pushAfterTime.replace(new RegExp(/(-)/g), '');
+            }
+            const param = {
+              adminCode: this.info.adminCode,
+              infoCode: this.info.infoCode,
+              complete: complete,
+              sendBeforeTime: sendBeforeTime,
+              sendAfterTime: sendAfterTime,
+              pushBeforeTime: pushBeforeTime,
+              pushAfterTime: pushAfterTime
+            };
+            const param1 = {
+              adminCode: this.info.adminCode
+            };
+            getTollGateInfoList(param).then(function (data) {
+              if (data.errorCode === 0) {
+                const self1 = self;
+                const resultData = data.data;
+                for (let i = 0; i < resultData.length; i++) {
+                  resultData[i].completeName = parseInt(resultData[i].complete, 10) === 1 ? '未处理' : parseInt(resultData[i].complete, 10) === 2 ? '已处理' : '无法处理';
+                }
+                self.info.infoData = resultData
+                getAdminLoc(param1).then(function (data1) {
+                  if (data1.errorCode === 0) {
+                    self1.info.loc = data1.data[0].geometry;
+                  }
+                })
+              }
+            });
+          }
         },
         mounted: function() {
           this.getTollGateTipList();
