@@ -29,7 +29,7 @@
                   <div class="inputPart">
                     <div class="inputPart">
                       <el-form-item prop="axle_num_limit">
-                        <el-input type="number" v-model.number="dataItem.axle_num_limit" size="mini"></el-input>
+                        <el-input type="number" @change="check_axle_num_limit" v-model.number="dataItem.axle_num_limit" size="mini"></el-input>
                       </el-form-item>
                     </div>
                   </div>
@@ -38,7 +38,7 @@
                   <div class="labelText">型号限载标准：</div>
                   <div class="inputPart">
                     <el-form-item prop="model_limit">
-                      <el-input type="number" v-model="dataItem.model_limit" size="mini"></el-input>
+                      <el-input type="number" v-model.number="dataItem.model_limit" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -46,7 +46,7 @@
                   <div class="labelText">吨数限载标准：</div>
                   <div class="inputPart">
                     <el-form-item prop="ton_limit">
-                      <el-input type="number" v-model.number="dataItem.ton_limit" size="mini"></el-input>
+                      <el-input type="number" @change="check_ton_limit" v-model.number="dataItem.ton_limit" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -75,38 +75,6 @@
     name: 'scTollCar',
     props: ['tableName', 'selectedData'],
     data() {
-      let _self = this;
-      let check_axle_num_limit = (rule, value, callback) => {
-        if (this.isClickSave)return;
-        if (value < 2 || value > 10) {
-          this.$confirm('轴数小于2或大于10, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            return callback();
-          }).catch(() => {
-            return callback(new Error('轴数不能小于2或大于10'));         
-          });
-        }
-        return callback();
-      };
-
-      let check_ton_limit = (rule, value, callback) => {
-         if (this.isClickSave)return;
-        if (value < 0 || value > 100) {
-          this.$confirm('吨数小于0或大于100, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            return callback();
-          }).catch(() => {
-            return callback(new Error('吨数不能小于0或大于100'));         
-          });
-        }
-        callback();
-      };
       return {
         isClickSave: false,
         loading: true,
@@ -122,14 +90,16 @@
         mountFlag: false,
         rules: {
           axle_num_limit: [
-            { required: true, message: '轴数不能为空!', trigger: 'blur' },
-            { type: 'number', message: '轴数必须为数字'},
-            { validator: check_axle_num_limit, trigger: 'change'}
+            { required: true, message: '轴数不能为空!', trigger: 'change' },
+            { type: 'number', message: '轴数必须为数字'}
           ],
           ton_limit: [
-            { required: true, message: '吨数不能为空!', trigger: 'blur' },
-            { type: 'number', message: '吨数必须为数字'},
-            { validator: check_ton_limit, trigger: 'change'}
+            { required: true, message: '吨数不能为空!', trigger: 'change' },
+            { type: 'number', message: '吨数必须为数字'}
+          ],
+          model_limit: [
+            { required: true, message: '型号不能为空!', trigger: 'change' },
+            { type: 'number', message: '型号必须为数字'}
           ]
         } 
       }
@@ -150,6 +120,24 @@
       }
     },
     methods: {
+      check_axle_num_limit(value) {
+        if (this.isClickSave)return;
+        if (value < 2 || value > 10) {
+          this.$alert('轴数小于2或大于10!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          });
+        }
+      },
+      check_ton_limit(value) {
+        if (this.isClickSave)return;
+        if (value < 0 || value > 100) {
+          this.$alert('吨数小于0或大于100!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          });
+        } 
+      },
       addItem() {
         let addItemData = Object.assign({insertFlag: true}, this.originModel);
         this.dataModels.push(addItemData);

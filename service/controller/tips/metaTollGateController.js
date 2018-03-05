@@ -150,9 +150,9 @@ class TollGate {
             } else {
               let insertsSql = '';
               if (this.req.body.workFlag =='static') {
-                insertsSql = "INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES ("+allTollPids[i]+","+this.adminCode+",1,0"+")";
+                insertsSql = "INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES ("+allTollPids[i]+","+this.adminCode+",0,Null"+")";
               } else {
-                insertsSql = "INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES ("+allTollPids[i]+","+this.adminCode+",0,1"+")";
+                insertsSql = "INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES ("+allTollPids[i]+","+this.adminCode+",Null,0"+")";
               }
               let insertResult = await this.selfDB.executeSql(insertsSql);
             }

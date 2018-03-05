@@ -218,15 +218,15 @@
         rules: {
           tunnage_min: [
             { type: 'number', message: '计重吨数必须为数字'},
-            { validator: checkTunage_min, trigger: 'blur'}
+            { validator: checkTunage_min, trigger: 'change'}
           ],
           tunnage_max: [
             { type: 'number', message: '计重吨数必须为数字'},
-            { validator: checkTunage_max, trigger: 'blur'}
+            { validator: checkTunage_max, trigger: 'change'}
           ],
           rate_add: [
             { type: 'number', message: '加费必须为数字'},
-            { validator: check_addFee, trigger: 'blur'}
+            { validator: check_addFee, trigger: 'change'}
           ]
         }
       }
