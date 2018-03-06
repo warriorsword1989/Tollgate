@@ -276,14 +276,15 @@
                 adminCode: this.tip.adminCode,
                 rowkey: data.rowkey,
                 photo_id: data.photo_id,
-                dataSource: dataSource
+                dataSource: dataSource,
               });
             } else {
               this.$router.push({name:'mainMap', params:{point:this.info.loc}});
               appUtil.setGolbalData({
                 workType: type,
                 adminCode: this.info.adminCode,
-                dataSource: dataSource
+                dataSource: dataSource,
+                infoCode: data.info_code
               });
             }
           },
