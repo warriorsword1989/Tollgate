@@ -9,46 +9,114 @@
 
 import axios from 'axios';
 import qs from 'querystring';
-import { appConfig, appUtil } from '../Application';
+import {appConfig, appUtil} from '../Application';
 // axios的全局配置;
-axios.defaults.baseURL = appConfig.serviceUrl;
-axios.defaults.headers.common['Content-Type'] = 'application/json;charset=UTF-8';
+const baseInstance = axios.create();
+const infoInstance = axios.create();
 
+baseInstance.defaults.baseURL = appConfig.serviceUrl;
+baseInstance.defaults.headers.common['Content-Type'] = 'application/json;charset=UTF-8';
+
+infoInstance.defaults.baseURL = appConfig.infoUrl;
+infoInstance.defaults.headers.common['Content-Type'] = 'application/json;charset=UTF-8';
 
 //添加一个请求拦截器
-axios.interceptors.request.use(function(config){
+baseInstance.interceptors.request.use(function (config) {
   if (config.url.split('/').pop() != 'login') {
     config.headers.common['x-access-token'] = appUtil.getTollgateToken();
   }
   return config;
-},function(err){
+}, function (err) {
   return Promise.reject(err);
 });
 
 //添加一个响应拦截器
-axios.interceptors.response.use(function(res){
+baseInstance.interceptors.response.use(function (res) {
   return res.data;
-},function(err){
+}, function (err) {
+  return Promise.reject(err);
+});
+
+infoInstance.interceptors.response.use(function (res) {
+  return res.data;
+}, function (err) {
   return Promise.reject(err);
 });
 
 // -- 用户相关  --
-export const login = params => { return axios.post('/tollgate/user/login', params) }; // 登录接口, 注意箭头函数返回对象是要加小括号的知识点
+const login = params => {
+  return baseInstance.post('/tollgate/user/login', params)
+}; // 登录接口, 注意箭头函数返回对象是要加小括号的知识点
 
 // -- tips列表相关  --
-export const getTollGateTipList = params => { return axios.get('/tollgate/tips/getTollGateTipList', {params})};
-export const getTollGateTip = params => { return axios.get('/tollgate/tips/getTollGateTip', {params})};
-export const updateTollGateTip = params => { return axios.post('/tollgate/tips/updateTollGateTip', params)};
+const getTollGateTipList = params => {
+  return baseInstance.get('/tollgate/tips/getTollGateTipList', { params })
+};
+const getTollGateTip = params => {
+  return baseInstance.get('/tollgate/tips/getTollGateTip', { params })
+};
+const updateTollGateTip = params => {
+  return baseInstance.post('/tollgate/tips/updateTollGateTip', params)
+};
 // -- info列表相关
-export const getTollGateInfoList = params => { return axios.get('/tollgate/info/getTollGateInfoList', {params})};
-export const getAdminLoc = params => { return axios.get('/tollgate/info/getAdminLoc', {params})};
+const getTollGateInfoList = params => {
+  return baseInstance.get('/tollgate/info/getTollGateInfoList', { params })
+};
+const getAdminLoc = params => {
+  return baseInstance.get('/tollgate/info/getAdminLoc', { params })
+};
+const getInfoList = params => {
+  return baseInstance.get('/tollgate/info/getInfoListByInfoCode', { params })
+};
+const updateInfoList = params => {
+  return baseInstance.get('/tollgate/info/updateInfoListByInfoIntelId', { params })
+};
+// 像情报部门发送接口，更新情报库
+const updateToInfoDepartments = params => {
+  // const usParams = new URLSearchParams();
+  // usParams.append('datas', JSON.stringify(params));
+  return infoInstance.get('/InfoDataAction.do?operate=saveRoadTollFB', { params })
+};
 
-export const getTipsPhoto = params => { return axios.get('/tollgate/tips/photo',{params})};
+const getTipsPhoto = params => {
+  return baseInstance.get('/tollgate/tips/photo', { params })
+};
 // 收费站新增编辑相关;
-export const getTollGate = params => { return axios.get('/tollgate/tips/getTollGate', {params})};
-export const getBriageName = params => { return axios.get('/tollgate/tips/getBtName', {params})};
-export const getTollName =  params => { return axios.get('/tollgate/tips/getTollName', {params})};
-export const getMaxId = params => { return axios.get('/tollgate/tips/getMaxId', {params})};
-export const updateTollGate = params => { return axios.post('/tollgate/tips/updateTollGate', params)};
+const getTollGate = params => {
+  return baseInstance.get('/tollgate/tips/getTollGate', { params })
+};
+const getBriageName = params => {
+  return baseInstance.get('/tollgate/tips/getBtName', { params })
+};
+const getTollName = params => {
+  return baseInstance.get('/tollgate/tips/getTollName', { params })
+};
+const getMaxId = params => {
+  return baseInstance.get('/tollgate/tips/getMaxId', { params })
+};
+const updateTollGate = params => {
+  return baseInstance.post('/tollgate/tips/updateTollGate', params)
+};
 // 查询功能
-export const getSearchData = params => { return axios.get('/tollgate/search/getSearchData', {params})};
+const getSearchData = params => {
+  return baseInstance.get('/tollgate/search/getSearchData', { params })
+};
+
+export {
+  login,
+  getTollGateTipList,
+  getTollGateTip,
+  updateTollGateTip,
+  getTollGateInfoList,
+  getAdminLoc,
+  getInfoList,
+  updateToInfoDepartments,
+  getTipsPhoto,
+  getTollGate,
+  getBriageName,
+  getTollName,
+  getMaxId,
+  updateTollGate,
+  getSearchData,
+  updateInfoList
+};

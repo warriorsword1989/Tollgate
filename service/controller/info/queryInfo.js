@@ -70,6 +70,45 @@ class GetInfoData {
       });
     }
   }
+
+  async getInfoListByInfoCode() {
+    const param = this.req.query;
+    const infoCode = param.infoCode;
+    let sql = "SELECT * FROM " + this.table + " a WHERE INFO_CODE = '" + infoCode + "'";
+    try {
+      const result = await this.db.executeSql(sql);
+      const resultData = changeResult(result);
+      this.res.send({
+        errorCode: 0,
+        data: resultData
+      });
+    } catch(error) {
+      this.res.send({
+        errorCode: -1,
+        data: error
+      });
+    }
+  }
+
+  async updateInfoListByInfoIntelId() {
+    const param = this.req.query;
+    const infoIntelId = param.infoIntelId;
+    const complete = param.complete;
+    const memo = param.memo;
+    const sql = "UPDATE " + this.table + " SET complete = '" + complete + "', memo = '" + memo + "' WHERE INFO_INTEL_ID = '" + infoIntelId + "'";
+    try {
+      const result = await this.db.executeSql(sql);
+      this.res.send({
+        errorCode: 0,
+        data: []
+      });
+    } catch(error) {
+      this.res.send({
+        errorCode: -1,
+        data: error
+      });
+    }
+  }
 }
 
 export default GetInfoData;

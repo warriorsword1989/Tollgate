@@ -1,10 +1,17 @@
 <template>
   <div class="mainMap">
     <!-- 左侧照片面板 -->
-    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-if="dataSource === 1">
+    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-show="dataSource === 1">
       <photo-swiper slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
       <photo-edit slot="dataView"></photo-edit>
     </side-bar>
+    <!-- 左侧情报面板 -->
+    <div class="fm-layout-container left" v-if="leftPanelFlag && dataSource === 2">
+      <info-list>
+      </info-list>
+      <img class="left-panel-hide" @click="hideLeftPanel()" src="../assets/toolIcon/icon/icon-back-left.png"/>
+    </div>
+    <img class="left-panel-open" @click="showLeftPanelSwitch()" v-if="!leftPanelFlag && dataSource === 2" src="../assets/toolIcon/icon/button-open-left.png"/>
     <!-- 地图 -->
     <div id="editorMap" class="map">
       <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag ? '390px': '90px'}"></edit-tool>
@@ -39,10 +46,12 @@
   import SceneTool from './SceneTool';
   import '../uikits/controllers/EventController';
   import SearchTool from './SearchTool';
+  import InfoList from './InfoList';
   export default {
     name: 'mainMap',
     components: {
       SearchTool,
+      InfoList,
       SceneTool,
       UserTool,
       EditTool,
@@ -59,6 +68,7 @@
         leftFloatArrow: false,
         showDialog: false,
         rightPanelFlag: false,
+        leftPanelFlag: false,
         dataSource: 1,
         dataModel: {
           uploadTime: '2012-10-7',
@@ -83,6 +93,12 @@
       },
       closeRightPanel: function () {
         this.rightPanelFlag = false;
+      },
+      hideLeftPanel: function () {
+        this.leftPanelFlag = false;
+      },
+      showLeftPanelSwitch: function () {
+        this.leftPanelFlag = true;
       }
     },
     watch: {
@@ -118,7 +134,7 @@
       });
       let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
       let point = this.$route.params.point;
-      this.dataSource = this.$route.params.dataSource;
+      this.dataSource = appUtil.getGolbalData().dataSource;
       const mapLocation = appUtil.getSessionStorage('mapLocation');
       let zoom = 15;
       if (point) {
@@ -214,6 +230,20 @@
     top: 10px;
     width: 20px;
     height: 20px;
+    cursor: pointer;
+  }
+  .left-panel-open {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    box-shadow: 0 0 10px #c8ccd4;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .left-panel-hide {
+    position: absolute;
+    right: 10px;
+    top: 10px;
     cursor: pointer;
   }
   .mapZoomBar {

@@ -13,6 +13,7 @@ export const appConfig = {
   // serviceUrl: 'http://192.168.15.220:3000' // 正式环境的服务地址
   // serviceUrl: 'http://192.168.4.189:3000' // 开发环境的服务地址
   serviceUrl: window.serviceConfig.serviceUrl, // 开发环境的服务地址
+  infoUrl: window.serviceConfig.infoUrl, // 开发环境的情报服务
   hbaseUrl: window.serviceConfig.habaseUrl // habse环境地址
 };
 
