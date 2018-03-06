@@ -28,7 +28,7 @@
         <div class="grid-wraper">
           <div class="grid-list">
             <fieldset :style="dataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
-              <legend>{{dataItem.car_class}} 型车</legend>
+              <legend>{{numberTable[dataItem.car_class-1]}} 型车</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
                   <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
@@ -48,7 +48,7 @@
                       <el-form-item prop="seat_num_min" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
                         <el-input v-model.number="dataItem.seat_num_min" disabled size="mini"></el-input>
                       </el-form-item>-
-                      <el-form-item v-if='dataItem.car_class!=4' prop="seat_num_max" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
+                      <el-form-item :rules="[{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'},{  validator: validateSeat0_55, trigger: 'change' }]" v-if='dataItem.car_class!=4' prop="seat_num_max">
                         <el-input v-model.number="dataItem.seat_num_max" @change="maxSeatNumChange" size="mini"></el-input>
                       </el-form-item>
                       <el-form-item v-if='dataItem.car_class==4' prop="seat_num_max">
@@ -62,7 +62,7 @@
                 <div class="grid-list">
                   <div title="费率(元/公里)非桥隧道：" class="labelText">费率(元/公里)非桥隧道：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate">
                       <el-input @change="validateRate" v-model.number="dataItem.rate" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -83,7 +83,7 @@
                 <div class="grid-list">
                   <div title="桥隧道费率(元/车次)：" class="labelText">桥隧道费率(元/车次)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate_bt">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate_bt">
                       <el-input @change="validateRateBt" v-model.number="dataItem.rate_bt" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -92,7 +92,7 @@
                 <div class="grid-list" v-show="isZheJiang">
                   <div title="车次加费(元)：" class="labelText">车次加费(元)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="fee_add">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="fee_add">
                       <el-input @change="validateFeeAdd" v-model.number="dataItem.fee_add" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -102,7 +102,7 @@
                 <div class="grid-list">
                   <div title="最低收费(元)：" class="labelText">最低收费(元)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="charge_min">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="charge_min">
                       <el-input @change="validateChargeMin" v-model.number="dataItem.charge_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -110,7 +110,7 @@
                 <div class="grid-list">
                   <div title="费率1(元/公里)：" class="labelText">费率1(元/公里)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate1">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate1">
                       <el-input @change="validateRate1" :disabled="!isGuangdong" v-model.number="dataItem.rate1" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -131,7 +131,7 @@
                 <div class="grid-list">
                   <div title="固定收费站对应次费：" class="labelText">固定收费站对应次费：</div>
                   <div class="inputPart">
-                    <el-form-item prop="fix_fee">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="fix_fee">
                       <el-input @change="validateFixFee" v-model.number="dataItem.fix_fee" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -168,7 +168,7 @@
         isZheJiang: false,
         loading: false,
         formIndex: 0,
-        dataModels: {},
+        dataModels: [],
         btGroupId:0,
         originModel: {
           group_id: this.$store.state.editSelectedData[0],
@@ -176,15 +176,16 @@
           seat_flag: 1,
           name_bt_id: 1,
           name_bt: '',
-          rate: 1,
+          rate: null,
           seat_num_max: 10,
           seat_num_min: 1,
           rate_bt: 4,
           fee_add: null,
-          charge_min: 3,
-          fix_fee: 3,
+          charge_min: null,
+          fix_fee: null,
           source: 1
         },
+        numberTable: ['一','二','三','四','五'],
         mountFlag: false,
         feeOptions: [{
           value: 0,
@@ -320,7 +321,7 @@
         if (newObj.car_class == '1') {
           newObj.seat_num_min = 0;
         } else {
-          newObj.seat_num_min = this.dataModels[modelLength - 1].seat_num_max;
+          newObj.seat_num_min = this.dataModels.length?this.dataModels[modelLength - 1].seat_num_max:this.originModel.seat_num_max;
           // 最后类型的最大值为1000
           if (newObj.car_class == 4) {
             newObj.seat_num_max = 1000;
@@ -408,7 +409,7 @@
           this.loading = true;
           this.afterValidate();
         } else {
-          this.$alert(alertMessage, '错误提示', {
+          alertMessage && this.$alert(alertMessage, '错误提示', {
             confirmButtonText: '确定',
             type: 'error'
           })

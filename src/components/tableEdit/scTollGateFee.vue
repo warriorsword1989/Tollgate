@@ -1,18 +1,18 @@
 <template>
   <div class="tableEditPanel" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
-    <el-form :rules="rules" :model="dataModels" ref="dataModels" :inline="false" class="wraper">
+    <el-form :model="dataModels" ref="dataModels" :inline="false" class="wraper">
       <div class="grid-content">
         <div class="labelText">费用金额：</div>
         <div class="inputPart">
-          <el-form-item prop="out_fee">
-            <el-input type="number" v-model.number="dataModels.out_fee" size="mini"></el-input>
+          <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="out_fee">
+            <el-input v-model.number="dataModels.out_fee" size="mini"></el-input>
           </el-form-item>
         </div>
       </div>
       <div class="grid-content">
         <div class="labelText">内埠车牌范围：</div>
         <div class="inputPart">
-          <el-form-item style="display:block" prop="local_plate">
+          <el-form-item :rules="[{ required: true, message: '内埠车牌范围不能为空'}, { validator: check_local_plate, trigger: 'change'}]" style="display:block" prop="local_plate">
             <el-input v-model="dataModels.local_plate" size="mini"></el-input>
           </el-form-item>
         </div>
@@ -44,13 +44,6 @@
     name: 'scTollGateFee',
     props: ['tableName', 'selectedData'],
     data() {
-      let _self = this;
-      let check_local_plate = (rule, value, callback) => {
-        if (/[a-z]/.test(value)) {
-          callback(new Error('车牌范围字母必须大写'));
-        }
-        callback();
-      }
       return {
         loading: false,
         dataModels: {
@@ -71,15 +64,6 @@
           value: 3,
           label: '当前收费站为跨界收费站'
         }],
-        rules: {
-          local_plate: [
-            { required: true, message: '计重吨数不能为空'},
-            { validator: check_local_plate, trigger: 'blur'},
-          ],
-          out_fee: [
-            { required: true, message: '费用金额不能为空'}
-          ]
-        },
         sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
       }
     },
@@ -99,6 +83,13 @@
       }
     },
     methods: {
+      check_local_plate (rule, value, callback) {
+        if (/[a-z]/.test(value)) {
+          callback(new Error('车牌范围字母必须大写'));
+        } else {
+          callback();
+        }
+      },
       onSubmit(formName) {
         let _self = this;
         if (!this.$store.state.editSelectedData.length) {

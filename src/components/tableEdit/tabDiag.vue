@@ -3,7 +3,7 @@
   class="dragWindow"
   style="background:#fff;box-shadow:0 4px 20px #5c78a7;display:flex;flex-direction:column;height:auto"
   :w="980"
-  :h="525"
+  :h="530"
   :x="leftDis"
   :y="topDis"
   :z="10"
@@ -23,7 +23,7 @@
       <template slot="title">
         <div style="text-align:center;background: rgb(241, 241, 241)">
           <i style="font-size: 1.8em;color:#636ef5;vertical-align: sub;" :class="isTableShow?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
-          <span style="color:#636ef5;">{{isTableShow ? '隐藏编辑面板' : '显示编辑面板'}}</span>
+          <span style="color:#636ef5;">{{isTableShow ? '隐藏收费站列表' : '显示收费站列表'}}</span>
         </div>
       </template>
       <el-table v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);" @selection-change="selectChange" ref="multipleTable" :data="tableData" :max-height="100" tooltip-effect="light">
@@ -45,9 +45,9 @@
     <el-tab-pane :label="isEdit[2]?'* 货车计重装载费率(不超限)':'货车计重装载费率(不超限)'">
       <sc-toll-load @tabStatusChange="changeTabStatus"></sc-toll-load>
     </el-tab-pane>
-    <el-tab-pane :label="isEdit[3]?'* 货车计重装载费率(广东不超限)':'货车计重装载费率(广东不超限)'">
+    <!--<el-tab-pane :label="isEdit[3]?'* 货车计重装载费率(广东不超限)':'货车计重装载费率(广东不超限)'">
       <sc-toll-load-gd @tabStatusChange="changeTabStatus"></sc-toll-load-gd>
-    </el-tab-pane>
+    </el-tab-pane>-->
     <el-tab-pane :label="isEdit[4]?'* 货车计重装载费率(超限)':'货车计重装载费率(超限)'">
       <sc-toll-over-load @tabStatusChange="changeTabStatus"></sc-toll-over-load>
     </el-tab-pane>
@@ -186,7 +186,7 @@
       let viewWidth = document.documentElement.clientWidth;
       let viewHeight = document.documentElement.clientHeight;
       this.leftDis = (viewWidth - 980) /2;
-      this.topDis = (viewHeight - 525) /2;
+      this.topDis = (viewHeight - 530) /2;
     }
   }
 </script>

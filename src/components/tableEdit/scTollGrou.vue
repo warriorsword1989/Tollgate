@@ -303,17 +303,26 @@
         }],
         rules: {
           pre_truck_loadmin: [
+            { required: true, message: '不能为空'},
             { type: 'number', message: '值必须为数字'},
             { validator: check_min, trigger: 'change'}
           ],
           pre_truck_loadmax: [
+            { required: true, message: '不能为空'},
             { type: 'number', message: '值必须为数字'},
             { validator: check_max, trigger: 'change'}
+          ],
+          pre_truck_load: [
+            { type: 'number', message: '值必须为数字'},
           ],
           etc_type: [
             { validator: check_etc_type, trigger: 'change'}
           ],
+          fee_limit: [
+            { required: true, message: '不能为空'}
+          ],
           etc_d: [
+            { type: 'number', message: '值必须为数字'},
             { validator: check_etc_d, trigger: 'change'}
           ]
         },

@@ -1,7 +1,7 @@
 <template>
   <div class="mainMap">
     <!-- 左侧照片面板 -->
-    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-if="dataSource === 1">
+    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-show="dataSource === 1">
       <photo-swiper slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
       <photo-edit slot="dataView"></photo-edit>
     </side-bar>
