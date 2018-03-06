@@ -243,7 +243,7 @@
       // 装载机别数
       validateTunnage (rule, value, callback) {
         if (value >49 || value < 0) {
-          callback(new Error('座位数必须大于0小于49')); 
+          callback(new Error('装载级别吨数不能大于49')); 
         } else {
           callback();
         }
