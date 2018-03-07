@@ -71,6 +71,12 @@ const getInfoList = params => {
 const updateInfoList = params => {
   return baseInstance.get('/tollgate/info/updateInfoListByInfoIntelId', { params })
 };
+const getTollListByRdName = params => {
+  return baseInstance.get('/tollgate/info/getTollListByRdName', { params })
+};
+const getTollListByTollId = params => {
+  return baseInstance.get('/tollgate/info/getTollListByTollId', { params })
+};
 // 像情报部门发送接口，更新情报库
 const updateToInfoDepartments = params => {
   // const usParams = new URLSearchParams();
@@ -118,5 +124,7 @@ export {
   getMaxId,
   updateTollGate,
   getSearchData,
+  getTollListByRdName,
+  getTollListByTollId,
   updateInfoList
 };

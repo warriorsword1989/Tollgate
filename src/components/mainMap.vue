@@ -11,22 +11,27 @@
       </info-list>
       <img class="left-panel-hide" @click="hideLeftPanel()" src="../assets/toolIcon/icon/icon-back-left.png"/>
     </div>
+    <!-- 右侧线作业面板 -->
+    <div class="fm-layout-container right" style="overflow: hidden" v-if="rightLineWorkFlag">
+      <line-work></line-work>
+      <img class="right-float-close" src="../assets/toolIcon/icon/button-close-normal.png" @click="closeLineWork()"/>
+    </div>
     <img class="left-panel-open" @click="showLeftPanelSwitch()" v-if="!leftPanelFlag && dataSource === 2" src="../assets/toolIcon/icon/button-open-left.png"/>
     <!-- 地图 -->
     <div id="editorMap" class="map">
-      <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag ? '390px': '90px'}"></edit-tool>
-      <div class="mapZoomBar" v-bind:style="{right: rightPanelFlag ? '360px': '60px'}">
+      <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '390px': '90px'}" v-on:lineWork="onLineWork()"></edit-tool>
+      <div class="mapZoomBar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '360px': '60px'}">
         缩放等级：
         <span>{{zoom}}</span>
       </div>
     </div>
-    <user-tool class="userToolbar" v-bind:style="{right: rightPanelFlag ? '350px': '50px'}"></user-tool>
-    <div class="sceneToolbar" @click="openRightPanel()" v-bind:style="{right: rightPanelFlag ? '310px': '10px'}"><div></div></div>
+    <user-tool class="userToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '350px': '50px'}"></user-tool>
+    <div class="sceneToolbar" @click="openRightPanel()" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '310px': '10px'}"><div></div></div>
     <div class="fm-layout-container right" v-if="rightPanelFlag" style="overflow: hidden">
       <scene-tool></scene-tool>
       <img class="right-float-close" @click="closeRightPanel()" src="../assets/toolIcon/icon/button-close-normal.png" />
     </div>
-    <search-tool class="searchToolbar" v-bind:style="{right: rightPanelFlag ? '540px': '240px'}">
+    <search-tool class="searchToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? (dataSource === 1 ? '540px' :'620px'): (dataSource === 1 ? '240px' :'320px')}">
     </search-tool>
     <table-edit v-if="showDialog" :handle-flag="editFlag" @dialogClose="closeDialog"></table-edit>
   </div>
@@ -47,6 +52,7 @@
   import '../uikits/controllers/EventController';
   import SearchTool from './SearchTool';
   import InfoList from './InfoList';
+  import LineWork from './LineWork';
   export default {
     name: 'mainMap',
     components: {
@@ -58,6 +64,7 @@
       photoEdit,
       photoSwiper,
       tableEdit,
+      LineWork,
       sideBar
     },
     data() {
@@ -69,6 +76,7 @@
         showDialog: false,
         rightPanelFlag: false,
         leftPanelFlag: false,
+        rightLineWorkFlag: false,
         dataSource: 1,
         dataModel: {
           uploadTime: '2012-10-7',
@@ -99,6 +107,12 @@
       },
       showLeftPanelSwitch: function () {
         this.leftPanelFlag = true;
+      },
+      onLineWork: function () {
+        this.rightLineWorkFlag = true;
+      },
+      closeLineWork: function () {
+        this.rightLineWorkFlag = false;
       }
     },
     watch: {
