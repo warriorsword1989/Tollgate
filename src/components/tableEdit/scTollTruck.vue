@@ -329,7 +329,7 @@
         }
       },
       // 最低收费
-      validateChargeMin() {
+      validateChargeMin(value) {
         if (this.isClickSave)return;
         if (value > 20) {
           this.$alert('最低收费值大于20!', '提示', {
@@ -339,7 +339,7 @@
         }
       },
       // 固定收费站对应次费
-      validateFixFee() {
+      validateFixFee(value) {
         if (this.isClickSave)return;
         if (value > 10 || value < 0) {
           this.$alert('固定收费站对应次费值大于10或者小于0!', '提示', {

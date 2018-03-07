@@ -162,25 +162,26 @@
       tabOnActive(e){
         this.activeIndex = parseInt(e.index);
       },
-      async transfromSelectedData() {
-        for (let i=0; i<this.tableData.length;i++) {
-          let param = { table: 'RD_TOLLGATE_NAME',pid: this.tableData[i].id};
+      async transfromSelectedData(arr) {
+        for (let i=0; i<arr.length;i++) {
+          let param = { table: 'RD_TOLLGATE_NAME',pid: arr[i]};
           let result = await getTollName(param);
-          this.tableData[i].name = result.data[0].name;
-          this.tableData[i].kind = this.tollType[this.tableData[i].kind];
+          let obj = {
+            name: result.data[0].name,
+            id: result.data[0].pid,
+            kind: this.tollType[result.data[0].type]
+          };
+          this.tableData.push(obj);
         }
+        this.loading = false;
+        this.toggleSelection(this.tableData);
       }
     },
     mounted() {
       // 查询获得收费站名称;
-      this.workFlag = appUtil.getGolbalData().workType
-      this.tableData = this.$store.state.selectedData.map(item => {
-        return Object.assign({},item);
-      });
-      this.transfromSelectedData().then(() => {
-        this.loading = false;
-        this.toggleSelection(this.tableData);
-      });
+      this.workFlag = appUtil.getGolbalData().workType;
+      let arr = this.$store.state.selectedData.map(item => item.id);
+      this.transfromSelectedData(arr);
     },
     beforeMount() {
       let viewWidth = document.documentElement.clientWidth;

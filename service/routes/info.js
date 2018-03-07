@@ -45,4 +45,44 @@ router.get ('/getAdminLoc', function (req, res, next) {
   }
 });
 
+router.get ('/getInfoListByInfoCode', function (req, res, next) {
+  "use strict";
+  try {
+    let InfoManager = new QueryInfo(req, res, next);
+    InfoManager['getInfoListByInfoCode'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
+router.get ('/updateInfoListByInfoIntelId', function (req, res, next) {
+  "use strict";
+  try {
+    let InfoManager = new QueryInfo(req, res, next);
+    InfoManager['updateInfoListByInfoIntelId'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
+router.get ('/getTollListByRdName', function (req, res, next) {
+  "use strict";
+  try {
+    let InfoManager = new QueryInfo(req, res, next);
+    InfoManager['getTollListByRdName'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
+router.get ('/getTollListByTollId', function (req, res, next) {
+  "use strict";
+  try {
+    let InfoManager = new QueryInfo(req, res, next);
+    InfoManager['getTollListByTollId'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
 export default router;

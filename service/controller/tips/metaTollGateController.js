@@ -62,7 +62,7 @@ class TollGate {
     const param = this.req.query;
     const pid = param.pid;
     this.table = param.table;
-    let sql = `SELECT * FROM ${this.table} WHERE PID=${pid} AND LANG_CODE='CHI'`;
+    let sql = `SELECT b.type, b.pid, a.name FROM ${this.table} a, RD_TOLLGATE b WHERE a.pid=b.pid AND a.pid=${pid} AND a.lang_code='CHI'`;
     const result = await this.originDB.executeSql2(sql);
     const resultData = changeResult(result);
     this.res.send({
@@ -71,8 +71,10 @@ class TollGate {
     });
   }
 
+  
+
   /**
-   * 
+   * 获得桥梁隧道名称;
    */
   async getBtName() {
     const param = this.req.query;
@@ -81,27 +83,17 @@ class TollGate {
     if (param.workFlag == 'dynamic') {
       this.db = new connectDynamicOracle();
     }
-    let sql = "SELECT NAME_GROUPID,NAME FROM " + this.table + " WHERE NAME LIKE " + "'%"+ nameString + "%' AND ROWNUM <= 1000";
-    const result = await this.db.executeSql(sql);
+    let dbSql = `create database link gdb_Links
+    connect to fm_gdb_trunk identified by fm_gdb_trunk
+    using '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.3.227)(PORT = 1521 )))(CONNECT_DATA = (SERVICE_NAME = orcl )))'`;
+    let dblinkconn = await this.db.executeSql(dbSql);
+    let querySql = `SELECT n.NAME,n.NAME_GROUPID FROM rd_link_name@gdb_Links l, rd_name n WHERE l.name_groupId = n.name_groupId AND n. NAME LIKE '%${nameString}%' AND l.name_type IN (4, 5)`;
+    let result = await this.db.executeSql(querySql,'gdb_Links');
+    await this.db.executeSql(`drop database link gdb_Links`);
     const resultData = changeResult(result);
-    let temp = resultData.map(item => {
-      return item.name_groupid;
-    });
-    let inString  = "("+temp.join(',')+")";
-    let sql2 = "SELECT NAME_GROUPID FROM RD_LINK_NAME WHERE NAME_GROUPID IN "+inString+" AND NAME_TYPE IN (4,5)";
-    const originResult = await this.originDB.executeSql2(sql2)
-    const allGroup = changeResult(originResult);
-    let results = []
-    resultData.forEach(item => {
-      allGroup.forEach(innerItem => {
-        if (item.name_groupid == innerItem.name_groupid) {
-          results.push(item);
-        }
-      })
-    });
     this.res.send({
       errorCode: 0,
-      data: results
+      data: resultData
     });
   }
 
