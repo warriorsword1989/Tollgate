@@ -6,25 +6,25 @@
         <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus">车型添加</el-button>
         <el-button @click="removeLimitItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-minus">车型删除</el-button>
       </div>
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
-          <div class="inputPart">
-            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].name_bt_id||originModel.name_bt_id" size="mini"></el-input>
-          </div>
-        </div>
-        <div class="grid-list">
-          <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
-          <div class="inputPart">
-            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].name_bt||originModel.name_bt" size="mini"></el-input>
-          </div>
-        </div>
-        <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
-      </div>
     </div>
     <!-- 车型循环 -->
     <el-form v-for="(dataItem, index) in dataModels" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
-      <div class="grid-content">
+        <div class="grid-content">
+          <div v-show="index==0" class="grid-wraper">
+            <div class="grid-list">
+              <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
+              <div class="inputPart">
+                <el-input :disabled="true" v-model="dataItem.name_bt_id" size="mini"></el-input>
+              </div>
+            </div>
+            <div class="grid-list">
+              <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
+              <div class="inputPart">
+                <el-input :disabled="true" v-model="dataItem.name_bt" size="mini"></el-input>
+              </div>
+            </div>
+            <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+          </div>
         <div class="grid-wraper">
           <div class="grid-list">
             <fieldset :style="dataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
@@ -142,7 +142,7 @@
         </div>
       </div>
     </el-form>
-    <div style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
+    <div v-show="((hasData && $store.state.handleFlag=='update')||dataModels.length) || (dataModels.length && $store.state.handleFlag=='insert')" style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
       <el-row :gutter="5">
         <el-button type="primary" @click="onSubmit($event,'dataItem')">保 存</el-button>
       </el-row>
@@ -153,7 +153,7 @@
 </template>
 
 <script>
-  import {updateTollGate, getTollGate, updateMetaIndex} from '../../dataService/api';
+  import {updateTollGate, getTollGate, updateMetaIndex, deleteCarTruckTollGate} from '../../dataService/api';
   import searchName from './searchName';
   import { appUtil } from '../../Application';
   export default {
@@ -162,6 +162,7 @@
     components: {searchName},
     data() {
       return {
+        hasData: false,
         isClickSave: false,
         serachShow: false,
         isGuangdong: false,
@@ -334,7 +335,7 @@
         this.setBtName();
       },
       removeLimitItem() {
-        this.dataModels.length>1 && this.dataModels.pop();
+        this.dataModels.pop();
       },
       afterValidate() {
         let submitData = [];
@@ -388,31 +389,57 @@
         if (!this.$store.state.editSelectedData.length) {
           return false;
         }
-        let validateFlag = true;
-        this.$refs[formName].forEach((formItem, index) => {
-          formItem.validate((valid) => {
-            if (!valid) {
-              return validateFlag = false;
+        if (!this.dataModels.length) {
+          let params = {
+            table: 'SC_TOLL_CAR',
+            pid: this.$store.state.editSelectedData[0],
+            workFlag: appUtil.getGolbalData().workType
+          };
+          this.loading = true;
+          deleteCarTruckTollGate(params)
+          .then(res =>{
+            this.$emit('tabStatusChange', {
+              status: false,
+              tabIndex: 0
+            });
+            let {errorCode,message,updateFlag} = res;
+            if (updateFlag && errorCode==0) {
+              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+            }
+          })
+          .finally(()=> {
+            this.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        } else {
+          let validateFlag = true;
+          this.$refs[formName].forEach((formItem, index) => {
+            formItem.validate((valid) => {
+              if (!valid) {
+                return validateFlag = false;
+              }
+            });
+          });
+          // 验证最小值不能大与最大值
+          let alertMessage = '';
+          this.dataModels.forEach((item,index) => {
+            if (item.seat_num_min >= item.seat_num_max) {
+              validateFlag = false;
+              alertMessage += `${index+1}车型最小值必须比最大值小;`;
             }
           });
-        });
-        // 验证最小值不能大与最大值
-        let alertMessage = '';
-        this.dataModels.forEach((item,index) => {
-          if (item.seat_num_min >= item.seat_num_max) {
-            validateFlag = false;
-            alertMessage += `${index+1}车型最小值必须比最大值小;`;
-          }
-        });
 
-        if (validateFlag) {
-          this.loading = true;
-          this.afterValidate();
-        } else {
-          alertMessage && this.$alert(alertMessage, '错误提示', {
-            confirmButtonText: '确定',
-            type: 'error'
-          })
+          if (validateFlag) {
+            this.loading = true;
+            this.afterValidate();
+          } else {
+            alertMessage && this.$alert(alertMessage, '错误提示', {
+              confirmButtonText: '确定',
+              type: 'error'
+            })
+          }
         }
       }
     },
@@ -429,10 +456,8 @@
         this.loading = true;
         getTollGate(param)
           .then(result => {
-            let {
-              errorCode,
-              data
-            } = result;
+            let {errorCode,data} = result;
+            this.hasData = data.length ? true : false;
             let transfromData = _.groupBy(data, 'car_class');
             let tempArray = [];
             Object.keys(transfromData).forEach(item => {
@@ -446,6 +471,8 @@
           .catch(err => {
             console.log(err);
           });
+      } else {
+        this.hasData = true;
       }
     }
   }

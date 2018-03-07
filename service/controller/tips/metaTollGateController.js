@@ -70,6 +70,7 @@ class TollGate {
       data: resultData
     });
   }
+
   /**
    * 
    */
@@ -104,6 +105,7 @@ class TollGate {
     });
   }
 
+
   /**
    * 对数据表进行更新
    */
@@ -119,45 +121,42 @@ class TollGate {
     if (this.table == 'SC_TOLL_HOLIDAY' || this.table == 'SC_TOLL_SPEFLOAT') {
       primaryKey = 'ID';
     }
-    let delSql = "DELETE FROM " + this.table + " WHERE " + primaryKey + " = " + param[0][primaryKey.toLowerCase()];
-    let insertSql = this.getInsertString(param);
+    let pids = param.map(item => item[primaryKey.toLowerCase()]);
+    let delSql = `DELETE FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')})`;
     const delResult = await this.db.executeSql(delSql);
     if (delResult.rowsAffected != -1) {
+      let insertSql = this._getInsertString(param);
       const insertResult = await this.db.executeSql(insertSql);
       if (insertResult.rowsAffected != -1) {
         // 如果与收费站有关的表有插入则更新index表;
         let tollTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP'];
         let priamry = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : 'GROUP_ID';
         if (tollTable.indexOf(this.table) !=-1){
-          let allTollPids = param.map(item => {
-            if (_self.table == 'SC_TOLL_TOLLGATEFEE') {
-              return item.toll_pid;
-            }
-            return item.group_id;
-          });
-          console.log(allTollPids)
+          let allTollPids = param.map(item => item[priamry.toLowerCase()]);
+          let handleFlag = true;
+          let resultBox = null;
           for (let i=0;i<allTollPids.length;i++) {
-            let selectSql = "SELECT * FROM SC_TOLL_INDEX WHERE TOLL_PID = " + allTollPids[i];
+            let selectSql = `SELECT * FROM SC_TOLL_INDEX WHERE TOLL_PID = ${allTollPids[i]}`;
             let searchResult = await this.selfDB.executeSql(selectSql);
             if (searchResult.rows.length) {
-              let updateSql = '';
-              if (this.req.body.workFlag =='static') {
-                updateSql = "UPDATE SC_TOLL_INDEX SET ADMIN_CODE="+this.adminCode+", TOLL_STATIC_STATE=1 WHERE TOLL_PID="+allTollPids[i];
-              } else {
-                updateSql = "UPDATE SC_TOLL_INDEX SET ADMIN_CODE="+this.adminCode+", TOLL_DYNAMIC_STATE=1 WHERE TOLL_PID="+allTollPids[i];
-              }
-              let updateResult = await this.selfDB.executeSql(updateSql);
+              let updateField = this.req.body.workFlag =='static' ? 'TOLL_STATIC_STATE' : 'TOLL_DYNAMIC_STATE';
+              let updateSql = `UPDATE SC_TOLL_INDEX SET ${updateField} = 1 WHERE TOLL_PID=${allTollPids[i]}`;
+              resultBox = await this.selfDB.executeSql(updateSql);
             } else {
-              let insertsSql = '';
-              if (this.req.body.workFlag =='static') {
-                insertsSql = "INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES ("+allTollPids[i]+","+this.adminCode+",0,Null"+")";
-              } else {
-                insertsSql = "INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES ("+allTollPids[i]+","+this.adminCode+",Null,0"+")";
-              }
-              let insertResult = await this.selfDB.executeSql(insertsSql);
+              let insertRes = this._updateTollIndex();
+              let insertValue = this.req.body.workFlag == 'static' ? `${allTollPids[i]},${this.adminCode},0,Null`: `${allTollPids[i]},${this.adminCode},Null,0`;
+              let insertsSql = `INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES (${insertValue})`;
+              resultBox = await this.selfDB.executeSql(insertsSql);
+            }
+            if (resultBox.rowsAffected == -1) {
+              handleFlag = false;
             }
           }
-          this.res.send({errorCode: 0});
+          if (handleFlag) {
+            this.res.send({errorCode: 0});
+          } else {
+            this.res.send({errorCode: -1});
+          }
         } else {
           this.res.send({errorCode: 0});
         }
@@ -169,12 +168,73 @@ class TollGate {
     }
   }
 
+  /**
+   * 删除表中的收费站相关信息
+   */
+  async deleteCarTruckTollGate() {
+    if (this.req.body.workFlag == 'dynamic') {
+      this.db = new connectDynamicOracle();
+    }
+    this.table = this.req.body.table;
+    let pid = this.req.body.pid;
+    let delSql = `DELETE FROM ${this.table} WHERE GROUP_ID = ${pid}`;
+    let delResult = await this.db.executeSql(delSql);
+    if (delResult.rowsAffected != -1) { 
+      // 如果删除成功，去查与收费站相关的表，如果不存在该收费站信息，则更新index表;
+      let existFlag = await this.isTollgateExists(pid,this.table);
+      if (!existFlag) {
+        //将对应的状态改为删除2;
+        let updateField = this.req.body.workFlag == 'dynamic'?'TOLL_DYNAMIC_STATE=2':'TOLL_STATIC_STATE=2';
+        let updateSql = `UPDATE SC_TOLL_INDEX SET ${updateField} WHERE TOLL_PID=${pid}`;
+        let updateRes = await this.selfDB.executeSql(updateSql);
+        if (updateRes.rowsAffected != -1) {
+          this.res.send({errorCode: 0, message: '删除成功', updateFlag: true});
+        } else {
+          this.res.send({errorCode: -1, message: '删除失败', updateFlag: false});
+        }
+      } else {
+        this.res.send({errorCode: 0, message: '删除成功', updateFlag: false});
+      }
+    } else {
+      this.res.send({errorCode: -1, message: '删除失败', updateFlag: false});
+    }
+  }
 
+  /**
+   * 查询一条收费站是否新增或删除过；
+   */
+  async isTollgateExists(pid, table) {
+    // 与收费站有关的表;
+    let tollTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP'];
+    let allTable = new Set(tollTable);
+    let currentTable = new Set([table]); 
+    let differenceABSet = new Set([...allTable].filter(x => !currentTable.has(x)));
+    differenceABSet = Array.from(differenceABSet);
+    let existFlag = false;
+    for (let i=0;i<differenceABSet.length;i++) {
+      let primaryKey = (differenceABSet[i] === 'SC_TOLL_TOLLGATEFEE') ? 'TOLL_PID'  : 'GROUP_ID';
+      let sql = `SELECT * FROM ${differenceABSet[i]} WHERE ${primaryKey}=${pid}`;
+      let queryRes = await this.db.executeSql(sql);
+      if (queryRes.rows.length) {// 如果有
+        existFlag = true;
+        break;
+      }
+    }
+    return existFlag;
+  }
+  /**
+   * toll_index表查询;
+   */
+  async _findTollgateIndex(primaryKey) {
+    let sql = `SELECT * FROM SC_TOLL_INDEX WHERE TOLL_PID=${primaryKey}`;
+    let qureyRes = await this.selfDB.executeSql(sql);
+    return changeResult(qureyRes);
+  }
   /**
    * 获得update部分语句
    * @param {*} data 
    */
-  getInsertString(data) {
+  _getInsertString(data) {
     let tempString = 'INSERT ALL INTO  ' + this.table + ' ';
     for (let i = 0; i < data.length; i++) {
       if (i == 0) {

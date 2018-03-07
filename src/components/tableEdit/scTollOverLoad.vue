@@ -51,7 +51,7 @@
                 </el-form-item>
                 -
                 <el-form-item prop="rato_max">
-                  <el-input v-model="innerDataItem.rato_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]" v-show="outerIndex!=4" :disabled="outerIndex!=4" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model="innerDataItem.rato_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]" v-show="outerIndex!=4" @change="setLevelRelate" size="mini"></el-input>
                   <el-input v-model="innerDataItem.rato_max" v-show="outerIndex==4" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
               </div>

@@ -50,5 +50,6 @@ export const getBriageName = params => { return axios.get('/tollgate/tips/getBtN
 export const getTollName =  params => { return axios.get('/tollgate/tips/getTollName', {params})};
 export const getMaxId = params => { return axios.get('/tollgate/tips/getMaxId', {params})};
 export const updateTollGate = params => { return axios.post('/tollgate/tips/updateTollGate', params)};
+export const deleteCarTruckTollGate = params => { return axios.post('/tollgate/tips/deleteCarTruckTollGate', params)};
 // 查询功能
 export const getSearchData = params => { return axios.get('/tollgate/search/getSearchData', {params})};
