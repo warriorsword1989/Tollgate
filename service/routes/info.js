@@ -65,4 +65,24 @@ router.get ('/updateInfoListByInfoIntelId', function (req, res, next) {
   }
 });
 
+router.get ('/getTollListByRdName', function (req, res, next) {
+  "use strict";
+  try {
+    let InfoManager = new QueryInfo(req, res, next);
+    InfoManager['getTollListByRdName'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
+router.get ('/getTollListByTollId', function (req, res, next) {
+  "use strict";
+  try {
+    let InfoManager = new QueryInfo(req, res, next);
+    InfoManager['getTollListByTollId'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
 export default router;
