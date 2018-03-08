@@ -158,6 +158,24 @@ class GetInfoData {
       });
     }
   }
+  async getTollGateByAdminCode() {
+    const param = this.req.query;
+    const adminCode = param.adminCode;
+    let sql = "select distinct STR.GROUP_ID from SC_TOLL_RDLINK STR left join SC_TOLL_SYSTEM STS ON STR.system_id=STS.systemid_old WHERE STS.system_id = " + adminCode;
+    try {
+      const result = await this.tollDb.executeSql(sql);
+      const resultData = changeResult(result);
+      this.res.send({
+        errorCode: 0,
+        data: resultData
+      });
+    } catch(error) {
+      this.res.send({
+        errorCode: -1,
+        data: error
+      });
+    }
+  }
 
 }
 
