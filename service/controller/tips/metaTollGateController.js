@@ -16,6 +16,8 @@ class TollGate {
     this.db = new ConnectMetaOracle();
     this.selfDB = new connetSelfObje();
     this.originDB = connectRenderObj;
+    // 与收费站有关的表;
+    this.tollRelateTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP'];
   }
 
   /**
@@ -87,7 +89,7 @@ class TollGate {
     connect to fm_gdb_trunk identified by fm_gdb_trunk
     using '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.3.227)(PORT = 1521 )))(CONNECT_DATA = (SERVICE_NAME = orcl )))'`;
     let dblinkconn = await this.db.executeSql(dbSql);
-    let querySql = `SELECT n.NAME,n.NAME_GROUPID FROM rd_link_name@gdb_Links l, rd_name n WHERE l.name_groupId = n.name_groupId AND n. NAME LIKE '%${nameString}%' AND l.name_type IN (4, 5)`;
+    let querySql = `SELECT DISTINCT n.NAME_GROUPID,n.NAME FROM rd_link_name@gdb_Links l, rd_name n WHERE l.name_groupId = n.name_groupId AND n. NAME LIKE '%${nameString}%' AND n.lang_code='CHI' AND l.name_type IN (4, 5)`;
     let result = await this.db.executeSql(querySql,'gdb_Links');
     await this.db.executeSql(`drop database link gdb_Links`);
     const resultData = changeResult(result);
@@ -121,9 +123,8 @@ class TollGate {
       const insertResult = await this.db.executeSql(insertSql);
       if (insertResult.rowsAffected != -1) {
         // 如果与收费站有关的表有插入则更新index表;
-        let tollTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP'];
         let priamry = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : 'GROUP_ID';
-        if (tollTable.indexOf(this.table) !=-1){
+        if (this.tollRelateTable.indexOf(this.table) !=-1){
           let allTollPids = param.map(item => item[priamry.toLowerCase()]);
           let handleFlag = true;
           let resultBox = null;
@@ -196,9 +197,7 @@ class TollGate {
    * 查询一条收费站是否新增或删除过；
    */
   async isTollgateExists(pid, table) {
-    // 与收费站有关的表;
-    let tollTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP'];
-    let allTable = new Set(tollTable);
+    let allTable = new Set(this.tollRelateTable);
     let currentTable = new Set([table]); 
     let differenceABSet = new Set([...allTable].filter(x => !currentTable.has(x)));
     differenceABSet = Array.from(differenceABSet);

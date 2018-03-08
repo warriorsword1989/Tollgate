@@ -38,7 +38,7 @@
               </div>
               <div style="width:180px" class="labelText">区间闭合标识：</div>
               <div class="inputPart">
-                <el-select size="mini" v-model.number="innerDataItem.rato_flag" placeholder="请选择">
+                <el-select size="mini" @changeRatoFlag v-model.number="innerDataItem.rato_flag" placeholder="请选择">
                   <el-option v-for="item in seatFlagClass" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </div>
@@ -170,7 +170,7 @@
         </el-form>
       </div>
     </div>
-    <div style="padding:10px 20px 0 0;text-align: right;" v-show="dataModels.length" class="footerPart">
+    <div style="padding:10px 20px 0 0;text-align: right;" v-show="((hasData && $store.state.handleFlag=='update')||dataModels.length) || (dataModels.length && $store.state.handleFlag=='insert')" class="footerPart">
       <el-row :gutter="5">
         <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
       </el-row>
@@ -182,7 +182,8 @@
 <script>
   import {
     updateTollGate,
-    getTollGate
+    getTollGate,
+    deleteCarTruckTollGate
   } from '../../dataService/api';
   import searchName from './searchName';
   import {appUtil} from '../../Application';
@@ -191,6 +192,7 @@
     components: {searchName},
     data() {
       return {
+        hasData: false,
         loading: false,
         isGuangdong: false,
         serachShow: false,
@@ -213,7 +215,7 @@
           lane_num: 0,
           sub_rate_base1: 0,
           lane_num1: 0,
-          name_bt_id: 0,
+          name_bt_id: 1,
           name_bt: 0,
           ton_limit: 0,
           multiple_limit: 0,
@@ -261,6 +263,15 @@
       }
     },
     methods: {
+      changeRatoFlag (value) {
+        this.dataModels.forEach((outer,outerIndex) => {
+          outer.forEach((inner,innerIndex) => {
+            if (innerIndex!=0) {
+              inner.rato_flag = outer[0].rato_flag;
+            }
+          });
+        });
+      },
       // 装载机别数
       validateTunnage (rule, value, callback) {
         if (value >49 || value < 0) {
@@ -409,34 +420,60 @@
       onSubmit(formName) {
         let validateFlag = true;
         if (!this.$store.state.editSelectedData.length) return false;
-        this.$refs[formName].forEach((formItem, index) => {
-          formItem.validate((valid) => {
-            if (!valid) {
-              return validateFlag = false;
+        if (!this.dataModels.length) {
+          let params = {
+            table: 'SC_TOLL_OVERLOAD',
+            pid: this.$store.state.editSelectedData[0],
+            workFlag: appUtil.getGolbalData().workType
+          };
+          this.loading = true;
+          deleteCarTruckTollGate(params)
+          .then(res =>{
+            this.$emit('tabStatusChange', {
+              status: false,
+              tabIndex: 3
+            });
+            let {errorCode,message,updateFlag} = res;
+            if (updateFlag && errorCode==0) {
+              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
             }
-          });
-        });
-        // 验证最小值不能大与最大值
-        let alertMessage = '';
-        this.dataModels.forEach((item,index) => {
-          if(item[0].rato_min >= item[0].rato_max) {
-            validateFlag = false;
-            alertMessage += `${index+1}类型超载最小百分比值必须比最大值小;`;
-          }
-          item.forEach((innerItem,innerIndex) => {
-            if(innerItem.interval_min >= innerItem.interval_max) {
-              validateFlag = false;
-              alertMessage += `${index+1}类型下的${innerIndex+1}区间超载最小百分比值必须比最大值小;`;
-            }
-          });
-        });
-        if (validateFlag) {
-          this.afterSave();
-        } else {
-          this.$alert(alertMessage, '错误提示', {
-            confirmButtonText: '确定',
-            type: 'error'
           })
+          .finally(()=> {
+            this.loading = false;
+          })
+          .catch(err => {
+            throw new Error(err);
+          });
+        } else {
+          this.$refs[formName].forEach((formItem, index) => {
+            formItem.validate((valid) => {
+              if (!valid) {
+                return validateFlag = false;
+              }
+            });
+          });
+          // 验证最小值不能大与最大值
+          let alertMessage = '';
+          this.dataModels.forEach((item,index) => {
+            if(item[0].rato_min >= item[0].rato_max) {
+              validateFlag = false;
+              alertMessage += `${index+1}类型超载最小百分比值必须比最大值小;`;
+            }
+            item.forEach((innerItem,innerIndex) => {
+              if(innerItem.interval_min >= innerItem.interval_max) {
+                validateFlag = false;
+                alertMessage += `${index+1}类型下的${innerIndex+1}区间超载最小百分比值必须比最大值小;`;
+              }
+            });
+          });
+          if (validateFlag) {
+            this.afterSave();
+          } else {
+            this.$alert(alertMessage, '错误提示', {
+              confirmButtonText: '确定',
+              type: 'error'
+            })
+          }
         }
       }
     },
@@ -453,6 +490,7 @@
         getTollGate(param)
           .then(result => {
             let {errorCode,data} = result;
+            this.hasData = result.data.length ? true : false;
             let classObjResult = _.groupBy(data, 'overloading_clss');
             let classArrResult = [];
             Object.keys(classObjResult).forEach(item => {

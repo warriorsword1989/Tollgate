@@ -35,7 +35,7 @@
             <div title="收费类型：" class="labelText">收费类型：</div>
             <div class="inputPart">
               <el-form-item prop="rate_class">
-                <el-select size="mini" v-model.number="dataModels.rate_class" placeholder="请选择">
+                <el-select @change="rateClassChange" size="mini" v-model.number="dataModels.rate_class" placeholder="请选择">
                   <el-option v-for="item in feeClass" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
@@ -246,7 +246,17 @@
       toggleSearchPanel(flag){
         this.serachShow = flag;
       },
-
+      rateClassChange(value){
+        if (value != 4) {
+          this.dataModels.rato = null;
+        }
+        if (value != 2) {
+          this.truck_class = null;
+          this.tunnage_flag = null;
+          this.tunnage_max = null;
+          this.tunnage_min = null;
+        }
+      },
       setBtName() {
         this.dataModels.name_bt_id = this.$store.state.btData.name_groupid;
         this.dataModels.name_bt = this.$store.state.btData.name;

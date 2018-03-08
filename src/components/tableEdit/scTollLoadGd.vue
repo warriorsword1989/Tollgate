@@ -193,7 +193,7 @@
           lane_num: 0,
           rate_base1: 0,
           lane_num1: 0,
-          name_bt_id: 0,
+          name_bt_id: 1,
           name_bt: 0,
           source: 1
         },

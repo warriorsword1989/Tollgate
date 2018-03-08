@@ -146,7 +146,7 @@
           return photoObj;
         });
         this.loading = false;
-        setTimeout(() => {
+        this.$nextTick(()=>{
           this.setCurrentInfo()
         });
       }).catch(function(err){

@@ -129,5 +129,6 @@ export {
   getSearchData,
   getTollListByRdName,
   getTollListByTollId,
-  updateInfoList
+  updateInfoList,
+  deleteCarTruckTollGate
 };

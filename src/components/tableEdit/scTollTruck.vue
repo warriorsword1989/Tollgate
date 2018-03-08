@@ -219,7 +219,7 @@
           lane_num: null,
           rate1: null,
           lane_num1: null,
-          name_bt_id: 0,
+          name_bt_id: 1,
           name_bt: '',
           fix_fee: null,
           source: 1
@@ -227,6 +227,9 @@
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,
         axleOptions: [{
+          value: null,
+          label: '空'
+        },{
           value: 2,
           label: '2'
         }, {
