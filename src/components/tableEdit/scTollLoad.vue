@@ -38,7 +38,7 @@
               </div>
               <div style="width:180px" class="labelText">区间闭合标识：</div>
               <div class="inputPart">
-                <el-select size="mini" v-model.number="innerDataItem.tunnage_flag" placeholder="请选择">
+                <el-select @change="changeTunnage" size="mini" v-model.number="innerDataItem.tunnage_flag" placeholder="请选择">
                   <el-option v-for="item in seatFlagClass" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </div>
@@ -93,7 +93,7 @@
                 <div class="grid-list">
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-input @change="validateRateMin" v-model="innerDataItem.rate_min" size="mini"></el-input>
+                    <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
                   </div>
                 </div>
               </div>
@@ -101,7 +101,7 @@
                 <div class="grid-list">
                   <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_max" size="mini"></el-input>
+                    <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -154,7 +154,7 @@
         </el-form>
       </div>
     </div>
-    <div v-show="dataModels.length" style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
+    <div v-show="((hasData && $store.state.handleFlag=='update')||dataModels.length) || (dataModels.length && $store.state.handleFlag=='insert')" style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
       <el-row :gutter="5">
         <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
       </el-row>
@@ -165,13 +165,14 @@
 
 <script>
   import searchName from './searchName';
-  import {updateTollGate,getTollGate} from '../../dataService/api';
+  import {updateTollGate,getTollGate, deleteCarTruckTollGate} from '../../dataService/api';
   import {appUtil} from '../../Application';
   export default {
     name: 'scTollCar',
     components: {searchName},
     data() {
       return {
+        hasData: false,
         loading: false,
         isGuangdong: false,
         dataModels: [],
@@ -194,7 +195,7 @@
           lane_num: 0,
           rate_base1: 0,
           lane_num1: 0,
-          name_bt_id: 0,
+          name_bt_id: 1,
           name_bt: '',
           source: 1
         },
@@ -282,6 +283,16 @@
             type: 'warning'
           });
         }
+      },
+      // 区间闭合标识改变的维护；
+      changeTunnage (value) {
+        this.dataModels.forEach((outer,outerIndex) => {
+          outer.forEach((inner,innerIndex) => {
+            if (innerIndex!=0) {
+              inner.tunnage_flag = outer[0].tunnage_flag;
+            }
+          });
+        });
       },
       // 装载级别吨位关联维护
       setLevelRelate (value) {
@@ -417,40 +428,66 @@
             this.loading = false;
           })
           .catch(err => {
-            console.log(err);
+            throw new Error(err);
           });
       },
       onSubmit(formName) {
         let validateFlag = true;
         if (!this.$store.state.editSelectedData.length) return false;
-        this.$refs[formName].forEach((formItem, index) => {
-          formItem.validate((valid) => {
-            if (!valid) {
-              return validateFlag = false; 
+        if (!this.dataModels.length) {
+          let params = {
+            table: this.isGuangdong? 'SC_TOLL_LOAD_GD' : 'SC_TOLL_LOAD',
+            pid: this.$store.state.editSelectedData[0],
+            workFlag: appUtil.getGolbalData().workType
+          };
+          this.loading = true;
+          deleteCarTruckTollGate(params)
+          .then(res =>{
+            this.$emit('tabStatusChange', {
+              status: false,
+              tabIndex: 2
+            });
+            let {errorCode,message,updateFlag} = res;
+            if (updateFlag && errorCode==0) {
+              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
             }
-          });
-        });
-        // 验证最小值不能大与最大值
-        let alertMessage = '';
-        this.dataModels.forEach((item,index) => {
-          if(item[0].tunnage_min >= item[0].tunnage_max) {
-            validateFlag = false;
-            alertMessage += `${index+1}类型装载吨位最小值必须比最大值小;`;
-          }
-          item.forEach((innerItem,innerIndex) => {
-            if(innerItem.interval_min >= innerItem.interval_max) {
-              validateFlag = false;
-              alertMessage += `${index+1}类型下的${innerIndex+1}区间装载吨位最小值必须比最大值小;`;
-            }
-          });
-        });
-        if (validateFlag) {
-          this.afterSave();
-        } else {
-          this.$alert(alertMessage, '错误提示', {
-            confirmButtonText: '确定',
-            type: 'error'
           })
+          .finally(()=> {
+            this.loading = false;
+          })
+          .catch(err => {
+            throw new Error(err);
+          });
+        } else {
+          this.$refs[formName].forEach((formItem, index) => {
+            formItem.validate((valid) => {
+              if (!valid) {
+                return validateFlag = false; 
+              }
+            });
+          });
+          // 验证最小值不能大与最大值
+          let alertMessage = '';
+          this.dataModels.forEach((item,index) => {
+            if(item[0].tunnage_min >= item[0].tunnage_max) {
+              validateFlag = false;
+              alertMessage += `${index+1}类型装载吨位最小值必须比最大值小;`;
+            }
+            item.forEach((innerItem,innerIndex) => {
+              if(innerItem.interval_min >= innerItem.interval_max) {
+                validateFlag = false;
+                alertMessage += `${index+1}类型下的${innerIndex+1}区间装载吨位最小值必须比最大值小;`;
+              }
+            });
+          });
+          if (validateFlag) {
+            this.afterSave();
+          } else {
+            this.$alert(alertMessage, '错误提示', {
+              confirmButtonText: '确定',
+              type: 'error'
+            })
+          }
         }
       }
     },
@@ -467,6 +504,7 @@
         getTollGate(param)
         .then(result => {
           let {errorCode,data} = result;
+          this.hasData = result.data.length ? true : false;
           let classObjResult = _.groupBy(data, 'loading_class');
           let classArrResult = [];
           Object.keys(classObjResult).forEach(item => {

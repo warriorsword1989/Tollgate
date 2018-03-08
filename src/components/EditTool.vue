@@ -32,12 +32,14 @@
 <script>
     import startEditCtrl from '../uikits/startEditCtrl';
     import { appUtil } from '../Application';
+    import '../uikits/controllers/EventController';
     import { getTollGateByAdminCode, getTollListByTollId } from '../dataService/api';
     export default {
       name: "edit-tool",
       data() {
         return {
-          dataSource: 1
+          dataSource: 1,
+          eventController: fastmap.uikit.EventController()
         }
       },
       methods: {
@@ -54,6 +56,7 @@
           this.$emit('lineWork')
         },
         editAdminToll: function (type) {
+          let _self = this;
           const param = {
             adminCode: appUtil.getGolbalData().adminCode
           };
@@ -67,6 +70,7 @@
               if (type === 1) {
                 // 编辑所有收费信息 tollIds
                 console.log(tollIds);
+                _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: tollIds, event: event, flag:'insert' });
               } else {
                 const param1 = {
                   tollIds: tollIds
@@ -82,9 +86,12 @@
                       let b = new Set(existTollIds)
                       let differenceABSet = new Set([...a].filter(x => !b.has(x)));
                       console.log([...differenceABSet]);
+                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: [...differenceABSet], event: event, flag:'insert' });
                     } else {
                       // 编辑收费信息 existTollIds
                       console.log(existTollIds);
+                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: existTollIds, event: event, flag:'insert' });
+                      
                     }
                   }
                 });

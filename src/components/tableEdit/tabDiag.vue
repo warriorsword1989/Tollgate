@@ -28,9 +28,9 @@
       </template>
       <el-table v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);" @selection-change="selectChange" ref="multipleTable" :data="tableData" :max-height="100" tooltip-effect="light">
         <el-table-column label="序号" type="index" width="120"></el-table-column>
-        <el-table-column prop="id" label="收费站ID"></el-table-column>
+        <el-table-column prop="pid" label="收费站ID"></el-table-column>
         <el-table-column prop="name" label="收费站名称"></el-table-column>
-        <el-table-column prop="kind" label="收费站类型" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="type" label="收费站类型" show-overflow-tooltip></el-table-column>
         <el-table-column type="selection" width="55"></el-table-column>
       </el-table>
     </el-collapse-item>
@@ -153,28 +153,23 @@
         }
       },
       selectChange (selection) {
-        let pids = [];
-        selection.forEach(item => {
-          pids.push(item.id);
-        });
+        let pids = selection.map(item => item.pid);
         this.$store.commit('changeEditSelectedData', pids);
       },
       tabOnActive(e){
         this.activeIndex = parseInt(e.index);
       },
       async transfromSelectedData(arr) {
-        for (let i=0; i<arr.length;i++) {
-          let param = { table: 'RD_TOLLGATE_NAME',pid: arr[i]};
-          let result = await getTollName(param);
-          let obj = {
-            name: result.data[0].name,
-            id: result.data[0].pid,
-            kind: this.tollType[result.data[0].type]
-          };
-          this.tableData.push(obj);
-        }
+        let param = { table: 'RD_TOLLGATE_NAME', pid: arr};
+        let result = await getTollName(param);
+        this.tableData = result.data.map(item => {
+          item.type = this.tollType[item.type];
+          return item;
+        });
         this.loading = false;
-        this.toggleSelection(this.tableData);
+        this.$nextTick(() => {
+          this.toggleSelection(this.tableData);
+        });
       }
     },
     mounted() {
