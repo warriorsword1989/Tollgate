@@ -62,9 +62,9 @@ class TollGate {
    */
   async getTollName() {
     const param = this.req.query;
-    const pid = param.pid;
+    const pids = param.pid;
     this.table = param.table;
-    let sql = `SELECT b.type, b.pid, a.name FROM ${this.table} a, RD_TOLLGATE b WHERE a.pid=b.pid AND a.pid=${pid} AND a.lang_code='CHI'`;
+    let sql = `SELECT b.type, b.pid, a.name FROM ${this.table} a, RD_TOLLGATE b WHERE a.pid=b.pid AND a.pid IN (${pids.join(',')}) AND a.lang_code='CHI'`;
     const result = await this.originDB.executeSql2(sql);
     const resultData = changeResult(result);
     this.res.send({
@@ -136,7 +136,6 @@ class TollGate {
               let updateSql = `UPDATE SC_TOLL_INDEX SET ${updateField} = 1 WHERE TOLL_PID=${allTollPids[i]}`;
               resultBox = await this.selfDB.executeSql(updateSql);
             } else {
-              let insertRes = this._updateTollIndex();
               let insertValue = this.req.body.workFlag == 'static' ? `${allTollPids[i]},${this.adminCode},0,Null`: `${allTollPids[i]},${this.adminCode},Null,0`;
               let insertsSql = `INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES (${insertValue})`;
               resultBox = await this.selfDB.executeSql(insertsSql);

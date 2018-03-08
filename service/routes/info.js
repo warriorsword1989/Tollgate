@@ -85,4 +85,14 @@ router.get ('/getTollListByTollId', function (req, res, next) {
   }
 });
 
+router.get ('/getTollGateByAdminCode', function (req, res, next) {
+  "use strict";
+  try {
+    let InfoManager = new QueryInfo(req, res, next);
+    InfoManager['getTollGateByAdminCode'] ();
+  } catch (error) {
+    next (error);
+  }
+});
+
 export default router;

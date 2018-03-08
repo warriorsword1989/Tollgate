@@ -15,13 +15,13 @@
     <div title="面作业" class="batchDelete" v-show="dataSource === 2">
       <img src="../assets/quickToolIcon/drawPloygon.png"/>
       <ul class="typeList">
-        <li>
+        <li @click="editAdminToll(1)">
           <span>编辑所有收费站</span>
         </li>
-        <li>
+        <li @click="editAdminToll(2)">
           <span>新增收费信息</span>
         </li>
-        <li>
+        <li @click="editAdminToll(3)">
           <span>编辑收费信息</span>
         </li>
       </ul>
@@ -32,11 +32,14 @@
 <script>
     import startEditCtrl from '../uikits/startEditCtrl';
     import { appUtil } from '../Application';
+    import '../uikits/controllers/EventController';
+    import { getTollGateByAdminCode, getTollListByTollId } from '../dataService/api';
     export default {
       name: "edit-tool",
       data() {
         return {
-          dataSource: 1
+          dataSource: 1,
+          eventController: fastmap.uikit.EventController()
         }
       },
       methods: {
@@ -51,6 +54,50 @@
         },
         lineWork: function () {
           this.$emit('lineWork')
+        },
+        editAdminToll: function (type) {
+          let _self = this;
+          const param = {
+            adminCode: appUtil.getGolbalData().adminCode
+          };
+          let tollIds = [];
+          let existTollIds = [];
+          getTollGateByAdminCode(param).then(function (data) {
+            if (data.errorCode === 0) {
+              for (let i = 0; i < data.data.length; i++) {
+                tollIds.push(data.data[i].group_id)
+              }
+              if (type === 1) {
+                // 编辑所有收费信息 tollIds
+                console.log(tollIds);
+                _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: tollIds, event: event, flag:'insert' });
+              } else {
+                const param1 = {
+                  tollIds: tollIds
+                };
+                getTollListByTollId(param1).then(function (data1) {
+                  if (data1.errorCode === 0) {
+                    for (let j = 0; j < data1.data.length; j++) {
+                      existTollIds.push(data1.data[j].toll_pid);
+                    }
+                    if (type === 2) {
+                      // 新增收费信息 differenceABSet
+                      let a = new Set(tollIds);
+                      let b = new Set(existTollIds)
+                      let differenceABSet = new Set([...a].filter(x => !b.has(x)));
+                      console.log([...differenceABSet]);
+                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: [...differenceABSet], event: event, flag:'insert' });
+                    } else {
+                      // 编辑收费信息 existTollIds
+                      console.log(existTollIds);
+                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: existTollIds, event: event, flag:'insert' });
+                      
+                    }
+                  }
+                });
+              }
+            }
+          });
         }
       },
       mounted() {
