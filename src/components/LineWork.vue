@@ -36,6 +36,7 @@
 
 <script>
     import { getTollListByRdName, getTollListByTollId } from '../dataService/api';
+    import '../uikits/controllers/EventController';
     export default {
       name: "line-work",
       data() {
@@ -43,7 +44,8 @@
           roadName: '',
           tollData: [],
           multipleSelection: [],
-          tollIds: []
+          tollIds: [],
+          eventController: fastmap.uikit.EventController()
         }
       },
       methods: {
@@ -86,6 +88,7 @@
                   type: 'warning'
                 }).then(() => {
                   self.tollIds = id;
+                  self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:'insert' });
                 }).catch(() => {
                   self.$message({
                     type: 'info',
@@ -94,6 +97,7 @@
                 });
               } else {
                 self.tollIds = id;
+                self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:'insert' });
               }
             }
           });

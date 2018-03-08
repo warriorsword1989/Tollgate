@@ -123,7 +123,6 @@
   export default {
     name: 'scTollRdlinkBt',
     components: {searchName},
-    props: ['tableName', 'selectedData'],
     data() {
       let _self = this;
       let checkTunage_max = (rule, value, callback) => {

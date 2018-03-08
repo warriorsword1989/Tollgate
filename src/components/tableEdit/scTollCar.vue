@@ -6,29 +6,29 @@
         <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus">车型添加</el-button>
         <el-button @click="removeLimitItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-minus">车型删除</el-button>
       </div>
-      <div class="grid-wraper">
-        <div class="grid-list">
-          <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
-          <div class="inputPart">
-            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].name_bt_id||originModel.name_bt_id" size="mini"></el-input>
-          </div>
-        </div>
-        <div class="grid-list">
-          <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
-          <div class="inputPart">
-            <el-input :disabled="true" v-model="dataModels[0] && dataModels[0].name_bt||originModel.name_bt" size="mini"></el-input>
-          </div>
-        </div>
-        <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
-      </div>
     </div>
     <!-- 车型循环 -->
     <el-form v-for="(dataItem, index) in dataModels" :key="index" :model="dataItem" ref="dataItem" :inline="true" class="wraper">
-      <div class="grid-content">
+        <div class="grid-content">
+          <div v-show="index==0" class="grid-wraper">
+            <div class="grid-list">
+              <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
+              <div class="inputPart">
+                <el-input :disabled="true" v-model="dataItem.name_bt_id" size="mini"></el-input>
+              </div>
+            </div>
+            <div class="grid-list">
+              <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
+              <div class="inputPart">
+                <el-input :disabled="true" v-model="dataItem.name_bt" size="mini"></el-input>
+              </div>
+            </div>
+            <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+          </div>
         <div class="grid-wraper">
           <div class="grid-list">
             <fieldset :style="dataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
-              <legend>{{dataItem.car_class}} 型车</legend>
+              <legend>{{numberTable[dataItem.car_class-1]}} 型车</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
                   <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
@@ -48,7 +48,7 @@
                       <el-form-item prop="seat_num_min" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
                         <el-input v-model.number="dataItem.seat_num_min" disabled size="mini"></el-input>
                       </el-form-item>-
-                      <el-form-item v-if='dataItem.car_class!=4' prop="seat_num_max" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
+                      <el-form-item :rules="[{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'},{  validator: validateSeat0_55, trigger: 'change' }]" v-if='dataItem.car_class!=4' prop="seat_num_max">
                         <el-input v-model.number="dataItem.seat_num_max" @change="maxSeatNumChange" size="mini"></el-input>
                       </el-form-item>
                       <el-form-item v-if='dataItem.car_class==4' prop="seat_num_max">
@@ -62,7 +62,7 @@
                 <div class="grid-list">
                   <div title="费率(元/公里)非桥隧道：" class="labelText">费率(元/公里)非桥隧道：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate">
                       <el-input @change="validateRate" v-model.number="dataItem.rate" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -83,7 +83,7 @@
                 <div class="grid-list">
                   <div title="桥隧道费率(元/车次)：" class="labelText">桥隧道费率(元/车次)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate_bt">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate_bt">
                       <el-input @change="validateRateBt" v-model.number="dataItem.rate_bt" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -92,7 +92,7 @@
                 <div class="grid-list" v-show="isZheJiang">
                   <div title="车次加费(元)：" class="labelText">车次加费(元)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="fee_add">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="fee_add">
                       <el-input @change="validateFeeAdd" v-model.number="dataItem.fee_add" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -102,7 +102,7 @@
                 <div class="grid-list">
                   <div title="最低收费(元)：" class="labelText">最低收费(元)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="charge_min">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="charge_min">
                       <el-input @change="validateChargeMin" v-model.number="dataItem.charge_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -110,7 +110,7 @@
                 <div class="grid-list">
                   <div title="费率1(元/公里)：" class="labelText">费率1(元/公里)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate1">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate1">
                       <el-input @change="validateRate1" :disabled="!isGuangdong" v-model.number="dataItem.rate1" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -131,7 +131,7 @@
                 <div class="grid-list">
                   <div title="固定收费站对应次费：" class="labelText">固定收费站对应次费：</div>
                   <div class="inputPart">
-                    <el-form-item prop="fix_fee">
+                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="fix_fee">
                       <el-input @change="validateFixFee" v-model.number="dataItem.fix_fee" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -142,7 +142,7 @@
         </div>
       </div>
     </el-form>
-    <div style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
+    <div v-show="((hasData && $store.state.handleFlag=='update')||dataModels.length) || (dataModels.length && $store.state.handleFlag=='insert')" style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
       <el-row :gutter="5">
         <el-button type="primary" @click="onSubmit($event,'dataItem')">保 存</el-button>
       </el-row>
@@ -153,22 +153,23 @@
 </template>
 
 <script>
-  import {updateTollGate, getTollGate, updateMetaIndex} from '../../dataService/api';
+  import {updateTollGate, getTollGate, updateMetaIndex, deleteCarTruckTollGate} from '../../dataService/api';
   import searchName from './searchName';
   import { appUtil } from '../../Application';
   export default {
     name: 'scTollCar',
-    props: ['tableName', 'selectedData', 'handleFlag'],
+    props: ['handleFlag'],
     components: {searchName},
     data() {
       return {
+        hasData: false,
         isClickSave: false,
         serachShow: false,
         isGuangdong: false,
         isZheJiang: false,
         loading: false,
         formIndex: 0,
-        dataModels: {},
+        dataModels: [],
         btGroupId:0,
         originModel: {
           group_id: this.$store.state.editSelectedData[0],
@@ -176,15 +177,16 @@
           seat_flag: 1,
           name_bt_id: 1,
           name_bt: '',
-          rate: 1,
+          rate: null,
           seat_num_max: 10,
           seat_num_min: 1,
           rate_bt: 4,
           fee_add: null,
-          charge_min: 3,
-          fix_fee: 3,
+          charge_min: null,
+          fix_fee: null,
           source: 1
         },
+        numberTable: ['一','二','三','四','五'],
         mountFlag: false,
         feeOptions: [{
           value: 0,
@@ -266,7 +268,7 @@
         }
       },
       // 最低收费
-      validateChargeMin() {
+      validateChargeMin(value) {
         if (this.isClickSave)return;
         if (value && value > 20) {
           this.$alert('最低收费值大于20', '提示', {
@@ -276,7 +278,7 @@
         }
       },
       // 固定收费站对应次费
-      validateFixFee() {
+      validateFixFee(value) {
         if (this.isClickSave)return;
         if (value && (value > 10 || value < 0)) {
           this.$alert('固定收费站对应次费值大于10或者小于0?', '提示', {
@@ -320,7 +322,7 @@
         if (newObj.car_class == '1') {
           newObj.seat_num_min = 0;
         } else {
-          newObj.seat_num_min = this.dataModels[modelLength - 1].seat_num_max;
+          newObj.seat_num_min = this.dataModels.length?this.dataModels[modelLength - 1].seat_num_max:this.originModel.seat_num_max;
           // 最后类型的最大值为1000
           if (newObj.car_class == 4) {
             newObj.seat_num_max = 1000;
@@ -333,7 +335,7 @@
         this.setBtName();
       },
       removeLimitItem() {
-        this.dataModels.length>1 && this.dataModels.pop();
+        this.dataModels.pop();
       },
       afterValidate() {
         let submitData = [];
@@ -387,31 +389,57 @@
         if (!this.$store.state.editSelectedData.length) {
           return false;
         }
-        let validateFlag = true;
-        this.$refs[formName].forEach((formItem, index) => {
-          formItem.validate((valid) => {
-            if (!valid) {
-              return validateFlag = false;
+        if (!this.dataModels.length) {
+          let params = {
+            table: 'SC_TOLL_CAR',
+            pid: this.$store.state.editSelectedData[0],
+            workFlag: appUtil.getGolbalData().workType
+          };
+          this.loading = true;
+          deleteCarTruckTollGate(params)
+          .then(res =>{
+            this.$emit('tabStatusChange', {
+              status: false,
+              tabIndex: 0
+            });
+            let {errorCode,message,updateFlag} = res;
+            if (updateFlag && errorCode==0) {
+              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+            }
+          })
+          .finally(()=> {
+            this.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        } else {
+          let validateFlag = true;
+          this.$refs[formName].forEach((formItem, index) => {
+            formItem.validate((valid) => {
+              if (!valid) {
+                return validateFlag = false;
+              }
+            });
+          });
+          // 验证最小值不能大与最大值
+          let alertMessage = '';
+          this.dataModels.forEach((item,index) => {
+            if (item.seat_num_min >= item.seat_num_max) {
+              validateFlag = false;
+              alertMessage += `${index+1}车型最小值必须比最大值小;`;
             }
           });
-        });
-        // 验证最小值不能大与最大值
-        let alertMessage = '';
-        this.dataModels.forEach((item,index) => {
-          if (item.seat_num_min >= item.seat_num_max) {
-            validateFlag = false;
-            alertMessage += `${index+1}车型最小值必须比最大值小;`;
-          }
-        });
 
-        if (validateFlag) {
-          this.loading = true;
-          this.afterValidate();
-        } else {
-          this.$alert(alertMessage, '错误提示', {
-            confirmButtonText: '确定',
-            type: 'error'
-          })
+          if (validateFlag) {
+            this.loading = true;
+            this.afterValidate();
+          } else {
+            alertMessage && this.$alert(alertMessage, '错误提示', {
+              confirmButtonText: '确定',
+              type: 'error'
+            })
+          }
         }
       }
     },
@@ -428,10 +456,8 @@
         this.loading = true;
         getTollGate(param)
           .then(result => {
-            let {
-              errorCode,
-              data
-            } = result;
+            let {errorCode,data} = result;
+            this.hasData = data.length ? true : false;
             let transfromData = _.groupBy(data, 'car_class');
             let tempArray = [];
             Object.keys(transfromData).forEach(item => {
@@ -445,6 +471,8 @@
           .catch(err => {
             console.log(err);
           });
+      } else {
+        this.hasData = true;
       }
     }
   }
