@@ -1,80 +1,73 @@
 <template>
   <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
+    <!-- 一条没有的显示 -->
     <div class="grid-content">
-      <div v-show="!dataModels[1] || !Object.keys(dataModels[1]).length" class="grid-wraper">
-        <div class="grid-list">
-          <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
-          <div class="inputPart">
-            <el-input :disabled="true" v-model="originModel.name_bt_id" size="mini"></el-input>
-          </div>
-        </div>
-        <div class="grid-list">
-          <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
-          <div class="inputPart">
-            <el-input :disabled="true" v-model="originModel.name_bt" size="mini"></el-input>
-          </div>
-        </div>
-        <el-button @click="toggleSearchPanel(true)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
-        <el-button @click="addOuter" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
+      <div style="justify-content: flex-end;" class="grid-wraper">
+        <el-button @click="addOuter" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus">装载类别添加</el-button>
+        <el-button @click="minusOuter" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-minus">装载类别删除</el-button>
       </div>
     </div>
-    <div v-for="(dataItem, outerKey, outerIndex) in dataModels" :key="outerKey" :inline="true" class="wraper">
+    <div v-for="(dataItem, outerIndex) in dataModels" :key="outerIndex" :inline="true" class="wraper">
       <div style="margin-bottom: 5x;display:flex;flex-direction:column" class="grid-content">
-        <el-form v-for="(innerDataItem,innerKey, innerIndex) in dataItem" :rules="loadRules" :key="innerKey" :model="dataItem[innerKey]" ref="dataItem" style="display: flex;flex-direction: column;" class="grid-list">
+        <el-form v-for="(innerDataItem, innerIndex) in dataItem" :key="innerIndex" :model="innerDataItem" ref="dataItem" style="display: flex;flex-direction: column;padding:0" class="grid-list">
+          <!-- 桥梁隧道名称 -->
           <div v-show="outerIndex==0 && innerIndex==0" class="grid-wraper">
             <div class="grid-list">
               <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
               <div class="inputPart">
-                <el-input :disabled="true" v-model="dataItem[innerKey].name_bt_id" size="mini"></el-input>
+                <el-input :disabled="true" v-model="innerDataItem.name_bt_id" size="mini"></el-input>
               </div>
             </div>
             <div class="grid-list">
               <div title="桥梁或隧道名称：" class="labelText">桥梁或隧道名称：</div>
               <div class="inputPart">
-                <el-input :disabled="true" v-model="dataItem[innerKey].name_bt" size="mini"></el-input>
+                <el-input :disabled="true" v-model="innerDataItem.name_bt" size="mini"></el-input>
               </div>
             </div>
             <el-button @click="toggleSearchPanel(true)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
-            <el-button @click="addOuter" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-plus"></el-button>
+          </div>
+          <!-- 装载类型显示 -->
+          <div v-show="innerIndex==0" style="justify-content: flex-end;" class="grid-wraper">
+            <el-button @click="addInner(outerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-circle-plus-outline">装载区间添加</el-button>
+            <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间添加</el-button>
           </div>
           <div v-show="innerIndex==0" class="grid-wraper">
             <div class="grid-list">
-              <div style="width:180px" class="labelText">
-                <span style="font-weight:bold;font-size:14px;">{{outerKey}}类装载</span>：区间闭合标识：</div>
+              <div class="labelText">
+                <span style="font-weight:bold;font-size:14px;color:#66b1ff">{{numberTable[innerDataItem.loading_class - 1]}}类装载：</span>
+              </div>
+              <div style="width:180px" class="labelText">区间闭合标识：</div>
               <div class="inputPart">
-                <el-select size="mini" v-model.number="dataItem[innerKey].tunnage_flag" placeholder="请选择">
-                  <el-option v-for="item in seatFlagClass" :key="item.value" :label="item.label" :value="item.value">
-                  </el-option>
+                <el-select size="mini" v-model.number="innerDataItem.tunnage_flag" placeholder="请选择">
+                  <el-option v-for="item in seatFlagClass" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </div>
             </div>
             <div class="grid-list">
               <div class="labelText" title="正常装载级别吨数范围(车货总重)">正常装载级别吨数范围(车货总重)：</div>
               <div class="inputPart">
-                 > 
+                > 
                 <el-form-item prop="tunnage_min">
-                  <el-input v-model="dataItem[innerKey].tunnage_min" :disabled="outerKey == 1" size="mini"></el-input>
+                  <el-input v-model="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
-                  <= 
-                <el-form-item prop="tunnage_max" v-show="outerKey != 5">
-                  <el-input v-model="dataItem[innerKey].tunnage_max" size="mini"></el-input>
+                <= 
+                <el-form-item prop="tunnage_max">
+                  <el-input v-model="innerDataItem.tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]" v-show="outerIndex!=4" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model="innerDataItem.tunnage_max" v-show="outerIndex==4" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
-                <el-input v-model="dataItem[innerKey].tunnage_max" v-show="outerKey == 5" :disabled="outerKey == 5" size="mini"></el-input>
               </div>
             </div>
-            <el-button @click="addInner(outerKey)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-circle-plus-outline"></el-button>
-            <el-button @click="minusOuter(outerKey)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus"></el-button>
           </div>
+          <!-- 装载类型内装载区间数据循环 -->
           <div style="display:flex;flex-direction: row;">
-            <fieldset :style="dataItem[innerKey].insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
-              <legend style="font-size:12px">{{innerKey}} 区间</legend>
+            <fieldset :style="innerDataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
+              <legend style="font-size:12px">{{numberTable[innerDataItem.loading_subclss - 1]}} 区间</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
                   <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
                   <div class="inputPart">
                     <el-select size="mini" v-model.number="innerDataItem.interval_flag" placeholder="请选择">
-                      <el-option v-for="item in seatFlagClass" :key="item.value" :label="item.label" :value="item.value">
-                      </el-option>
+                      <el-option v-for="item in seatFlagClass" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                   </div>
                 </div>
@@ -82,8 +75,8 @@
                   <div title="正常装载区间吨数范围：" class="labelText">正常装载区间吨数范围：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input v-model="innerDataItem.interval_min" size="mini"></el-input> -
-                      <el-input v-model="innerDataItem.interval_max" size="mini"></el-input>
+                      <el-input disabled v-model="innerDataItem.interval_min" size="mini"></el-input> -
+                      <el-input :disabled="innerIndex==dataItem.length-1" @change="setRangeRelate" v-model="innerDataItem.interval_max" size="mini"></el-input>
                     </div>
                   </div>
                 </div>
@@ -93,14 +86,14 @@
                   <div title="基本费率：" class="labelText">基本费率：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_base">
-                      <el-input v-model="innerDataItem.rate_base" size="mini"></el-input>
+                      <el-input @change="validateRateBase" v-model="innerDataItem.rate_base" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
+                    <el-input @change="validateRateMin" v-model="innerDataItem.rate_min" size="mini"></el-input>
                   </div>
                 </div>
               </div>
@@ -151,19 +144,17 @@
                   <div title="最低收费(元)：" class="labelText">最低收费(元)：</div>
                   <div class="inputPart">
                     <el-form-item prop="charge_min">
-                      <el-input v-model="innerDataItem.charge_min" size="mini"></el-input>
+                      <el-input @change="validateChargeMin" v-model="innerDataItem.charge_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
               </div>
             </fieldset>
-            <el-button @click="minusInner(outerKey,innerKey)" style="padding:5px;height:25px;width:25px;margin-top:100px"
-              type="primary" class="btn-icon" icon="el-icon-remove-outline"></el-button>
           </div>
         </el-form>
       </div>
     </div>
-    <div style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
+    <div v-show="dataModels.length" style="padding:10px 20px 0 0;text-align: right;" class="footerPart">
       <el-row :gutter="5">
         <el-button type="primary" @click="onSubmit('dataItem')">保 存</el-button>
       </el-row>
@@ -178,67 +169,12 @@
   import {appUtil} from '../../Application';
   export default {
     name: 'scTollCar',
-    props: ['tableName', 'selectedData'],
     components: {searchName},
     data() {
-      // 装载机别数
-      let validateTunnage = (rule, value, callback) => {
-        let self = this;
-        if (value >49 || value < 0) {
-          callback(new Error('座位数必须大于0小于49')); 
-        } else {
-          callback();
-        }
-      };
-      // 最低收费
-      let validateChargeMin = (rule, value, callback) => {
-        let self = this;
-        if (value > 20) {
-          this.$confirm('最低收费值大于20, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            callback();
-          }).catch(() => {
-            callback(new Error('最低收费值必须小于20'));         
-          });
-        }
-      };
-      // 最低计重吨数
-      let validateWeightMin = (rule, value, callback) => {
-        let self = this;
-        if (value > 10) {
-          this.$confirm('最低收费值大于10, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            callback();
-          }).catch(() => {
-            callback(new Error('最低收费值必须小于10'));         
-          });
-        }
-      };
-      // 基本费率
-      let validateRateBase = (rule, value, callback) => {
-        let self = this;
-        if (value > 10 || value < 0) {
-          this.$confirm('基本费率值大于10或者小于0, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            callback();
-          }).catch(() => {
-            callback(new Error('基本费率值必须小于10并且大于0'));         
-          });
-        }
-      };
       return {
         loading: false,
         isGuangdong: false,
-        dataModels: {},
+        dataModels: [],
         serachShow: false,
         originModel: {
           group_id: this.$store.state.editSelectedData[0],
@@ -262,13 +198,7 @@
           name_bt: '',
           source: 1
         },
-        loadRules: {
-          tunnage_min: [{ validator: validateTunnage, trigger: 'blur' }],
-          tunnage_max: [{ validator: validateTunnage, trigger: 'blur' }],
-          charge_min: [{ validator: validateChargeMin, trigger: 'blur' }],
-          weight_min: [{ validator: validateWeightMin, trigger: 'blur' }],
-          rate_base: [{ validator: validateRateBase, trigger: 'blur' }],
-        },
+        numberTable: ['一','二','三','四','五'],
         mountFlag: false,
         feeOptions: [{
           value: 0,
@@ -309,148 +239,227 @@
       }
     },
     methods: {
+      // 装载机别数
+      validateTunnage (rule, value, callback) {
+        if (value >49 || value < 0) {
+          callback(new Error('装载级别吨数不能大于49')); 
+        } else {
+          callback();
+        }
+      },
+      // 最低收费
+      validateChargeMin(value) {
+        if (value > 20) {
+          this.$alert('最低收费值大于20!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          });
+        }
+      },
+      // 最低计重吨数
+      validateWeightMin (value) {
+        if (value > 10) {
+          this.$alert('最低收费值大于10?', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          });
+        }
+      },
+      // 正常装载费率上限必须小于3，否则提示确认
+      validateRateMin (value) {
+        if (value >= 3) {
+          this.$alert('费率上限必须小于3!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          });
+        }
+      },
+      // 基本费率
+      validateRateBase (value) {
+        if (value > 10 || value < 0) {
+          this.$alert('基本费率值大于10或者小于0!', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          });
+        }
+      },
+      // 装载级别吨位关联维护
+      setLevelRelate (value) {
+        this.dataModels.forEach((outer,outerIndex,datas) => {
+          var tunnage_max = 0;
+          var tunnage_min = 0;
+          if (outerIndex != 0) {
+            outer[0].tunnage_min = datas[outerIndex - 1][0].tunnage_max;
+          }
+          outer.forEach((inner, innerIndex) => {
+            if (innerIndex === 0) {
+              tunnage_max = parseInt(inner.tunnage_max);
+              tunnage_min = parseInt(inner.tunnage_min);
+            }
+            inner.tunnage_max = tunnage_max;
+            inner.tunnage_min = tunnage_min;
+            if (innerIndex == outer.length - 1){
+              inner.interval_max = tunnage_max;
+            }
+          });
+        });
+        this.setRangeRelate();
+      },
+      // 装载区间吨位关联维护
+      setRangeRelate (value) {
+        this.dataModels.forEach((outer,outerIndex) => {
+          outer.forEach((inner, innerIndex) => {
+            if(innerIndex != 0) {
+              inner.interval_min = outer[innerIndex - 1].interval_max;
+            } else {
+              inner.interval_min = outer[0].tunnage_min;
+            }
+          });
+        });
+      },
       toggleSearchPanel(flag){
         this.serachShow = flag;
       },
       setBtName() {
         this.originModel.name_bt_id = this.$store.state.btData.name_groupid;
         this.originModel.name_bt = this.$store.state.btData.name;
-        Object.keys(this.dataModels).forEach(item => {
-          Object.keys(this.dataModels[item]).forEach(innerItem => {
-            this.dataModels[item][innerItem].name_bt_id = this.$store.state.btData.name_groupid;
-            this.dataModels[item][innerItem].name_bt = this.$store.state.btData.name;
+        this.dataModels.forEach(item => {
+          item.forEach(innerItem => {
+            innerItem.name_bt_id = this.$store.state.btData.name_groupid;
+            innerItem.name_bt = this.$store.state.btData.name;
           });
         });
-      },
-      _reSort() {
-        let a = _.groupBy(this.dataModels, 'loading_class');
-        Object.keys(a).forEach(item => {
-          a[item] = _.groupBy(a[item], 'loading_subclss');
-          Object.keys(a[item]).forEach(innerItem => {
-            a[item][innerItem] = a[item][innerItem][0]
-          });
-        });
-        this.dataModels = a;
       },
       addOuter() {
-        let _self = this;
-        let existsKeys = Object.keys(this.dataModels);
-        let allKeys = ['1', '2', '3', '4', '5'];
-        let leftKeys = _.difference(allKeys, existsKeys);
-        if (leftKeys.length) {
-          let newObj = Object.assign({insertFlag: true}, _self.originModel);
-          newObj.loading_class = leftKeys[0];
-          if (leftKeys[0] === '1') {
-            newObj.tunnage_min = 0;
-          } else {
-            newObj.tunnage_min = this.dataModels[leftKeys[0] - 1][1].tunnage_max;
-            // 最后类型的最大值为1000
-            if (leftKeys[0] === allKeys[allKeys.length - 1]) {
-              newObj.tunnage_max = 1000;
-            } else {
-              // 控制最大值比最小值大1
-              newObj.tunnage_max = newObj.tunnage_min + 1;
-            }
-          }
-          _self.$set(_self.dataModels, leftKeys[0], {'1': newObj});
+        if (this.dataModels.length===5)return;
+        let newLoadingClass = this.dataModels.length;
+        let newObj = Object.assign({}, this.originModel, {insertFlag: true, loading_class: newLoadingClass+1});
+        if(this.dataModels.length) {
+          newObj.tunnage_min = this.dataModels[newLoadingClass - 1][0].tunnage_max;
+          newObj.tunnage_max = newObj.tunnage_min + 1;
+        } else {
+          newObj.tunnage_min = 0;
         }
+        if (this.dataModels.length === 4) {
+          newObj.tunnage_max = 1000;
+        }
+        newObj.interval_min = newObj.tunnage_min;
+        newObj.interval_max = newObj.tunnage_max;
+        // 设置桥梁隧道;
+        newObj.name_bt = this.dataModels[0]?this.dataModels[0][0].name_bt:this.originModel.name_bt;
+        newObj.name_bt_id = this.dataModels[0]?this.dataModels[0][0].name_bt_id:this.originModel.name_bt_id;
+        this.$set(this.dataModels, newLoadingClass, []);
+        this.$set(this.dataModels[newLoadingClass], 0, newObj);
       },
-      minusOuter(index) {
-        Object.keys(this.dataModels).length > 1 && this.$delete(this.dataModels, index);
+      minusOuter() {
+        this.dataModels.pop();
       },
       addInner(index) {
-        let _self = this;
-        let existsKeys = [];
-        for (let key in this.dataModels[index]) {
-          existsKeys.push(this.dataModels[index][key].loading_subclss);
-        }
-        let allKeys = [1, 2, 3, 4, 5];
-        let leftKeys = _.difference(allKeys, existsKeys);
-        if (leftKeys.length) {
-          let newObj = Object.assign({insertFlag: true}, _self.originModel);
-          newObj.loading_class = index;
-          newObj.loading_subclss = leftKeys[0];
-          _self.$set(_self.dataModels[index], leftKeys[0], newObj);
-        }
+        if (this.dataModels[index].length===5)return;
+        let newSubLoadingClass = this.dataModels[index].length;
+        let newObj = Object.assign({}, this.originModel, {insertFlag: true});
+        newObj.loading_class = index+1;
+        newObj.loading_subclss = newSubLoadingClass + 1;
+        newObj.interval_min = this.dataModels[index][newSubLoadingClass - 1].interval_max;
+        newObj.interval_max = this.dataModels[index][newSubLoadingClass - 1].tunnage_max;
+        // 设置桥梁隧道;
+        newObj.name_bt = this.dataModels[0][0].name_bt;
+        newObj.name_bt_id = this.dataModels[0][0].name_bt_id;
+        this.$set(this.dataModels[index], newSubLoadingClass, newObj);
       },
       minusInner(outerIndex, innerIndex) {
-        (Object.keys(this.dataModels).length > 1 || Object.keys(this.dataModels[outerIndex]).length>1) && this.$delete(this.dataModels[outerIndex], innerIndex);
-        if (!Object.keys(this.dataModels[outerIndex]).length) {
-          this.$delete(this.dataModels, outerIndex);
-        }
+        this.dataModels[outerIndex].length > 1 && this.dataModels[outerIndex].pop();
+      },
+      afterSave() {
+        let submitData = [];
+        this.$store.state.editSelectedData.forEach(outer => {
+          this.dataModels.forEach(item => {
+            item.forEach(innerItem => {
+              let cloneData = Object.assign({},innerItem);
+              cloneData.group_id = outer;
+              delete innerItem.insertFlag;
+              delete cloneData.insertFlag;
+              submitData.push(cloneData);
+            });
+          });
+        });
+        let params = {
+          table: this.isGuangdong? 'SC_TOLL_LOAD_GD' : 'SC_TOLL_LOAD',
+          data: submitData,
+          workFlag: appUtil.getGolbalData().workType,
+          adminCode: appUtil.getGolbalData().adminCode
+        };
+        this.loading = true;
+        updateTollGate(params)
+          .then(result => {
+            let {
+              errorCode
+            } = result;
+            const h = this.$createElement;
+            if (errorCode === 0) {
+              this.$emit('tabStatusChange', {
+                status: false,
+                tabIndex: 2
+              });
+              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+              return this.$message({
+                message: '数据更新成功！',
+                type: 'success'
+              });
+            } else {
+              return this.$message({
+                message: '数据更新失败！',
+                type: 'warning'
+              });
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+          .catch(err => {
+            console.log(err);
+          });
       },
       onSubmit(formName) {
-        let _self = this;
         let validateFlag = true;
-        if (!this.$store.state.editSelectedData.length) {
-          return false;
-        }
+        if (!this.$store.state.editSelectedData.length) return false;
         this.$refs[formName].forEach((formItem, index) => {
           formItem.validate((valid) => {
             if (!valid) {
-              validateFlag = false; 
+              return validateFlag = false; 
+            }
+          });
+        });
+        // 验证最小值不能大与最大值
+        let alertMessage = '';
+        this.dataModels.forEach((item,index) => {
+          if(item[0].tunnage_min >= item[0].tunnage_max) {
+            validateFlag = false;
+            alertMessage += `${index+1}类型装载吨位最小值必须比最大值小;`;
+          }
+          item.forEach((innerItem,innerIndex) => {
+            if(innerItem.interval_min >= innerItem.interval_max) {
+              validateFlag = false;
+              alertMessage += `${index+1}类型下的${innerIndex+1}区间装载吨位最小值必须比最大值小;`;
             }
           });
         });
         if (validateFlag) {
-          let submitData = [];
-          this.$store.state.editSelectedData.forEach(outer => {
-            Object.keys(this.dataModels).forEach(item => {
-              Object.keys(this.dataModels[item]).forEach(innerItem => {
-                let cloneData = Object.assign({},this.dataModels[item][innerItem]);
-                cloneData.group_id = outer;
-                delete this.dataModels[item][innerItem].insertFlag;
-                delete cloneData.insertFlag;
-                submitData.push(cloneData);
-              });
-            });
-          });
-          let params = {
-            table: 'SC_TOLL_LOAD',
-            data: submitData,
-            workFlag: appUtil.getGolbalData().workType,
-            adminCode: appUtil.getGolbalData().adminCode
-          };
-          this.loading = true;
-          updateTollGate(params)
-            .then(result => {
-              let {
-                errorCode
-              } = result;
-              const h = this.$createElement;
-              if (errorCode === 0) {
-                this.$emit('tabStatusChange', {
-                  status: false,
-                  tabIndex: 2
-                });
-                this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
-                return this.$message({
-                  message: '数据更新成功！',
-                  type: 'success'
-                });
-              } else {
-                return this.$message({
-                  message: '数据更新失败！',
-                  type: 'warning'
-                });
-              }
-            })
-            .finally(() => {
-              this.loading = false;
-            })
-            .catch(err => {
-              console.log(err);
-            });
+          this.afterSave();
+        } else {
+          this.$alert(alertMessage, '错误提示', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
         }
       }
     },
     mounted() {
-      let _self = this;
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '210000';
       this.mountFlag = true;
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '210000';
       if (this.$store.state.handleFlag === 'update') {
         let param = {
-          table: 'SC_TOLL_LOAD',
+          table: this.isGuangdong? 'SC_TOLL_LOAD_GD' : 'SC_TOLL_LOAD',
           pid: this.$store.state.editSelectedData[0],
           workFlag: appUtil.getGolbalData().workType
         };
@@ -458,23 +467,26 @@
         getTollGate(param)
         .then(result => {
           let {errorCode,data} = result;
-          let a = _.groupBy(data, 'loading_class');
-          Object.keys(a).forEach(item => {
-            a[item] = _.groupBy(a[item], 'loading_subclss');
-            Object.keys(a[item]).forEach(innerItem => {
-              a[item][innerItem] = a[item][innerItem][0]
+          let classObjResult = _.groupBy(data, 'loading_class');
+          let classArrResult = [];
+          Object.keys(classObjResult).forEach(item => {
+            let innerArr = [];
+            classObjResult[item] = _.groupBy(classObjResult[item], 'loading_subclss');
+            Object.keys(classObjResult[item]).forEach(innerItem => {
+              innerArr.push(classObjResult[item][innerItem][0]);
             });
-          });
-          _self.dataModels = a;
+            classArrResult.push(innerArr);
+          });          
+          this.dataModels = classArrResult;
         })
         .finally(() => {
-          _self.loading = false;
+          this.loading = false;
         })
         .catch(err => {
-          console.log(err);
+          throw new Error('货车计重不超载装载费率表查询失败');
         });
       } else {
-        _self.loading = false;
+        this.loading = false;
       }
     }
   }

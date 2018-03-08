@@ -73,7 +73,6 @@
   import {appUtil} from '../../Application';
   export default {
     name: 'scTollCar',
-    props: ['tableName', 'selectedData'],
     data() {
       return {
         isClickSave: false,

@@ -19,9 +19,12 @@ export default {
   overflow: hidden;
 }
 /**************** 复写dialog样式 ********************/
+.dragWindow .el-tabs--left .el-tabs__header {
+  margin-top: 15px
+}
 .dragWindow .el-tabs--left .el-tabs__item{
-  height: 35px;
-  line-height: 35px;
+  height: 40px;
+  line-height: 40px;
 }
 .dragWindow .el-collapse .el-collapse-item__header i.el-collapse-item__arrow {
   display: none;

@@ -168,7 +168,6 @@
   import {appUtil} from '../../Application';
   export default {
     name: 'scTollCar',
-    props: ['tableName', 'selectedData'],
     components: {searchName},
     data() {
       return {

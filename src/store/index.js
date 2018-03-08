@@ -4,7 +4,6 @@ Vue.use(Vuex)
 // 这里定义初始值
 let state = {
   handleFlag: 'update',
-  selectedData: [],
   editSelectedData: [],
   btData: {name: '',name_groupid:0},
 };
@@ -15,9 +14,6 @@ const mutations = {
   },
   changeHandleFlag(context, value) {
     context.handleFlag = value;
-  },
-  changeSelectedData(context, value) {
-    context.selectedData = value;
   },
   changeEditSelectedData(context, value) {
     context.editSelectedData = value;

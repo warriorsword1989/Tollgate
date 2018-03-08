@@ -93,11 +93,21 @@ router.post ('/updateTollGate', function (req, res, next) {
   }
 });
 
+// 如果货车或客车类型全部删除;
+router.post ('/deleteCarTruckTollGate', function (req, res, next) {
+  "use strict";
+  try {
+    let TollGate = new TollGateCtrl(req, res, next);
+    TollGate['deleteCarTruckTollGate'] ();
+  } catch (error) {
+    next (error);
+  }
+});
 
 // 查询照片;
 router.get ('/photo', function (req, res, next) {
   "use strict";
-  return http.get(`${req.query.url}photo/${req.query.rowKey}`, httpRes => {
+  return http.get(`${req.query.url}/${req.query.rowKey}`, httpRes => {
     let body = '';
     httpRes.on('data', function(chunk) {
       httpRes.setEncoding('utf8'); 
