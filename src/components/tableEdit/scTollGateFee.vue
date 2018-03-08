@@ -42,7 +42,6 @@
   import {appUtil} from '../../Application';
   export default {
     name: 'scTollGateFee',
-    props: ['tableName', 'selectedData'],
     data() {
       return {
         loading: false,

@@ -121,29 +121,21 @@
       },
     },
     mounted() {
-      let _self = this;
       this.eventController.off('ObjectSelected');
       this.eventController.off('CHANGECOORDNITES');
-      this.eventController.on('ObjectSelected',function(data) {
+      this.eventController.on('ObjectSelected', data => {
         if (data.features.length) {
-          _self.showDialog = true;
-          if (data.flag=='update') {
-            _self.$store.commit('changeHandleFlag', 'update');
-            _self.$store.commit('changeSelectedData', [data.features[0].properties]);
-            _self.$store.commit('changeEditSelectedData', [data.features[0].properties.id]);
-          } else if (data.flag=='insert') {
-            let objs = [];
-            data.features.forEach(item => {
-              objs.push(item.properties);
-            });
-            _self.$store.commit('changeSelectedData', objs);
-            let pids = [];
-            data.features.forEach(item => {
-              pids.push(item.properties.id);
-            });
-            _self.$store.commit('changeEditSelectedData', pids);
-            _self.$store.commit('changeHandleFlag', 'insert');
-          }
+          this.showDialog = false;
+          setTimeout(()=>{
+            this.showDialog = true;
+            if (data.flag=='update') {
+              this.$store.commit('changeHandleFlag', 'update');
+              this.$store.commit('changeEditSelectedData', [data.features[0]]);
+            } else if (data.flag=='insert') {
+              this.$store.commit('changeEditSelectedData', data.features);
+              this.$store.commit('changeHandleFlag', 'insert');
+            }
+          })
         }
       });
       let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();

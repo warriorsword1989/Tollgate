@@ -180,8 +180,7 @@
     mounted() {
       // 查询获得收费站名称;
       this.workFlag = appUtil.getGolbalData().workType;
-      let arr = this.$store.state.selectedData.map(item => item.id);
-      this.transfromSelectedData(arr);
+      this.transfromSelectedData(this.$store.state.editSelectedData);
     },
     beforeMount() {
       let viewWidth = document.documentElement.clientWidth;

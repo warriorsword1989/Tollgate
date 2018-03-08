@@ -169,7 +169,6 @@
   import {appUtil} from '../../Application';
   export default {
     name: 'scTollGrou',
-    props: ['tableName', 'selectedData'],
     data() {
       let _self = this;
       let check_max = (rule, value, callback) => {

@@ -189,7 +189,6 @@
   export default {
     name: 'scTollCar',
     components: {searchName},
-    props: ['tableName', 'selectedData'],
     data() {
       return {
         loading: false,
