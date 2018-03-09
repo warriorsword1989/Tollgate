@@ -324,8 +324,7 @@
             { type: 'number', message: '值必须为数字'},
             { validator: check_etc_d, trigger: 'change'}
           ]
-        },
-        sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
+        }
       }
     },
     computed: {
@@ -387,7 +386,7 @@
                 status: false,
                 tabIndex: 6
               });
-              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+              fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
                 message: '数据更新成功！',
                 type: 'success'

@@ -220,8 +220,7 @@
         }, {
           value: 3,
           label: '前闭后闭'
-        }],
-        sceneCtrl: fastmap.mapApi.scene.SceneController.getInstance()
+        }]
       }
     },
     watch: {
@@ -412,7 +411,7 @@
                 status: false,
                 tabIndex: 2
               });
-              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+              fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
                 message: '数据更新成功！',
                 type: 'success'
@@ -449,7 +448,7 @@
                 status: false,
                 tabIndex: 1
               });
-              updateFlag && this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+              updateFlag && fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
                 message: '数据更新成功！',
                 type: 'success'
