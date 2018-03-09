@@ -64,81 +64,82 @@
   export default {
     name: "scene-tool",
     data() {
-      const sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
-      const sourceCtrl = fastmap.mapApi.source.SourceController.getInstance();
-      const leafletMap = sceneCtrl.getLeafletMap();
       return {
-        layers: sceneCtrl.getLayers(),
-        sceneCtrl: sceneCtrl,
-        sourceCtrl: sourceCtrl,
-        leafletMap: leafletMap,
-        currentScene: sceneCtrl.getCurrentScene(),
+        currentScene: '',
         featureLayers: [],
         backLayers: [],
         overLayers: [],
         tipLayers: [],
-        sceneLayers: sceneCtrl.getSceneLayers(),
         visibleBackgroundLayerId: null
       }
     },
     methods: {
       getSceneLayer: function (layer) {
-        for (let i = 0, len = this.sceneLayers.length; i < len; i++) {
-          if (this.sceneLayers[i].id === layer.id) {
-            return this.sceneLayers[i];
+        const sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
+        const sceneLayers = sceneCtrl.getSceneLayers();
+        for (let i = 0, len = sceneLayers.length; i < len; i++) {
+          if (sceneLayers[i].id === layer.id) {
+            return sceneLayers[i];
           }
         }
         return null;
       },
       toggleLayer: function (layer) {
+        const sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
         if (!layer.checked) {
           const sceneLayer = this.getSceneLayer(layer);
 
           if (sceneLayer) {
             sceneLayer.setVisible();
-            this.sceneCtrl.refreshMap();
+            sceneCtrl.refreshMap();
           } else {
             layer.setVisible(); //  专门针对，初始化时，道路标注和grid子任务中fc预处理tips的visible为false的情况
-            this.sceneCtrl.addToScene(layer);
+            sceneCtrl.addToScene(layer);
           }
         } else {
-          this.sceneCtrl.removeFromScene(layer.id);
+          sceneCtrl.removeFromScene(layer.id);
         }
       },
       resetLayerChecked: function () {
-        for (let i = 0; i < this.layers.length; i++) {
-          this.layers[i].checked = this.sceneCtrl.isLayerLoaded(this.layers[i].id);
-          if (this.layers[i].label === 'background' && this.layers[i].checked) {
-            this.visibleBackgroundLayerId = this.layers[i].id;
+        const sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
+        const layers = sceneCtrl.getLayers();
+        for (let i = 0; i < layers.length; i++) {
+          layers[i].checked = sceneCtrl.isLayerLoaded(layers[i].id);
+          if (layers[i].label === 'background' && layers[i].checked) {
+            this.visibleBackgroundLayerId = layers[i].id;
           }
         }
       },
       toggleBackgroundLayer: function (layer, event) {
+        const sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
         if (layer.id === this.visibleBackgroundLayerId) {
-          this.sceneCtrl.removeFromBackground(layer.id);
+          sceneCtrl.removeFromBackground(layer.id);
           this.visibleBackgroundLayerId = null;
         } else {
           if (this.visibleBackgroundLayerId) {
-            this.sceneCtrl.removeFromBackground(this.visibleBackgroundLayerId);
+            sceneCtrl.removeFromBackground(this.visibleBackgroundLayerId);
           }
-          this.sceneCtrl.addToBackground(layer);
+          sceneCtrl.addToBackground(layer);
           this.visibleBackgroundLayerId = layer.id;
         }
       },
       toggleOverlayLayer: function (layer) {
+        const sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
         if (!layer.checked) {
-          this.sceneCtrl.addToOverlay(layer);
+          sceneCtrl.addToOverlay(layer);
         } else {
-          this.sceneCtrl.removeFromOverlay(layer.id);
+          sceneCtrl.removeFromOverlay(layer.id);
         }
       }
     },
     mounted: function () {
+      const sceneCtrl = fastmap.mapApi.scene.SceneController.getInstance();
       this.resetLayerChecked();
-      this.featureLayers = this.sceneCtrl.getLayersByLabel('feature');
-      this.backLayers = this.sceneCtrl.getLayersByLabel('background');
-      this.overLayers = this.sceneCtrl.getLayersByLabel('overlay');
-      this.tipLayers = this.sceneCtrl.getLayersByLabel('tip');
+      this.featureLayers = sceneCtrl.getLayersByLabel('feature');
+      this.backLayers = sceneCtrl.getLayersByLabel('background');
+      this.overLayers = sceneCtrl.getLayersByLabel('overlay');
+      this.tipLayers = sceneCtrl.getLayersByLabel('tip');
+      this.currentScene = sceneCtrl.getCurrentScene();
     }
   }
 </script>
