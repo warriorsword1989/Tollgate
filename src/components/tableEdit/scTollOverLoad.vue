@@ -429,13 +429,22 @@
           this.loading = true;
           deleteCarTruckTollGate(params)
           .then(res =>{
-            this.$emit('tabStatusChange', {
-              status: false,
-              tabIndex: 3
-            });
             let {errorCode,message,updateFlag} = res;
-            if (updateFlag && errorCode==0) {
-              this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+            if (errorCode === 0) {
+              this.$emit('tabStatusChange', {
+                status: false,
+                tabIndex: 3
+              });
+              updateFlag && this.sceneCtrl.redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
+              return this.$message({
+                message: '数据更新成功！',
+                type: 'success'
+              });
+            } else {
+              return this.$message({
+                message: '数据更新失败！',
+                type: 'warning'
+              });
             }
           })
           .finally(()=> {
