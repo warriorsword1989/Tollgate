@@ -39,7 +39,7 @@ fastmap.uikit.editControl.CopyLineControl = fastmap.uikit.editControl.EditContro
 
     onUpdateSuccess: function (editResult) {
         this.complexEditor.stop();
-        let ids = editResult.links.map(item => item.id);
+        let ids = editResult.links.map(item => item.properties.id);
         this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, event: event, flag:'insert' });
         console.log(editResult);
         this.run();
