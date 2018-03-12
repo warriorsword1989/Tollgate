@@ -47,10 +47,10 @@
                         <el-input v-model.number="dataItem.tunnage_min" disabled size="mini"></el-input>
                       </el-form-item>
                        -
-                      <el-form-item prop="tunnage_max" v-show="dataItem.truck_class!=5" :rules="[ { required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'},{  validator: validateSeat0_55, trigger: 'change' }]">
+                      <el-form-item prop="tunnage_max" v-if="dataItem.truck_class!=5" :rules="[ { required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'},{  validator: validateSeat0_55, trigger: 'change' }]">
                         <el-input v-model.number="dataItem.tunnage_max" @change="maxTunnageNumChange" size="mini"></el-input>
                       </el-form-item>
-                      <el-form-item prop="tunnage_max" v-show='dataItem.truck_class==5'>
+                      <el-form-item prop="tunnage_max" v-if='dataItem.truck_class==5'>
                         <el-input v-model.number="dataItem.tunnage_max" :disabled="dataItem.truck_class == 5" size="mini"></el-input>
                       </el-form-item>
                     </div>
@@ -351,7 +351,7 @@
       },
       validateSeat0_55(rule, value, callback){
         if (value >55 || value < 0) {
-          callback(new Error('座位数区间为0-55')); 
+          callback(new Error('吨数区间为0-55')); 
         } else {
           callback();
         }

@@ -51,9 +51,11 @@
                   <el-input v-model="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
                 <= 
-                <el-form-item prop="tunnage_max">
-                  <el-input v-model="innerDataItem.tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]" v-show="outerIndex!=4" @change="setLevelRelate" size="mini"></el-input>
-                  <el-input v-model="innerDataItem.tunnage_max" v-show="outerIndex==4" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
+                <el-form-item v-if="outerIndex!=4" prop="tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]">
+                  <el-input v-model="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item v-if="outerIndex==4" prop="tunnage_max">
+                  <el-input v-model="innerDataItem.tunnage_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -93,7 +95,9 @@
                 <div class="grid-list">
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
+                    <el-form-item prop="rate_max">
+                      <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
@@ -101,7 +105,9 @@
                 <div class="grid-list">
                   <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
+                    <el-form-item prop="rate_min">
+                      <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -136,7 +142,7 @@
                   <div title="最低计重(吨)：" class="labelText">最低计重(吨)：</div>
                   <div class="inputPart">
                     <el-form-item prop="weight_min">
-                      <el-input v-model="innerDataItem.weight_min" size="mini"></el-input>
+                      <el-input @change="validateWeightMin" v-model="innerDataItem.weight_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -259,7 +265,7 @@
       // 最低计重吨数
       validateWeightMin (value) {
         if (value > 10) {
-          this.$alert('最低收费值大于10?', '提示', {
+          this.$alert('最低计重值大于10?', '提示', {
             confirmButtonText: '确定',
             type: 'warning'
           });
@@ -479,21 +485,28 @@
           this.dataModels.forEach((item,index) => {
             if(item[0].tunnage_min >= item[0].tunnage_max) {
               validateFlag = false;
-              alertMessage += `${index+1}类型装载吨位最小值必须比最大值小;`;
+              alertMessage += `${index+1}类型装载吨位最小值必须比最大值小;<br />`;
             }
             item.forEach((innerItem,innerIndex) => {
               if(innerItem.interval_min >= innerItem.interval_max) {
                 validateFlag = false;
-                alertMessage += `${index+1}类型下的${innerIndex+1}区间装载吨位最小值必须比最大值小;`;
+                alertMessage += `${index+1}类型下的${innerIndex+1}区间装载吨位最小值必须比最大值小;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(innerItem.rate_max < innerItem.rate_min) {
+                validateFlag = false;
+                alertMessage += `${index+1}类型下的${innerIndex+1}区间费率上限不能小于下限;<br />`;
               }
             });
           });
           if (validateFlag) {
             this.afterSave();
           } else {
-            this.$alert(alertMessage, '错误提示', {
+            alertMessage && this.$alert(alertMessage, '错误提示', {
               confirmButtonText: '确定',
-              type: 'error'
+              type: 'error',
+              dangerouslyUseHTMLString: true
             })
           }
         }

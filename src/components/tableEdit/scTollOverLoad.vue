@@ -50,9 +50,11 @@
                   <el-input v-model="innerDataItem.rato_min" disabled size="mini"></el-input>
                 </el-form-item>
                 -
-                <el-form-item prop="rato_max">
-                  <el-input v-model="innerDataItem.rato_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]" v-show="outerIndex!=4" @change="setLevelRelate" size="mini"></el-input>
-                  <el-input v-model="innerDataItem.rato_max" v-show="outerIndex==4" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
+                <el-form-item v-if="outerIndex!=4" :rules="[{ validator: validateTunnage, trigger: 'change' }]" prop="rato_max">
+                  <el-input v-model="innerDataItem.rato_max" @change="setLevelRelate" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item v-if="outerIndex==4" prop="rato_max">
+                  <el-input v-model="innerDataItem.rato_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -465,21 +467,28 @@
           this.dataModels.forEach((item,index) => {
             if(item[0].rato_min >= item[0].rato_max) {
               validateFlag = false;
-              alertMessage += `${index+1}类型超载最小百分比值必须比最大值小;`;
+              alertMessage += `${index+1}类型超载最小百分比值必须比最大值小;<br />`;
             }
             item.forEach((innerItem,innerIndex) => {
               if(innerItem.interval_min >= innerItem.interval_max) {
                 validateFlag = false;
-                alertMessage += `${index+1}类型下的${innerIndex+1}区间超载最小百分比值必须比最大值小;`;
+                alertMessage += `${index+1}类型下的${innerIndex+1}区间超载最小百分比值必须比最大值小;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(innerItem.multiple_max < innerItem.multiple_min) {
+                validateFlag = false;
+                alertMessage += `${index+1}类型下的${innerIndex+1}超载基本费率上限不能小于下限;<br />`;
               }
             });
           });
           if (validateFlag) {
             this.afterSave();
           } else {
-            this.$alert(alertMessage, '错误提示', {
+            alertMessage && this.$alert(alertMessage, '错误提示', {
               confirmButtonText: '确定',
-              type: 'error'
+              type: 'error',
+              dangerouslyUseHTMLString: true
             })
           }
         }
