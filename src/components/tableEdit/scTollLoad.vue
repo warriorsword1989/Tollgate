@@ -29,7 +29,7 @@
           <!-- 装载类型显示 -->
           <div v-show="innerIndex==0" style="justify-content: flex-end;" class="grid-wraper">
             <el-button @click="addInner(outerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-circle-plus-outline">装载区间添加</el-button>
-            <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间添加</el-button>
+            <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间删除</el-button>
           </div>
           <div v-show="innerIndex==0" class="grid-wraper">
             <div class="grid-list">
@@ -48,14 +48,14 @@
               <div class="inputPart">
                 > 
                 <el-form-item prop="tunnage_min">
-                  <el-input v-model="innerDataItem.tunnage_min" disabled size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
                 <= 
                 <el-form-item v-if="outerIndex!=4" prop="tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]">
-                  <el-input v-model="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
                 <el-form-item v-if="outerIndex==4" prop="tunnage_max">
-                  <el-input v-model="innerDataItem.tunnage_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -77,7 +77,7 @@
                   <div title="正常装载区间吨数范围：" class="labelText">正常装载区间吨数范围：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input disabled v-model="innerDataItem.interval_min" size="mini"></el-input> -
+                      <el-input disabled v-model.number="innerDataItem.interval_min" size="mini"></el-input> -
                       <el-input :disabled="innerIndex==dataItem.length-1" @change="setRangeRelate" v-model="innerDataItem.interval_max" size="mini"></el-input>
                     </div>
                   </div>
@@ -88,7 +88,7 @@
                   <div title="基本费率：" class="labelText">基本费率：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_base">
-                      <el-input @change="validateRateBase" v-model="innerDataItem.rate_base" size="mini"></el-input>
+                      <el-input @change="validateRateBase" v-model.number="innerDataItem.rate_base" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -96,7 +96,7 @@
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_max">
-                      <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
+                      <el-input @change="validateRateMin" v-model.number="innerDataItem.rate_max" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -106,7 +106,7 @@
                   <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_min">
-                      <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
+                      <el-input v-model.number="innerDataItem.rate_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -124,7 +124,7 @@
                 <div class="grid-list">
                   <div title="费 率 1：" class="labelText">费 率 1：</div>
                   <div class="inputPart">
-                    <el-input :disabled="!isGuangdong" v-model="innerDataItem.rate_base1" size="mini"></el-input>
+                    <el-input :disabled="!isGuangdong" v-model.number="innerDataItem.rate_base1" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -142,7 +142,7 @@
                   <div title="最低计重(吨)：" class="labelText">最低计重(吨)：</div>
                   <div class="inputPart">
                     <el-form-item prop="weight_min">
-                      <el-input @change="validateWeightMin" v-model="innerDataItem.weight_min" size="mini"></el-input>
+                      <el-input @change="validateWeightMin" v-model.number="innerDataItem.weight_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -376,6 +376,10 @@
         let newObj = Object.assign({}, this.originModel, {insertFlag: true});
         newObj.loading_class = index+1;
         newObj.loading_subclss = newSubLoadingClass + 1;
+        newObj.tunnage_max = this.dataModels[index][0].tunnage_max;
+        newObj.tunnage_min = this.dataModels[index][0].tunnage_min;
+        newObj.tunnage_flag = this.dataModels[index][0].tunnage_flag;
+        
         newObj.interval_min = this.dataModels[index][newSubLoadingClass - 1].interval_max;
         newObj.interval_max = this.dataModels[index][newSubLoadingClass - 1].tunnage_max;
         // 设置桥梁隧道;
@@ -452,7 +456,7 @@
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
                 status: false,
-                tabIndex: 1
+                tabIndex: 2
               });
               updateFlag && fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({

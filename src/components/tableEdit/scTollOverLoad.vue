@@ -29,7 +29,7 @@
           <!-- 装载类型显示 -->
           <div v-show="innerIndex==0" style="justify-content: flex-end;" class="grid-wraper">
             <el-button @click="addInner(outerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-circle-plus-outline">装载区间添加</el-button>
-            <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间添加</el-button>
+            <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间删除</el-button>
           </div>
           <div v-show="innerIndex==0" class="grid-wraper">
             <div class="grid-list">
@@ -38,7 +38,7 @@
               </div>
               <div style="width:180px" class="labelText">区间闭合标识：</div>
               <div class="inputPart">
-                <el-select size="mini" @changeRatoFlag v-model.number="innerDataItem.rato_flag" placeholder="请选择">
+                <el-select size="mini" @change="changeRatoFlag" v-model.number="innerDataItem.rato_flag" placeholder="请选择">
                   <el-option v-for="item in seatFlagClass" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </div>
@@ -47,14 +47,14 @@
               <div title="超载级别百分比范围(超载情况，车货总重)：" class="labelText">超载级别百分比范围(超载情况，车货总重)：</div>
               <div class="inputPart">
                 <el-form-item prop="rato_min">
-                  <el-input v-model="innerDataItem.rato_min" disabled size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.rato_min" disabled size="mini"></el-input>
                 </el-form-item>
                 -
                 <el-form-item v-if="outerIndex!=4" :rules="[{ validator: validateTunnage, trigger: 'change' }]" prop="rato_max">
-                  <el-input v-model="innerDataItem.rato_max" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.rato_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
                 <el-form-item v-if="outerIndex==4" prop="rato_max">
-                  <el-input v-model="innerDataItem.rato_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.rato_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -63,13 +63,13 @@
             <div class="grid-list">
               <div title="本级别正常装载部分的基本费率：" class="labelText">本级别正常装载部分的基本费率：</div>
               <div class="inputPart">
-                <el-input v-model="innerDataItem.rate_base" size="mini"></el-input>
+                <el-input @change="changeRateBase" v-model.number="innerDataItem.rate_base" size="mini"></el-input>
               </div>
             </div>
             <div class="grid-list">
               <div title="本级别最低计重(吨)：" class="labelText">本级别最低计重(吨)：</div>
               <div class="inputPart">
-                <el-input v-model="innerDataItem.weight_min" size="mini"></el-input>
+                <el-input @change="changeWeightMin" v-model.number="innerDataItem.weight_min" size="mini"></el-input>
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@
                   <div title="超装载区间百分比范围：" class="labelText">超装载区间百分比范围：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input disabled v-model="innerDataItem.interval_min" placeholder="%" size="mini"></el-input> -
+                      <el-input disabled v-model.number="innerDataItem.interval_min" placeholder="%" size="mini"></el-input> -
                       <el-input :disabled="innerIndex==dataItem.length-1" @change="setRangeRelate" v-model="innerDataItem.interval_max" placeholder="%" size="mini"></el-input>
                     </div>
                   </div>
@@ -100,13 +100,13 @@
                 <div class="grid-list">
                   <div title="超载区间基本费率：" class="labelText">超载区间基本费率：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.sub_rate_base" size="mini"></el-input>
+                    <el-input v-model.number="innerDataItem.sub_rate_base" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="超载基本费率的倍数上限：" class="labelText">超载基本费率的倍数上限：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.multiple_max" size="mini"></el-input>
+                    <el-input v-model.number="innerDataItem.multiple_max" size="mini"></el-input>
                   </div>
                 </div>
               </div>
@@ -114,7 +114,7 @@
                 <div class="grid-list">
                   <div title="超载基本费率的倍数下限：" class="labelText">超载基本费率的倍数下限：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.multiple_min" size="mini"></el-input>
+                    <el-input v-model.number="innerDataItem.multiple_min" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -131,7 +131,7 @@
                 <div class="grid-list">
                   <div title="超载区间的基本费率1：" class="labelText">超载区间的基本费率1：</div>
                   <div class="inputPart">
-                    <el-input :disabled="!isGuangdong" v-model="innerDataItem.sub_rate_base1" size="mini"></el-input>
+                    <el-input :disabled="!isGuangdong" v-model.number="innerDataItem.sub_rate_base1" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -148,13 +148,13 @@
                 <div class="grid-list">
                   <div title="超限值费率：" class="labelText">超限值费率：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_limit" size="mini"></el-input>
+                    <el-input v-model.number="innerDataItem.rate_limit" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="超载区间划分吨数限值：" class="labelText">超载区间划分吨数限值：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.ton_limit" size="mini"></el-input>
+                    <el-input v-model.number="innerDataItem.ton_limit" size="mini"></el-input>
                   </div>
                 </div>
               </div>
@@ -162,7 +162,7 @@
                 <div class="grid-list">
                   <div title="超限值基本费率：" class="labelText">超限值基本费率：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.multiple_limit" size="mini"></el-input>
+                    <el-input v-model.number="innerDataItem.multiple_limit" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list"></div>
@@ -254,7 +254,7 @@
           if (!this.mountFlag) {
             this.$emit('tabStatusChange', {
               status: true,
-              tabIndex: 4
+              tabIndex: 3
             });
           } else {
             this.mountFlag = false;
@@ -264,14 +264,23 @@
       }
     },
     methods: {
-      changeRatoFlag (value) {
+      _setData (field) {
         this.dataModels.forEach((outer,outerIndex) => {
           outer.forEach((inner,innerIndex) => {
             if (innerIndex!=0) {
-              inner.rato_flag = outer[0].rato_flag;
+              inner[field] = outer[0][field];
             }
           });
         });
+      },
+      changeRatoFlag (value) {
+        this._setData('rato_flag');
+      },
+      changeRateBase () {
+        this._setData('rate_base');
+      },
+      changeWeightMin () {
+        this._setData('weight_min');
       },
       // 装载机别数
       validateTunnage (rule, value, callback) {
@@ -358,6 +367,12 @@
         let newObj = Object.assign({}, this.originModel, {insertFlag: true});
         newObj.overloading_clss = index+1;
         newObj.overloading_subclss = newSubLoadingClass + 1;
+        newObj.rato_max = this.dataModels[index][0].rato_max;
+        newObj.rato_min = this.dataModels[index][0].rato_min;
+        newObj.rato_flag = this.dataModels[index][0].rato_flag;
+        newObj.rate_base = this.dataModels[index][0].rate_base;
+        newObj.weight_min = this.dataModels[index][0].weight_min;
+        
         newObj.interval_min = this.dataModels[index][newSubLoadingClass - 1].interval_max;
         newObj.interval_max = this.dataModels[index][newSubLoadingClass - 1].rato_max;
         // 设置桥梁隧道;
@@ -397,7 +412,7 @@
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
                 status: false,
-                tabIndex: 4
+                tabIndex: 3
               });
               fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({

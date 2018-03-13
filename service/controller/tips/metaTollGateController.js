@@ -3,9 +3,7 @@ import connectDynamicOracle from '../../oracle/connectDynamicOracle';
 import connectRenderObj from '../../oracle/connectRenderObj';
 import connetSelfObje from '../../oracle/connectOracle';
 import logger from '../../config/logs';
-import {
-  changeResult
-} from '../../Util';
+import {changeResult} from '../../Util';
 
 class TollGate {
   constructor(req, res, next) {
@@ -82,9 +80,10 @@ class TollGate {
     const param = this.req.query;
     const nameString = param.bridgeName;
     this.table = param.table;
-    if (param.workFlag == 'dynamic') {
-      this.db = new connectDynamicOracle();
-    }
+    // 动态库中没有rd_name表;
+    // if (param.workFlag == 'dynamic') {
+    //   this.db = new connectDynamicOracle();
+    // }
     let dbSql = `create database link gdb_Links
     connect to fm_gdb_trunk identified by fm_gdb_trunk
     using '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.3.227)(PORT = 1521 )))(CONNECT_DATA = (SERVICE_NAME = orcl )))'`;
