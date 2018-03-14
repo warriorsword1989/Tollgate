@@ -222,7 +222,7 @@
           name_bt_id: 1,
           name_bt: '',
           fix_fee: null,
-          source: 1
+          source: this.$store.state.source
         },
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,

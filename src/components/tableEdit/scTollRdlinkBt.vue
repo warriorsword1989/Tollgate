@@ -174,7 +174,7 @@
           rate_add:0,
           rate_class:1,
           rato:null,
-          source:1,
+          source:this.$store.state.source,
           truck_class:null,
           tunnage_flag:null,
           tunnage_max:null,

@@ -222,7 +222,7 @@
           ton_limit: 0,
           multiple_limit: 0,
           rate_limit: 0,
-          source: 1
+          source: this.$store.state.source
         },
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,

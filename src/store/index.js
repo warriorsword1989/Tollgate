@@ -6,6 +6,7 @@ let state = {
   handleFlag: 'update',
   editSelectedData: [],
   btData: {name: '',name_groupid:0},
+  source: 1,
 };
 
 const mutations = {
@@ -17,6 +18,9 @@ const mutations = {
   },
   changeEditSelectedData(context, value) {
     context.editSelectedData = value;
+  },
+  changeSourceValue(context, value) {
+    context.source = value;
   }
 };
 
