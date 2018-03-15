@@ -27,7 +27,7 @@ class GetInfoData {
     const sendAfterTime = param.sendAfterTime;
     const pushBeforeTime = param.pushBeforeTime;
     const pushAfterTime = param.pushAfterTime;
-    let sql = "SELECT * FROM " + this.table + " WHERE ADMIN_CODE = '" + adminCode + "'";
+    let sql = "SELECT * FROM " + this.table + " WHERE ADMIN_CODE LIKE '" + adminCode.substr(0,2) + "%'";
     if (infoCode) {
       sql = sql + " AND INFO_CODE = '" + infoCode + "'";
     }

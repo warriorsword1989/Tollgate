@@ -174,7 +174,7 @@
           rate_add:0,
           rate_class:1,
           rato:null,
-          source:1,
+          source:this.$store.state.source,
           truck_class:null,
           tunnage_flag:null,
           tunnage_max:null,
@@ -251,10 +251,10 @@
           this.dataModels.rato = null;
         }
         if (value != 2) {
-          this.truck_class = null;
-          this.tunnage_flag = null;
-          this.tunnage_max = null;
-          this.tunnage_min = null;
+          this.dataModels.truck_class = null;
+          this.dataModels.tunnage_flag = null;
+          this.dataModels.tunnage_max = null;
+          this.dataModels.tunnage_min = null;
         }
       },
       setBtName() {

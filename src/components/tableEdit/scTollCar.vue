@@ -45,7 +45,7 @@
                   <div title="各车型座位数区间：" class="labelText">各车型座位数区间：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-form-item prop="seat_num_min" :rules="[ {  validator: validateSeat0_55, trigger: 'change' }]">
+                      <el-form-item prop="seat_num_min">
                         <el-input v-model.number="dataItem.seat_num_min" disabled size="mini"></el-input>
                       </el-form-item>-
                       <el-form-item :rules="[{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'},{  validator: validateSeat0_55, trigger: 'change' }]" v-if='dataItem.car_class!=4' prop="seat_num_max">
@@ -184,7 +184,7 @@
           fee_add: null,
           charge_min: null,
           fix_fee: null,
-          source: 1
+          source: this.$store.state.source
         },
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,

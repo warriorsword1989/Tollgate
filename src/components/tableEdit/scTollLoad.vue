@@ -29,7 +29,7 @@
           <!-- 装载类型显示 -->
           <div v-show="innerIndex==0" style="justify-content: flex-end;" class="grid-wraper">
             <el-button @click="addInner(outerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-circle-plus-outline">装载区间添加</el-button>
-            <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间添加</el-button>
+            <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间删除</el-button>
           </div>
           <div v-show="innerIndex==0" class="grid-wraper">
             <div class="grid-list">
@@ -48,12 +48,14 @@
               <div class="inputPart">
                 > 
                 <el-form-item prop="tunnage_min">
-                  <el-input v-model="innerDataItem.tunnage_min" disabled size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
                 <= 
-                <el-form-item prop="tunnage_max">
-                  <el-input v-model="innerDataItem.tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]" v-show="outerIndex!=4" @change="setLevelRelate" size="mini"></el-input>
-                  <el-input v-model="innerDataItem.tunnage_max" v-show="outerIndex==4" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
+                <el-form-item v-if="outerIndex!=4" prop="tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]">
+                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item v-if="outerIndex==4" prop="tunnage_max">
+                  <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -75,7 +77,7 @@
                   <div title="正常装载区间吨数范围：" class="labelText">正常装载区间吨数范围：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input disabled v-model="innerDataItem.interval_min" size="mini"></el-input> -
+                      <el-input disabled v-model.number="innerDataItem.interval_min" size="mini"></el-input> -
                       <el-input :disabled="innerIndex==dataItem.length-1" @change="setRangeRelate" v-model="innerDataItem.interval_max" size="mini"></el-input>
                     </div>
                   </div>
@@ -86,14 +88,16 @@
                   <div title="基本费率：" class="labelText">基本费率：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_base">
-                      <el-input @change="validateRateBase" v-model="innerDataItem.rate_base" size="mini"></el-input>
+                      <el-input @change="validateRateBase" v-model.number="innerDataItem.rate_base" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
+                    <el-form-item prop="rate_max">
+                      <el-input @change="validateRateMin" v-model.number="innerDataItem.rate_max" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
@@ -101,7 +105,9 @@
                 <div class="grid-list">
                   <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
+                    <el-form-item prop="rate_min">
+                      <el-input v-model.number="innerDataItem.rate_min" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -118,7 +124,7 @@
                 <div class="grid-list">
                   <div title="费 率 1：" class="labelText">费 率 1：</div>
                   <div class="inputPart">
-                    <el-input :disabled="!isGuangdong" v-model="innerDataItem.rate_base1" size="mini"></el-input>
+                    <el-input :disabled="!isGuangdong" v-model.number="innerDataItem.rate_base1" size="mini"></el-input>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -136,7 +142,7 @@
                   <div title="最低计重(吨)：" class="labelText">最低计重(吨)：</div>
                   <div class="inputPart">
                     <el-form-item prop="weight_min">
-                      <el-input v-model="innerDataItem.weight_min" size="mini"></el-input>
+                      <el-input @change="validateWeightMin" v-model.number="innerDataItem.weight_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -197,7 +203,7 @@
           lane_num1: 0,
           name_bt_id: 1,
           name_bt: '',
-          source: 1
+          source: this.$store.state.source
         },
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,
@@ -259,7 +265,7 @@
       // 最低计重吨数
       validateWeightMin (value) {
         if (value > 10) {
-          this.$alert('最低收费值大于10?', '提示', {
+          this.$alert('最低计重值大于10?', '提示', {
             confirmButtonText: '确定',
             type: 'warning'
           });
@@ -340,6 +346,18 @@
           });
         });
       },
+      _setRateMinMax (outerIndex, innerIndex, obj) {
+        let tableBox = [
+          [{rateMax: 1.25,rateMin: 1.35}],
+          [{rateMax: 1.1,rateMin: 1.1},{rateMax: 1,rateMin: 0.83}],
+          [{rateMax: 1,rateMin: 1},{rateMax: 1,rateMin: 0.3}],
+          [{rateMax: 1,rateMin: 1},{rateMax: 0.3,rateMin: 0.3}]
+        ];
+        if (tableBox[outerIndex][innerIndex]) {
+          obj.rate_max = tableBox[outerIndex][innerIndex].rateMax;
+          obj.rate_min = tableBox[outerIndex][innerIndex].rateMin;
+        }
+      },
       addOuter() {
         if (this.dataModels.length===5)return;
         let newLoadingClass = this.dataModels.length;
@@ -358,6 +376,9 @@
         // 设置桥梁隧道;
         newObj.name_bt = this.dataModels[0]?this.dataModels[0][0].name_bt:this.originModel.name_bt;
         newObj.name_bt_id = this.dataModels[0]?this.dataModels[0][0].name_bt_id:this.originModel.name_bt_id;
+        // 如果是广东，自动维护装载费率上线和下限;
+        this.isGuangdong && this._setRateMinMax(this.dataModels.length,0,newObj);
+        // this._setRateMinMax(this.dataModels.length,0,newObj);
         this.$set(this.dataModels, newLoadingClass, []);
         this.$set(this.dataModels[newLoadingClass], 0, newObj);
       },
@@ -370,11 +391,18 @@
         let newObj = Object.assign({}, this.originModel, {insertFlag: true});
         newObj.loading_class = index+1;
         newObj.loading_subclss = newSubLoadingClass + 1;
+        newObj.tunnage_max = this.dataModels[index][0].tunnage_max;
+        newObj.tunnage_min = this.dataModels[index][0].tunnage_min;
+        newObj.tunnage_flag = this.dataModels[index][0].tunnage_flag;
+        
         newObj.interval_min = this.dataModels[index][newSubLoadingClass - 1].interval_max;
         newObj.interval_max = this.dataModels[index][newSubLoadingClass - 1].tunnage_max;
         // 设置桥梁隧道;
         newObj.name_bt = this.dataModels[0][0].name_bt;
         newObj.name_bt_id = this.dataModels[0][0].name_bt_id;
+        // 如果是广东，自动维护装载费率上线和下限;
+        this.isGuangdong && this._setRateMinMax(index,this.dataModels[index].length,newObj);
+        // this._setRateMinMax(index,this.dataModels[index].length,newObj);
         this.$set(this.dataModels[index], newSubLoadingClass, newObj);
       },
       minusInner(outerIndex, innerIndex) {
@@ -446,7 +474,7 @@
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
                 status: false,
-                tabIndex: 1
+                tabIndex: 2
               });
               updateFlag && fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
@@ -479,21 +507,28 @@
           this.dataModels.forEach((item,index) => {
             if(item[0].tunnage_min >= item[0].tunnage_max) {
               validateFlag = false;
-              alertMessage += `${index+1}类型装载吨位最小值必须比最大值小;`;
+              alertMessage += `${index+1}类型装载吨位最小值必须比最大值小;<br />`;
             }
             item.forEach((innerItem,innerIndex) => {
               if(innerItem.interval_min >= innerItem.interval_max) {
                 validateFlag = false;
-                alertMessage += `${index+1}类型下的${innerIndex+1}区间装载吨位最小值必须比最大值小;`;
+                alertMessage += `${index+1}类型下的${innerIndex+1}区间装载吨位最小值必须比最大值小;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(innerItem.rate_max < innerItem.rate_min) {
+                validateFlag = false;
+                alertMessage += `${index+1}类型下的${innerIndex+1}区间费率上限不能小于下限;<br />`;
               }
             });
           });
           if (validateFlag) {
             this.afterSave();
           } else {
-            this.$alert(alertMessage, '错误提示', {
+            alertMessage && this.$alert(alertMessage, '错误提示', {
               confirmButtonText: '确定',
-              type: 'error'
+              type: 'error',
+              dangerouslyUseHTMLString: true
             })
           }
         }
