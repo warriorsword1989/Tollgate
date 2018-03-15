@@ -177,12 +177,16 @@ class TollGate {
             let batchInsertSql = this._getInsertStringSql(notExistsPids, this.req.body.workFlag);
             promiseArray.push(this.selfDB.executeSql(batchInsertSql));
           }
-          promiseArray.length && Promise.all(promiseArray)
+          if (promiseArray.length) {
+            Promise.all(promiseArray)
             .then(proRes => {
               this.res.send({errorCode: 0});
             }).catch(err => {
               this.next(err);
             });
+          } else {
+            this.res.send({errorCode: 0});
+          }
         } else {
           this.res.send({errorCode: 0});
         }
