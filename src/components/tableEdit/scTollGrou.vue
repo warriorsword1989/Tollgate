@@ -215,7 +215,7 @@
           pre_truck_loadmax:null,
           pre_truck_loadmin:null,
           round:null,
-          source:1,
+          source:this.$store.state.source,
           system_id:appUtil.getGolbalData().adminCode,
           ton_limit:null
         },

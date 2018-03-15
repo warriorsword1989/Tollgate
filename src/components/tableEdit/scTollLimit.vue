@@ -84,7 +84,7 @@
           axle_num_limit: 2,
           model_limit: 0,
           ton_limit: 1,
-          source: 1
+          source: this.$store.state.source
         },
         mountFlag: false,
         rules: {

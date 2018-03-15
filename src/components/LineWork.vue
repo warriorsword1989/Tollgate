@@ -88,7 +88,7 @@
                   type: 'warning'
                 }).then(() => {
                   self.tollIds = id;
-                  self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:'insert' });
+                  self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:'insert',sourceFlag: 2 });
                 }).catch(() => {
                   self.$message({
                     type: 'info',
@@ -97,7 +97,7 @@
                 });
               } else {
                 self.tollIds = id;
-                self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:'insert' });
+                self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:'insert',sourceFlag: 2 });
               }
             }
           });

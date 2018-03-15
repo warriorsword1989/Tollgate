@@ -50,11 +50,11 @@ fastmap.uikit.editControl.SelectControl = fastmap.uikit.editControl.EditControl.
         if (features.length > 0) {
             if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
                 if (features[0].properties.static === 0 || features[0].properties.static === 1) {
-                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, event: event, flag:'update' });
+                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, event: event, flag:'update',sourceFlag: 3 });
                 }
             } else {
                 if (features[0].properties.dynamic === 0 || features[0].properties.dynamic === 1) {
-                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, event: event, flag:'update' });
+                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, event: event, flag:'update',sourceFlag: 3 });
                 }
             }
         }

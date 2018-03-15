@@ -30,7 +30,8 @@
         <el-table-column label="序号" type="index" width="120"></el-table-column>
         <el-table-column prop="pid" label="收费站ID"></el-table-column>
         <el-table-column prop="name" label="收费站名称"></el-table-column>
-        <el-table-column prop="type" label="收费站类型" show-overflow-tooltip></el-table-column>
+        <el-table-column v-if="$store.state.source==1" prop="type" label="收费站类型" show-overflow-tooltip></el-table-column>
+        <el-table-column v-if="$store.state.source!=1" prop="source" label="信息来源" show-overflow-tooltip></el-table-column>
         <el-table-column type="selection" width="55"></el-table-column>
       </el-table>
     </el-collapse-item>
@@ -164,6 +165,7 @@
         let result = await getTollName(param);
         this.tableData = result.data.map(item => {
           item.type = this.tollType[item.type];
+          item.source = ['情报道路对象','情报点对象','情报省份对象'][this.$store.state.source-2];
           return item;
         });
         this.loading = false;

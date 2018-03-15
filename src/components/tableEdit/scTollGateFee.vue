@@ -48,7 +48,7 @@
         dataModels: {
           local_plate: '',
           out_fee: 0,
-          source: 1,
+          source: this.$store.state.source,
           toll_pid: this.$store.state.editSelectedData[0],
           type: 1
         },

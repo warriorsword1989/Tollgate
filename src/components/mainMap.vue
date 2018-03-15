@@ -128,6 +128,8 @@
           this.showDialog = false;
           setTimeout(()=>{
             this.showDialog = true;
+            let sourceValue = appUtil.getGolbalData().dataSource==1?1:data.sourceFlag;
+            this.$store.commit('changeSourceValue',sourceValue);
             if (data.flag=='update') {
               this.$store.commit('changeHandleFlag', 'update');
               this.$store.commit('changeEditSelectedData', [data.features[0]]);

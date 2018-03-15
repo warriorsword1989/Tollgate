@@ -3,9 +3,7 @@ import connectDynamicOracle from '../../oracle/connectDynamicOracle';
 import connectRenderObj from '../../oracle/connectRenderObj';
 import connetSelfObje from '../../oracle/connectOracle';
 import logger from '../../config/logs';
-import {
-  changeResult
-} from '../../Util';
+import {changeResult} from '../../Util';
 
 class TollGate {
   constructor(req, res, next) {
@@ -82,9 +80,10 @@ class TollGate {
     const param = this.req.query;
     const nameString = param.bridgeName;
     this.table = param.table;
-    if (param.workFlag == 'dynamic') {
-      this.db = new connectDynamicOracle();
-    }
+    // 动态库中没有rd_name表;
+    // if (param.workFlag == 'dynamic') {
+    //   this.db = new connectDynamicOracle();
+    // }
     let dbSql = `create database link gdb_Links
     connect to fm_gdb_trunk identified by fm_gdb_trunk
     using '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.3.227)(PORT = 1521 )))(CONNECT_DATA = (SERVICE_NAME = orcl )))'`;
@@ -99,12 +98,25 @@ class TollGate {
     });
   }
 
+  // 获得批量插入index表的sql语句;
+  _getInsertStringSql (pids, flag) {
+    let sql = `INSERT ALL INTO SC_TOLL_INDEX `;
+    pids.forEach((item, index) => {
+      let insertValue = flag == 'static' ? `${item},${this.adminCode},0,Null`: `${item},${this.adminCode},Null,0`;
+      if (index == 0) {
+        sql += `(TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES (${insertValue}) `;
+      } else {
+        sql += `INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES (${insertValue}) `;
+      }
+    });
+    sql += `SELECT * FROM dual`;
+    return sql;
+  }
 
   /**
    * 对数据表进行更新
    */
   async updateTollGate() {
-    const _self = this;
     const param = this.req.body.data;
     this.table = this.req.body.table;
     this.adminCode = this.req.body.adminCode;
@@ -126,28 +138,54 @@ class TollGate {
         let priamry = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : 'GROUP_ID';
         if (this.tollRelateTable.indexOf(this.table) !=-1){
           let allTollPids = param.map(item => item[priamry.toLowerCase()]);
-          let handleFlag = true;
-          let resultBox = null;
-          for (let i=0;i<allTollPids.length;i++) {
-            let selectSql = `SELECT * FROM SC_TOLL_INDEX WHERE TOLL_PID = ${allTollPids[i]}`;
-            let searchResult = await this.selfDB.executeSql(selectSql);
-            if (searchResult.rows.length) {
-              let updateField = this.req.body.workFlag =='static' ? 'TOLL_STATIC_STATE' : 'TOLL_DYNAMIC_STATE';
-              let updateSql = `UPDATE SC_TOLL_INDEX SET ${updateField} = 1 WHERE TOLL_PID=${allTollPids[i]}`;
-              resultBox = await this.selfDB.executeSql(updateSql);
+          // 查询allTollPids看有哪些完全不存在，执行插入操作；
+          // 如果存在，则跟据当前workflag来判断到底是 编辑呢还是新增
+          let allExistsResult = await this.selfDB.executeSql(`SELECT * FROM SC_TOLL_INDEX WHERE TOLL_PID IN (${allTollPids.join(',')})`);
+          let allExistsDatas = changeResult(allExistsResult);
+          let allExistsPids = allExistsDatas.map(item => item.toll_pid);
+          let allUpdate_0_Pids = [];
+          let allUpdate_1_Pids = [];
+          allExistsDatas.forEach(item => {
+            if (this.req.body.workFlag =='static') {
+              if (item.toll_static_state == null || item.toll_static_state == 2) {
+                allUpdate_0_Pids.push(item.toll_pid);
+              }
+              if (item.toll_static_state == 0) {
+                allUpdate_1_Pids.push(item.toll_pid);
+              }
             } else {
-              let insertValue = this.req.body.workFlag == 'static' ? `${allTollPids[i]},${this.adminCode},0,Null`: `${allTollPids[i]},${this.adminCode},Null,0`;
-              let insertsSql = `INSERT INTO SC_TOLL_INDEX (TOLL_PID,ADMIN_CODE,TOLL_STATIC_STATE,TOLL_DYNAMIC_STATE) VALUES (${insertValue})`;
-              resultBox = await this.selfDB.executeSql(insertsSql);
+              if (item.toll_dynamic_state == null || item.toll_dynamic_state == 2) {
+                allUpdate_0_Pids.push(item.toll_pid);
+              }
+              if (item.toll_dynamic_state == 0) {
+                allUpdate_1_Pids.push(item.toll_pid);
+              }
             }
-            if (resultBox.rowsAffected == -1) {
-              handleFlag = false;
-            }
+          });
+          let promiseArray = [];
+          let field = this.req.body.workFlag =='static' ? 'TOLL_STATIC_STATE' : 'TOLL_DYNAMIC_STATE';
+          if (allUpdate_0_Pids.length) {
+            let batchInsertSql = `UPDATE SC_TOLL_INDEX SET ${field}=0 WHERE TOLL_PID IN (${allUpdate_0_Pids.join(',')})`;
+            promiseArray.push(this.selfDB.executeSql(batchInsertSql));
           }
-          if (handleFlag) {
-            this.res.send({errorCode: 0});
+          if (allUpdate_1_Pids.length) {
+            let batchUpdateSql = `UPDATE SC_TOLL_INDEX SET ${field}=1 WHERE TOLL_PID IN (${allUpdate_1_Pids.join(',')})`;
+            promiseArray.push(this.selfDB.executeSql(batchUpdateSql));
+          }
+          let notExistsPids = allTollPids.filter(item => allExistsPids.indexOf(item) == -1);
+          if (notExistsPids.length) {
+            let batchInsertSql = this._getInsertStringSql(notExistsPids, this.req.body.workFlag);
+            promiseArray.push(this.selfDB.executeSql(batchInsertSql));
+          }
+          if (promiseArray.length) {
+            Promise.all(promiseArray)
+            .then(proRes => {
+              this.res.send({errorCode: 0});
+            }).catch(err => {
+              this.next(err);
+            });
           } else {
-            this.res.send({errorCode: -1});
+            this.res.send({errorCode: 0});
           }
         } else {
           this.res.send({errorCode: 0});
