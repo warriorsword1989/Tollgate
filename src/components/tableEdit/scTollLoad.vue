@@ -377,8 +377,8 @@
         newObj.name_bt = this.dataModels[0]?this.dataModels[0][0].name_bt:this.originModel.name_bt;
         newObj.name_bt_id = this.dataModels[0]?this.dataModels[0][0].name_bt_id:this.originModel.name_bt_id;
         // 如果是广东，自动维护装载费率上线和下限;
-        //this.isGuangdong && this._setRateMinMax(this.dataModels.length-1,0,newObj);
-        this._setRateMinMax(this.dataModels.length,0,newObj);
+        this.isGuangdong && this._setRateMinMax(this.dataModels.length,0,newObj);
+        // this._setRateMinMax(this.dataModels.length,0,newObj);
         this.$set(this.dataModels, newLoadingClass, []);
         this.$set(this.dataModels[newLoadingClass], 0, newObj);
       },
@@ -401,8 +401,8 @@
         newObj.name_bt = this.dataModels[0][0].name_bt;
         newObj.name_bt_id = this.dataModels[0][0].name_bt_id;
         // 如果是广东，自动维护装载费率上线和下限;
-        // this.isGuangdong && this._setRateMinMax(index-1,this.dataModels[index].length-1,newObj);
-        this._setRateMinMax(index,this.dataModels[index].length,newObj);
+        this.isGuangdong && this._setRateMinMax(index,this.dataModels[index].length,newObj);
+        // this._setRateMinMax(index,this.dataModels[index].length,newObj);
         this.$set(this.dataModels[index], newSubLoadingClass, newObj);
       },
       minusInner(outerIndex, innerIndex) {
