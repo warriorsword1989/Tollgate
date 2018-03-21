@@ -25,8 +25,10 @@
           <div class="blockDescLiDiv">
             <span>来源网址</span>
           </div>
-          <div style="width: 200px;display: inline-block;word-wrap: break-word">
-            {{infoData.url}}
+          <div style="display: inline-block;width: 200px">
+            <div style="word-wrap: break-word" v-for="item in infoData.url.split(';')">
+              <a target="_blank" v-bind:href="item">{{item}}</a>
+            </div>
           </div>
         </li>
         <li>
