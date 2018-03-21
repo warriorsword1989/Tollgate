@@ -4,7 +4,7 @@
       <!-- <div class="innerImg"></div> -->
     </div>
     <ul class="list-group fm-dropdown-menu">
-      <li v-show="showTips" @click="backToTips()">返回tips列表</li>
+      <li v-show="showTips" @click="backToTips()">{{this.dataSource === 1 ? '返回tips列表': '返回情报列表'}}</li>
       <li><a @click="logout" href="#/login">退出</a></li>
     </ul>
   </div>
@@ -16,12 +16,15 @@
         name: "user-tool",
         data() {
           return {
+            dataSource: 1,
             showTips: true
           }
         },
         methods: {
           backToTips: function () {
-            this.$router.push('/Home');
+            const data = this.$route.params.data;
+            const type = this.$route.params.type;
+            this.$router.push({name:'Home', params:{data: data, type: type}});
           },
           logout: function () {
             this.$router.push('/login');
@@ -29,6 +32,9 @@
           }
         },
         mounted () {
+          if (appUtil.getGolbalData().dataSource) {
+            this.dataSource = appUtil.getGolbalData().dataSource;
+          }
           if (this.$route.path == '/Home') {
             this.showTips = false;
           }

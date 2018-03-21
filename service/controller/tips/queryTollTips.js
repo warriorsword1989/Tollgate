@@ -28,7 +28,7 @@ class Tips {
       sql = sql + " AND TOLL_NAME LIKE '%" + tollName + "%'";
     }
     if (updateStartTime && updateEndTime) {
-      sql = sql + " AND UPDATE_TIME BETWEEN TO_DATE('" + updateStartTime + "', 'yyyy-MM-dd') AND TO_DATE('" + updateEndTime + "', 'yyyy-MM-dd')";
+      sql = sql + " AND trunc(UPDATE_TIME) BETWEEN TO_DATE('" + updateStartTime + "', 'yyyy-MM-dd') AND TO_DATE('" + updateEndTime + "', 'yyyy-MM-dd')";
     }
     if (isAdopted.length > 0) {
       sql = sql + " AND IS_ADOPTED IN (" + isAdopted.toString() + ")";
