@@ -43,7 +43,7 @@ export default {
   line-height: 0;
 }
 .dragWindow .el-form--inline .el-form-item__content {
-
+  display: block;
 }
 /****************display: block复写tab样式********************/
 .dragWindow .el-tabs__content {

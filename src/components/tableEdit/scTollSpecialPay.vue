@@ -36,30 +36,30 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="客车车型：" title="客车车型" class="edit-container">
-              <el-input v-model.number="dataModels.card_class" class="edit-content"></el-input>
+            <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="card_class" label="客车车型：" title="客车车型" class="edit-container">
+              <el-input v-model="dataModels.card_class" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="货车车型：" title="货车车型" class="edit-container">
-              <el-input v-model.number="dataModels.truck_class" class="edit-content"></el-input>
+            <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="truck_class" label="货车车型：" title="货车车型" class="edit-container">
+              <el-input v-model="dataModels.truck_class" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="8">
-            <el-form-item label="正常装载类型：" title="正常装载类型" class="edit-container">
-              <el-input v-model.number="dataModels.loading_class" class="edit-content"></el-input>
+            <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="loading_class" label="正常装载类型：" title="正常装载类型" class="edit-container">
+              <el-input v-model="dataModels.loading_class" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="超载类型：" title="超载类型" class="edit-container">
-              <el-input v-model.number="dataModels.overloading_clss" class="edit-content"></el-input>
+            <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="overloading_clss" label="超载类型：" title="超载类型" class="edit-container">
+              <el-input v-model="dataModels.overloading_clss" class="edit-content"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="打折：" title="打折" class="edit-container">
-              <el-input v-model.number="dataModels.discount" class="edit-content">
+            <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="discount" label="打折：" title="打折" class="edit-container">
+              <el-input v-model="dataModels.discount" class="edit-content">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
@@ -67,15 +67,15 @@
         </el-row>
         <el-row style="margin:15px 0" type="flex" justify="start">
           <el-col :span="12">
-            <el-form-item label="优惠上限：" title="优惠上限" class="edit-container">
-              <el-input v-model.number="dataModels.pre_max" class="edit-content">
+            <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="pre_max" label="优惠上限：" title="优惠上限" class="edit-container">
+              <el-input v-model="dataModels.pre_max" class="edit-content">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="优惠金额：" title="优惠金额" class="edit-container">
-              <el-input v-model.number="dataModels.pre_fee" class="edit-content">
+            <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="pre_fee" label="优惠金额：" title="优惠金额" class="edit-container">
+              <el-input v-model="dataModels.pre_fee" class="edit-content">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>
@@ -115,29 +115,37 @@
         loading: false,
         dataModels: {
           system_id: appUtil.getGolbalData().adminCode,
-          id: '',
-          local_plate: '',
+          id: null,
+          local_plate: null,
           timeDomainFmt: '',
-          time_domain: '',
-          card_type: '',
-          card_class: '',
-          truck_class: '',
-          loading_class: '',
-          overloading_clss: '',
-          discount: '',
-          pre_max: '',
+          time_domain: null,
+          card_type: null,
+          card_class: null,
+          truck_class: null,
+          loading_class: null,
+          overloading_clss: null,
+          discount: null,
+          pre_max: null,
           free: '1',
-          pre_fee: ''
+          pre_fee: null
         }
       }
     },
     methods: {
+      // 如果存在的换验证数字是否为>=0的数字；
+      validateNum (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        } else {
+          callback();
+        }
+      },
       onSubmit(formName) {
         let _self = this;
         if (this.dataModels.timeDomainFmt) {
           this.dataModels.time_domain = this.dataModels.timeDomainFmt.join('-');
-          delete this.dataModels.timeDomainFmt;
         }
+        delete this.dataModels.timeDomainFmt;
         let params = { table: 'SC_TOLL_SPEFLOAT', data: [this.dataModels], workFlag: appUtil.getGolbalData().workType };
         this.loading = true;
         getMaxId({ table: 'SC_TOLL_SPEFLOAT', adminCode: appUtil.getGolbalData().adminCode})

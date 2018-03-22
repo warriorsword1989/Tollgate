@@ -46,12 +46,11 @@
             <div class="grid-list">
               <div class="labelText" title="正常装载级别吨数范围(车货总重)">正常装载级别吨数范围(车货总重)：</div>
               <div class="inputPart">
-                > 
                 <el-form-item prop="tunnage_min">
                   <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
-                <= 
-                <el-form-item v-if="outerIndex!=4" prop="tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]">
+                <span style="display:block;line-height:28px">-</span> 
+                <el-form-item v-if="outerIndex!=4" prop="tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
                   <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
                 <el-form-item v-if="outerIndex==4" prop="tunnage_max">
@@ -77,8 +76,14 @@
                   <div title="正常装载区间吨数范围：" class="labelText">正常装载区间吨数范围：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input disabled v-model.number="innerDataItem.interval_min" size="mini"></el-input> -
-                      <el-input :disabled="innerIndex==dataItem.length-1" @change="setRangeRelate" v-model="innerDataItem.interval_max" size="mini"></el-input>
+                      <el-input disabled v-model.number="innerDataItem.interval_min" size="mini"></el-input>
+                      <span style="display:block;line-height:28px">-</span>
+                      <el-form-item v-if="innerIndex!=4" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
+                        <el-input v-model.number="innerDataItem.interval_max" @change="setRangeRelate" size="mini"></el-input>
+                      </el-form-item>
+                      <el-form-item v-if="innerIndex==4" prop="interval_max">
+                        <el-input v-model.number="innerDataItem.interval_max" disabled size="mini"></el-input>
+                      </el-form-item>
                     </div>
                   </div>
                 </div>
@@ -87,16 +92,16 @@
                 <div class="grid-list">
                   <div title="基本费率：" class="labelText">基本费率：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate_base">
-                      <el-input @change="validateRateBase" v-model.number="innerDataItem.rate_base" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate_base">
+                      <el-input @change="validateRateBase" v-model="innerDataItem.rate_base" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate_max">
-                      <el-input @change="validateRateMin" v-model.number="innerDataItem.rate_max" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_max">
+                      <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -105,8 +110,8 @@
                 <div class="grid-list">
                   <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate_min">
-                      <el-input v-model.number="innerDataItem.rate_min" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_min">
+                      <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -124,7 +129,12 @@
                 <div class="grid-list">
                   <div title="费 率 1：" class="labelText">费 率 1：</div>
                   <div class="inputPart">
-                    <el-input :disabled="!isGuangdong" v-model.number="innerDataItem.rate_base1" size="mini"></el-input>
+                    <el-form-item v-if="!isGuangdong" prop="rate_min">
+                      <el-input disabled v-model="innerDataItem.rate_base1" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item v-if="isGuangdong" :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate_min">
+                      <el-input v-model="innerDataItem.rate_base1" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -141,8 +151,8 @@
                 <div class="grid-list">
                   <div title="最低计重(吨)：" class="labelText">最低计重(吨)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="weight_min">
-                      <el-input @change="validateWeightMin" v-model.number="innerDataItem.weight_min" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="weight_min">
+                      <el-input @change="validateWeightMin" v-model="innerDataItem.weight_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -199,7 +209,7 @@
           weight_min: 0,
           rate_base: 0,
           lane_num: 0,
-          rate_base1: 0,
+          rate_base1: null,
           lane_num1: 0,
           name_bt_id: 1,
           name_bt: '',
@@ -245,6 +255,22 @@
       }
     },
     methods: {
+      // 如果存在的换验证数字是否为>=0的数字；
+      validateNum (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        } else {
+          callback();
+        }
+      },
+      // 如果存在的换验证数字是正实数小数点一位；
+      validateFloat1 (rule, value, callback) {
+        if ((value!==null && value!=='') && !/^[0-9]+(\.[0-9]{1})+$/.test(value)) {
+          callback(new Error('输入的数字必须保留一位小数点')); 
+        } else {
+          callback();
+        }
+      },
       // 装载机别数
       validateTunnage (rule, value, callback) {
         if (value >49 || value < 0) {
@@ -348,7 +374,7 @@
       },
       _setRateMinMax (outerIndex, innerIndex, obj) {
         let tableBox = [
-          [{rateMax: 1.25,rateMin: 1.35}],
+          [{rateMax: 1.25,rateMin: 1.25}],
           [{rateMax: 1.1,rateMin: 1.1},{rateMax: 1,rateMin: 0.83}],
           [{rateMax: 1,rateMin: 1},{rateMax: 1,rateMin: 0.3}],
           [{rateMax: 1,rateMin: 1},{rateMax: 0.3,rateMin: 0.3}]
@@ -415,6 +441,7 @@
             item.forEach(innerItem => {
               let cloneData = Object.assign({},innerItem);
               cloneData.group_id = outer;
+              cloneData.source = this.$store.state.source;
               delete innerItem.insertFlag;
               delete cloneData.insertFlag;
               submitData.push(cloneData);
@@ -433,6 +460,10 @@
             let {
               errorCode
             } = result;
+            let messageStr = '数据更新成功！'
+            if (result.message) {
+              messageStr = result.message
+            }
             const h = this.$createElement;
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
@@ -441,7 +472,7 @@
               });
               fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
-                message: '数据更新成功！',
+                message: messageStr,
                 type: 'success'
               });
             } else {
@@ -589,7 +620,7 @@
   .grid-wraper {
     display: flex;
     flex-direction: row;
-    margin: 10px 0;
+    margin: 15px 0;
   }
 
   .grid-content {
@@ -625,7 +656,8 @@
   }
   .inputPart .el-form-item {
     width: 100%;
-    margin-bottom: 0
+    margin-bottom: 0;
+    margin-right: 0;
   }
 
 </style>

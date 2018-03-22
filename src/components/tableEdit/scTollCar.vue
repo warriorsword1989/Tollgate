@@ -47,7 +47,8 @@
                     <div class="inputPart">
                       <el-form-item prop="seat_num_min">
                         <el-input v-model.number="dataItem.seat_num_min" disabled size="mini"></el-input>
-                      </el-form-item>-
+                      </el-form-item>
+                      <span style="display:block;line-height:28px">-</span>
                       <el-form-item :rules="[{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'},{  validator: validateSeat0_55, trigger: 'change' }]" v-if='dataItem.car_class!=4' prop="seat_num_max">
                         <el-input v-model.number="dataItem.seat_num_max" @change="maxSeatNumChange" size="mini"></el-input>
                       </el-form-item>
@@ -62,8 +63,8 @@
                 <div class="grid-list">
                   <div title="费率(元/公里)非桥隧道：" class="labelText">费率(元/公里)非桥隧道：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate">
-                      <el-input @change="validateRate" v-model.number="dataItem.rate" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate">
+                      <el-input @change="validateRate" v-model="dataItem.rate" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -83,8 +84,8 @@
                 <div class="grid-list">
                   <div title="桥隧道费率(元/车次)：" class="labelText">桥隧道费率(元/车次)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate_bt">
-                      <el-input @change="validateRateBt" v-model.number="dataItem.rate_bt" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate_bt">
+                      <el-input @change="validateRateBt" v-model="dataItem.rate_bt" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -92,8 +93,8 @@
                 <div class="grid-list" v-show="isZheJiang">
                   <div title="车次加费(元)：" class="labelText">车次加费(元)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="fee_add">
-                      <el-input @change="validateFeeAdd" v-model.number="dataItem.fee_add" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="fee_add">
+                      <el-input @change="validateFeeAdd" v-model="dataItem.fee_add" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -102,16 +103,19 @@
                 <div class="grid-list">
                   <div title="最低收费(元)：" class="labelText">最低收费(元)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="charge_min">
-                      <el-input @change="validateChargeMin" v-model.number="dataItem.charge_min" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="charge_min">
+                      <el-input @change="validateChargeMin" v-model="dataItem.charge_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="费率1(元/公里)：" class="labelText">费率1(元/公里)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate1">
-                      <el-input @change="validateRate1" :disabled="!isGuangdong" v-model.number="dataItem.rate1" size="mini"></el-input>
+                    <el-form-item v-if="!isGuangdong" prop="rate1">
+                      <el-input disabled v-model="dataItem.rate1" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item v-if="isGuangdong" :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate1">
+                      <el-input @change="validateRate1" v-model="dataItem.rate1" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -131,9 +135,23 @@
                 <div class="grid-list">
                   <div title="固定收费站对应次费：" class="labelText">固定收费站对应次费：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="fix_fee">
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="fix_fee">
                       <el-input @change="validateFixFee" v-model.number="dataItem.fix_fee" size="mini"></el-input>
                     </el-form-item>
+                  </div>
+                </div>
+              </div>
+              <div class="grid-wraper">
+                <div class="grid-list">
+                  <div title="生效日期" class="labelText">生效日期：</div>
+                  <div class="inputPart">
+                    <el-date-picker size="mini" value-format="yyyy/MM/dd" v-model="dataItem.sdate" type="date" placeholder="选择日期"></el-date-picker>
+                  </div>
+                </div>
+                <div class="grid-list">
+                  <div title="失效日期" class="labelText">失效日期：</div>
+                  <div class="inputPart">
+                    <el-date-picker size="mini" value-format="yyyy/MM/dd" v-model="dataItem.edate" type="date" placeholder="选择日期"></el-date-picker>
                   </div>
                 </div>
               </div>
@@ -180,11 +198,13 @@
           rate: null,
           seat_num_max: 10,
           seat_num_min: 1,
-          rate_bt: 4,
+          rate_bt: null,
           fee_add: null,
           charge_min: null,
           fix_fee: null,
-          source: this.$store.state.source
+          source: this.$store.state.source,
+          sdate: null,
+          edate: null
         },
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,
@@ -287,9 +307,25 @@
         }
       },
       // 检查车型的座位数是否合法;
-      validateSeat0_55(rule, value, callback){
+      validateSeat0_55(rule, value, callback) {
         if (value >55 || value < 0) {
           callback(new Error('座位数范围在0-55')); 
+        } else {
+          callback();
+        }
+      },
+      // 如果存在的换验证数字是否为>=0的数字；
+      validateNum (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        } else {
+          callback();
+        }
+      },
+      // 如果存在的换验证数字是正实数小数点一位；
+      validateFloat1 (rule, value, callback) {
+        if ((value!==null && value!=='') && !/^[0-9]+(\.[0-9]{1})+$/.test(value)) {
+          callback(new Error('输入的数字必须保留一位小数点')); 
         } else {
           callback();
         }
@@ -342,6 +378,7 @@
           this.dataModels.forEach(item => {
             let cloneData = Object.assign({},item);
             cloneData.group_id = outer;
+            cloneData.source = this.$store.state.source;
             delete item.insertFlag;
             delete cloneData.insertFlag;
             submitData.push(cloneData);
@@ -357,6 +394,10 @@
         updateTollGate(params)
         .then(result => {
           let {errorCode} = result;
+          let messageStr = '数据更新成功！'
+          if (result.message) {
+            messageStr = result.message
+          }
           const h = this.$createElement;
           if (errorCode === 0) {
             this.$emit('tabStatusChange', {
@@ -365,7 +406,7 @@
             });
             fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
             return this.$message({
-              message: '数据更新成功！',
+              message: messageStr,
               type: 'success'
             });
           } else {
@@ -539,6 +580,7 @@
   }
   .inputPart .el-form-item {
     width: 100%;
+    margin-right: 0;
     margin-bottom: 0
   }
 </style>

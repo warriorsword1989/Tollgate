@@ -95,10 +95,6 @@
           ton_limit: [
             { required: true, message: '吨数不能为空!', trigger: 'change' },
             { type: 'number', message: '吨数必须为数字'}
-          ],
-          model_limit: [
-            { required: true, message: '型号不能为空!', trigger: 'change' },
-            { type: 'number', message: '型号必须为数字'}
           ]
         } 
       }
@@ -163,6 +159,7 @@
           let submitData = [];
           this.dataModels.forEach(item => {
             let cloneData = Object.assign({},item);
+            cloneData.source = this.$store.state.source;
             delete cloneData.insertFlag;
             delete item.insertFlag;
             submitData.push(cloneData);
@@ -178,6 +175,10 @@
             let {
               errorCode
             } = result;
+            let messageStr = '数据更新成功！'
+            if (result.message) {
+              messageStr = result.message
+            }
             const h = this.$createElement;
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
@@ -185,7 +186,7 @@
                 tabIndex: 7
               });
               return this.$message({
-                message: '数据更新成功！',
+                message: messageStr,
                 type: 'success'
               });
             } else {

@@ -7,7 +7,6 @@
     :model="dataModels"
     ref="dataModels"
     :inline="true"
-    :rules="rules"
     :inline-message="false"
     class="wraper">
       <div class="grid-content">
@@ -45,8 +44,8 @@
           <div class="grid-list">
             <div title="实际收费的长度倍数：" class="labelText">实际收费的长度倍数：</div>
             <div class="inputPart">
-              <el-form-item prop="rato">
-                <el-input type="number" :disabled="dataModels.rate_class!=4" v-model="dataModels.rato" size="mini"></el-input>
+              <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rato">
+                <el-input :disabled="dataModels.rate_class!=4" v-model="dataModels.rato" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -55,16 +54,16 @@
           <div class="grid-list">
             <div title="加费：" class="labelText">加费：</div>
             <div class="inputPart">
-              <el-form-item prop="rate_add">
-                <el-input type="number" v-model.number="dataModels.rate_add" size="mini"></el-input>
+              <el-form-item :rules="[{ validator: check_addFee, trigger: 'change'}]" prop="rate_add">
+                <el-input v-model.number="dataModels.rate_add" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
           <div class="grid-list">
             <div title="客车车型编号：" class="labelText">客车车型编号：</div>
             <div class="inputPart">
-              <el-form-item prop="car_class">
-                <el-input type="number" :disabled="dataModels.rate_class!=2" v-model="dataModels.car_class" size="mini"></el-input>
+              <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="car_class">
+                <el-input :disabled="dataModels.rate_class!=2" v-model="dataModels.car_class" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -73,8 +72,8 @@
           <div class="grid-list">
             <div title="货车车型编号：" class="labelText">货车车型编号：</div>
             <div class="inputPart">
-              <el-form-item prop="truck_class">
-                <el-input type="number" :disabled="dataModels.rate_class!=2" v-model="dataModels.truck_class" size="mini"></el-input>
+              <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="truck_class">
+                <el-input :disabled="dataModels.rate_class!=2" v-model="dataModels.truck_class" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -94,12 +93,12 @@
           <div class="grid-list">
             <div title="计重吨数区间：" class="labelText">计重吨数区间：</div>
             <div class="inputPart">
-              <el-form-item style="flex:5" prop="tunnage_min">
-                <el-input type="number" :disabled="dataModels.rate_class!=2" v-model.number="dataModels.tunnage_min" size="mini"></el-input>
+              <el-form-item :rules="[{ validator: checkTunage_min, trigger: 'change'}]" style="flex:5" prop="tunnage_min">
+                <el-input :disabled="dataModels.rate_class!=2" v-model.number="dataModels.tunnage_min" size="mini"></el-input>
               </el-form-item>
-              <div style="flex:1">--</div>
-              <el-form-item style="flex:5" prop="tunnage_max">
-                <el-input type="number" :disabled="dataModels.rate_class!=2" v-model.number="dataModels.tunnage_max" size="mini"></el-input>
+              <div style="flex:1">-</div>
+              <el-form-item :rules="[{ validator: checkTunage_max, trigger: 'change'}]" style="flex:5" prop="tunnage_max">
+                <el-input :disabled="dataModels.rate_class!=2" v-model.number="dataModels.tunnage_max" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -124,43 +123,18 @@
     name: 'scTollRdlinkBt',
     components: {searchName},
     data() {
-      let _self = this;
-      let checkTunage_max = (rule, value, callback) => {
-        if (value && value <= _self.dataModels.tunnage_min) {
-          callback(new Error('吨数区间最小值必须小于最大值'));
-        }
-        if (value && (value <0 || value>1000 || value.toString().split('.').length > 1)) {
-          callback(new Error('吨数区间最小值必须是0-1000内的整数'));
-        }
-        callback();
-      };
-      let checkTunage_min = (rule, value, callback) => {
-        if (value && (value >= _self.dataModels.tunnage_max || value.toString().split('.').length > 1)) {
-          callback(new Error('吨数区间最小值必须小于最大值'));
-        }
-        if (value && (value < 0 || value > 1000 || value.toString().split('.').length > 1)) {
-          callback(new Error('吨数区间最大值必须是0-1000内的整数'));
-        }
-        callback();
-      };
-      let check_addFee = (rule, value, callback) => {
-        if (value && (value < 0 || value > 10)) {
-          callback(new Error('加费字段值域错误,必须为0-10的数字'));
-        }
-        callback();
-      };
       return {
         loading: false,
         serachShow: false,
         dataModels: {
           car_class:null,
-          group_id: 1,
+          group_id: null,
           name_bt:'',
           name_bt_id:1,
           rate_add:0,
           rate_class:1,
           rato:null,
-          source:1,
+          source:this.$store.state.source,
           truck_class:null,
           tunnage_flag:null,
           tunnage_max:null,
@@ -168,7 +142,7 @@
         },
         originModel: {
           car_class:null,
-          group_id: 1,
+          group_id: null,
           name_bt:'',
           name_bt_id:1,
           rate_add:0,
@@ -213,21 +187,7 @@
         }, {
           value: 3,
           label: '前闭后闭'
-        }],
-        rules: {
-          tunnage_min: [
-            { type: 'number', message: '计重吨数必须为数字'},
-            { validator: checkTunage_min, trigger: 'change'}
-          ],
-          tunnage_max: [
-            { type: 'number', message: '计重吨数必须为数字'},
-            { validator: checkTunage_max, trigger: 'change'}
-          ],
-          rate_add: [
-            { type: 'number', message: '加费必须为数字'},
-            { validator: check_addFee, trigger: 'change'}
-          ]
-        }
+        }]
       }
     },
     watch: {
@@ -243,6 +203,47 @@
       }
     },
     methods: {
+      checkTunage_max  (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        }
+        if (value && value <= this.dataModels.tunnage_min) {
+          callback(new Error('吨数区间最小值必须小于最大值'));
+        }
+        if (value && (value <0 || value>1000 || value.toString().split('.').length > 1)) {
+          callback(new Error('吨数区间最小值必须是0-1000内的整数'));
+        }
+        callback();
+      },
+      checkTunage_min (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        }
+        if (value && (value >= this.dataModels.tunnage_max || value.toString().split('.').length > 1)) {
+          callback(new Error('吨数区间最小值必须小于最大值'));
+        }
+        if (value && (value < 0 || value > 1000 || value.toString().split('.').length > 1)) {
+          callback(new Error('吨数区间最大值必须是0-1000内的整数'));
+        }
+        callback();
+      },
+      check_addFee (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        }
+        if (value && (value < 0 || value > 10)) {
+          callback(new Error('加费字段值域错误,必须为0-10的数字'));
+        }
+        callback();
+      },
+      // 如果存在的换验证数字是否为>=0的数字；
+      validateNum (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        } else {
+          callback();
+        }
+      },
       toggleSearchPanel(flag){
         this.serachShow = flag;
       },
@@ -251,6 +252,7 @@
           this.dataModels.rato = null;
         }
         if (value != 2) {
+          this.dataModels.car_class = null;
           this.dataModels.truck_class = null;
           this.dataModels.tunnage_flag = null;
           this.dataModels.tunnage_max = null;
@@ -301,6 +303,10 @@
           updateTollGate(params)
           .then(result => {
             let {errorCode} = result;
+            let messageStr = '数据更新成功！'
+            if (result.message) {
+              messageStr = result.message
+            }
             const h = this.$createElement;
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
@@ -308,7 +314,7 @@
                 tabIndex: 8
               });
               return this.$message({
-                message: '数据更新成功！',
+                message: messageStr,
                 type: 'success'
               });
             } else {

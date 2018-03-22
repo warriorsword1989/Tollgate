@@ -22,7 +22,7 @@
             <div title="ETC打折类型：" class="labelText">ETC打折类型：</div>
             <div class="inputPart">
             <el-form-item prop="etc_type">
-              <el-select size="mini" v-model.number="dataModels.etc_type" placeholder="请选择">
+              <el-select size="mini" @change="etcTypeChange" v-model.number="dataModels.etc_type" placeholder="请选择">
                 <el-option v-for="item in etcTypeOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -35,7 +35,9 @@
             <div title="ETC打折：" class="labelText">ETC打折：</div>
             <div class="inputPart">
               <el-form-item prop="etc_d">
-                <el-input placeholder="%" type="number" v-model.number="dataModels.etc_d" size="mini"></el-input>
+                <el-input type="number" v-model.number="dataModels.etc_d" size="mini">
+                  <template slot="append">%</template>
+                </el-input>
               </el-form-item>
             </div>
           </div>
@@ -114,11 +116,11 @@
             <div title="货车正常装载优惠吨数区间：" class="labelText">货车正常装载优惠吨数区间：</div>
             <div class="inputPart">
               <el-form-item style="flex:5" prop="pre_truck_loadmin">
-                <el-input type="number" v-model.number="dataModels.pre_truck_loadmin" size="mini"></el-input>
+                <el-input @change="loadminChange" v-model="dataModels.pre_truck_loadmin" size="mini"></el-input>
               </el-form-item>
               <div style="flex:1">--</div>
               <el-form-item style="flex:5" prop="pre_truck_loadmax">
-                <el-input type="number" v-model.number="dataModels.pre_truck_loadmax" size="mini"></el-input>
+                <el-input @change="loadmaxChange" v-model="dataModels.pre_truck_loadmax" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -128,7 +130,7 @@
             <div title="货车正常装载优惠计费吨数：" class="labelText">货车正常装载优惠计费吨数：</div>
             <div class="inputPart">
               <el-form-item prop="pre_truck_load">
-                <el-input type="number" v-model.number="dataModels.pre_truck_load" size="mini"></el-input>
+                <el-input v-model="dataModels.pre_truck_load" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -136,7 +138,7 @@
             <div title="最低收费金额：" class="labelText">最低收费金额：</div>
             <div class="inputPart">
               <el-form-item prop="fee_limit">
-                <el-input @change="check_fee_limit" type="number" v-model.number="dataModels.fee_limit" size="mini"></el-input>
+                <el-input @change="check_fee_limit" v-model="dataModels.fee_limit" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -171,14 +173,28 @@
     name: 'scTollGrou',
     data() {
       let _self = this;
+      // 如果存在的换验证数字是否为>=0的数字；
+      let validateNum = (rule, value, callback) => {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        } else {
+          callback();
+        }
+      };
       let check_max = (rule, value, callback) => {
-        if (value <= _self.dataModels.pre_truck_loadmin) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        }
+        if ((value!==null && value!=='') && value <= _self.dataModels.pre_truck_loadmin) {
           return callback(new Error('优惠区间不合法'));
         }
         callback();
       };
       let check_min = (rule, value, callback) => {
-        if (value >= _self.dataModels.pre_truck_loadmax) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        }
+        if ((value!==null && value!=='') && value >= _self.dataModels.pre_truck_loadmax) {
           return callback(new Error('优惠区间不合法'));
         }
         callback();
@@ -190,6 +206,9 @@
         callback();
       };
       let check_etc_d = (rule, value, callback) => {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        }
         if ((value && !_self.dataModels.etc_type) || (!value && _self.dataModels.etc_type)) {
           return callback(new Error('etc类型与etc打折必须同时有值或同时为空'));
         }
@@ -302,26 +321,21 @@
         }],
         rules: {
           pre_truck_loadmin: [
-            { required: true, message: '不能为空'},
-            { type: 'number', message: '值必须为数字'},
             { validator: check_min, trigger: 'change'}
           ],
           pre_truck_loadmax: [
-            { required: true, message: '不能为空'},
-            { type: 'number', message: '值必须为数字'},
             { validator: check_max, trigger: 'change'}
           ],
           pre_truck_load: [
-            { type: 'number', message: '值必须为数字'},
+            { validator: validateNum, trigger: 'change'}
           ],
           etc_type: [
             { validator: check_etc_type, trigger: 'change'}
           ],
           fee_limit: [
-            { required: true, message: '不能为空'}
+            { validator: validateNum, trigger: 'change'}
           ],
           etc_d: [
-            { type: 'number', message: '值必须为数字'},
             { validator: check_etc_d, trigger: 'change'}
           ]
         }
@@ -341,6 +355,16 @@
       }
     },
     methods: {
+      // ETC打折类型改变的事件监听;
+      etcTypeChange (value) {
+        this.$refs['dataModels'].validateField('etc_d');
+      },
+      loadmaxChange (value) {
+        this.$refs['dataModels'].validateField('pre_truck_loadmin');
+      },
+      loadminChange (value) {
+        this.$refs['dataModels'].validateField('pre_truck_loadmax');
+      },
       check_fee_limit(value) {
         if (value > 20) {
           this.$confirm('最低收费金额大于20!', '提示', {
@@ -370,7 +394,7 @@
             submitData.push(cloneData);
           });
           let params = {
-            table: 'SC_TOLL_GROUP',
+            table: 'SC_TOLL_GROUP_DETAIL',
             data: submitData,
             workFlag: appUtil.getGolbalData().workType,
             adminCode: appUtil.getGolbalData().adminCode
@@ -380,6 +404,10 @@
             let {
               errorCode
             } = result;
+            let messageStr = '数据更新成功！'
+            if (result.message) {
+              messageStr = result.message
+            }
             const h = this.$createElement;
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
@@ -388,7 +416,7 @@
               });
               fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
-                message: '数据更新成功！',
+                message: messageStr,
                 type: 'success'
               });
             } else {
@@ -422,7 +450,7 @@
     mounted(){
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
-        let param = {table: 'SC_TOLL_GROUP', pid: this.$store.state.editSelectedData[0],workFlag: appUtil.getGolbalData().workType};
+        let param = {table: 'SC_TOLL_GROUP_DETAIL', pid: this.$store.state.editSelectedData[0],workFlag: appUtil.getGolbalData().workType};
         this.loading = true;
         getTollGate(param)
         .then(result => {

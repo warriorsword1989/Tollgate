@@ -46,7 +46,7 @@
                       <el-form-item prop="tunnage_min">
                         <el-input v-model.number="dataItem.tunnage_min" disabled size="mini"></el-input>
                       </el-form-item>
-                       -
+                      <span style="display:block;line-height:28px">-</span>
                       <el-form-item prop="tunnage_max" v-if="dataItem.truck_class!=5" :rules="[ { required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'},{  validator: validateSeat0_55, trigger: 'change' }]">
                         <el-input v-model.number="dataItem.tunnage_max" @change="maxTunnageNumChange" size="mini"></el-input>
                       </el-form-item>
@@ -61,8 +61,8 @@
                 <div class="grid-list">
                   <div title="费率（元/公里）非桥隧道：" class="labelText">费率（元/公里）非桥隧道：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate">
-                      <el-input @change="validateRate" v-model.number="dataItem.rate" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate">
+                      <el-input @change="validateRate" v-model="dataItem.rate" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -80,8 +80,8 @@
                 <div class="grid-list">
                   <div title="集装箱尺寸数：" class="labelText">集装箱尺寸数：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="container">
-                      <el-input @change="validateContainer" v-model.number="dataItem.container" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="container">
+                      <el-input @change="validateContainer" v-model="dataItem.container" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -99,16 +99,16 @@
                <div class="grid-list">
                   <div title="轮数：" class="labelText">轮数：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="wheel_num">
-                      <el-input v-model.number="dataItem.wheel_num" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="wheel_num">
+                      <el-input v-model="dataItem.wheel_num" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="型号：" class="labelText">型号：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="model">
-                      <el-input v-model.number="dataItem.model" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="model">
+                      <el-input v-model="dataItem.model" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -119,8 +119,8 @@
                   <div title="桥隧道费率（元/车次）：" class="labelText">桥隧道费率（元/车次）：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_bt">
-                      <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate_bt">
-                        <el-input @change="validateRateBt" v-model.number="dataItem.rate_bt" size="mini"></el-input>
+                      <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate_bt">
+                        <el-input @change="validateRateBt" v-model="dataItem.rate_bt" size="mini"></el-input>
                       </el-form-item>
                     </el-form-item>
                   </div>
@@ -128,8 +128,8 @@
                 <div class="grid-list" v-show="isZheJiang">
                   <div title="车次加费（元）：" class="labelText">车次加费（元）：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="fee_add">
-                      <el-input @change="validateFeeAdd" v-model.number="dataItem.fee_add" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="fee_add">
+                      <el-input @change="validateFeeAdd" v-model="dataItem.fee_add" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -139,16 +139,16 @@
                 <div class="grid-list">
                   <div title="最低收费（元）：" class="labelText">最低收费（元）：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="charge_min">
-                      <el-input @change="validateChargeMin" v-model.number="dataItem.charge_min" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="charge_min">
+                      <el-input @change="validateChargeMin" v-model="dataItem.charge_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="费率1(元/公里)：" class="labelText">费率1(元/公里)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="rate1">
-                      <el-input :disabled="!isGuangdong" @change="validateRate1" v-model.number="dataItem.rate1" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate1">
+                      <el-input :disabled="!isGuangdong" @change="validateRate1" v-model="dataItem.rate1" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -166,8 +166,8 @@
                 <div class="grid-list">
                   <div title="固定收费站对应次费：" class="labelText">固定收费站对应次费：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="fix_fee">
-                      <el-input @change="validateFixFee" v-model.number="dataItem.fix_fee" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="fix_fee">
+                      <el-input @change="validateFixFee" v-model="dataItem.fix_fee" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -283,6 +283,22 @@
       }
     },
     methods: {
+      // 如果存在的换验证数字是否为>=0的数字；
+      validateNum (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        } else {
+          callback();
+        }
+      },
+      // 如果存在的换验证数字是正实数小数点一位；
+      validateFloat1 (rule, value, callback) {
+        if ((value!==null && value!=='') && !/^[0-9]+(\.[0-9]{1})+$/.test(value)) {
+          callback(new Error('输入的数字必须保留一位小数点')); 
+        } else {
+          callback();
+        }
+      },
       validateContainer(value) {
         if (this.isClickSave)return;
         if (value != 20 && value != 40) {
@@ -405,6 +421,7 @@
           this.dataModels.forEach(item => {
             let cloneData = Object.assign({},item);
             cloneData.group_id = outer;
+            cloneData.source = this.$store.state.source;
             delete item.insertFlag;
             delete cloneData.insertFlag;
             submitData.push(cloneData);
@@ -421,6 +438,10 @@
         .then(result => {
           let {errorCode} = result;
           const h = this.$createElement;
+          let messageStr = '数据更新成功！'
+          if (result.message) {
+            messageStr = result.message
+          }
           if (errorCode === 0) {
             this.$emit('tabStatusChange', {
               status: false,
@@ -428,7 +449,7 @@
             });
             fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
             return this.$message({
-              message: '数据更新成功！',
+              message: messageStr,
               type: 'success'
             });
           } else {
@@ -598,7 +619,8 @@
   }
   .inputPart .el-form-item {
     width: 100%;
-    margin-bottom: 0
+    margin-bottom: 0;
+    margin-right: 0;
   }
 
 </style>

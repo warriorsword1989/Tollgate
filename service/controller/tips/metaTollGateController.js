@@ -15,7 +15,7 @@ class TollGate {
     this.selfDB = new connetSelfObje();
     this.originDB = connectRenderObj;
     // 与收费站有关的表;
-    this.tollRelateTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP'];
+    this.tollRelateTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP_DETAIL'];
   }
 
   /**
@@ -113,6 +113,24 @@ class TollGate {
     return sql;
   }
 
+  async getPidsBySource (primaryKey,pids,source) {
+    let inCondition = '';
+    if (source == 2) {
+      inCondition = '2,4';
+    } else if (source == 3) {
+      inCondition = '2,3,4';
+    } else if (source == 4) {
+      inCondition = '4';
+    }
+    let sql = `SELECT * FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')}) AND source IN (${inCondition})`;
+    let result = await this.db.executeSql(sql);
+    let resultData = changeResult(result);
+    let data = resultData.map(item => {
+      return item[primaryKey.toLowerCase()];
+    });
+    return data;
+  }
+
   /**
    * 对数据表进行更新
    */
@@ -123,11 +141,20 @@ class TollGate {
     if (this.req.body.workFlag == 'dynamic') {
       this.db = new connectDynamicOracle();
     }
+    let sourceValue = null;
     let primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
     if (this.table == 'SC_TOLL_HOLIDAY' || this.table == 'SC_TOLL_SPEFLOAT') {
       primaryKey = 'ID';
+    } else {
+      sourceValue = param[0].source;
     }
     let pids = param.map(item => item[primaryKey.toLowerCase()]);
+    if (sourceValue != null && sourceValue != 1) {
+      pids = await this.getPidsBySource(primaryKey, pids, sourceValue);
+    } 
+    if (!pids.length) {
+      return this.res.send({errorCode: 0, message: '不存在符合更新原则的数据'});
+    }   
     let delSql = `DELETE FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')})`;
     const delResult = await this.db.executeSql(delSql);
     if (delResult.rowsAffected != -1) {
