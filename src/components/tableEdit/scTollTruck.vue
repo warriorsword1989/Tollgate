@@ -147,8 +147,11 @@
                 <div class="grid-list">
                   <div title="费率1(元/公里)：" class="labelText">费率1(元/公里)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate1">
-                      <el-input :disabled="!isGuangdong" @change="validateRate1" v-model="dataItem.rate1" size="mini"></el-input>
+                    <el-form-item v-if="!isGuangdong" prop="rate1">
+                      <el-input disabled= @change="validateRate1" v-model="dataItem.rate1" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item v-if="isGuangdong" :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate1">
+                      <el-input @change="validateRate1" v-model="dataItem.rate1" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
