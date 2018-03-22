@@ -243,7 +243,7 @@
           lane_num: null,
           sub_rate_base1: null,
           lane_num1: null,
-          name_bt_id: null,
+          name_bt_id: 1,
           name_bt: null,
           ton_limit: null,
           multiple_limit: null,
