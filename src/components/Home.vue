@@ -61,7 +61,7 @@
           </el-table>
         </div>
         <div class="block">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="tip.currentPage" :page-size="tip.pageSize" layout="total, prev, pager, next" :total="tip.photoData.length"></el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="tip.currentPage" :page-size="tip.pageSize" :page-sizes="[10, 20, 50]" layout="sizes, total, prev, pager, next" :total="tip.photoData.length"></el-pagination>
         </div>
       </el-tab-pane>
 <!--情报作业-->
@@ -79,12 +79,6 @@
               <div style="display: inline-block">
                 <el-input v-model="info.infoCode" placeholder="请输入内容"></el-input>
               </div>
-            </div>
-            <div class="photoProject_rightDiv_choose">
-              <span>新闻发布日期：</span>
-              <el-date-picker v-model="info.sendBeforeTime" type="date" placeholder="选择日期" :picker-options="sendDateBefore" value-format="yyyy-MM-dd"></el-date-picker>
-              <span>至</span>
-              <el-date-picker v-model="info.sendAfterTime" type="date" placeholder="选择日期" :picker-options="sendDateAfter" value-format="yyyy-MM-dd"></el-date-picker>
             </div>
               <el-checkbox-group class="photoProject_rightDiv_choose" v-model="info.complete">
                 <span>完成状态：</span>
@@ -124,7 +118,7 @@
           </el-table>
         </div>
         <div class="block">
-          <el-pagination @size-change="handleInfoSizeChange" @current-change="handleInfoCurrentChange" :current-page.sync="info.currentPage" :page-size="info.pageSize" layout="total, prev, pager, next" :total="info.infoData.length"></el-pagination>
+          <el-pagination @size-change="handleInfoSizeChange" @current-change="handleInfoCurrentChange" :current-page.sync="info.currentPage" :page-size="info.pageSize" :page-sizes="[10, 20, 50]" layout="sizes, total, prev, pager, next" :total="info.infoData.length"></el-pagination>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -196,8 +190,6 @@
               cityList: cityList
             },
             info: {
-              sendBeforeTime:preTime,
-              sendAfterTime:time,
               pushBeforeTime:preTime,
               pushAfterTime:time,
               adminCode:'110000',
@@ -233,22 +225,6 @@
               },
             },
             // 时间控件
-            sendDateBefore:{
-              disabledDate: (time) => {
-                let beginDateVal = this.info.sendAfterTime;
-                if (beginDateVal) {
-                  return time.getTime() > beginDateVal;
-                }
-              }
-            },
-            sendDateAfter:{
-              disabledDate: (time) => {
-                let beginDateVal = this.info.sendBeforeTime;
-                if (beginDateVal) {
-                  return time.getTime() < beginDateVal;
-                }
-              },
-            },
             pushBefore:{
               disabledDate: (time) => {
                 let beginDateVal = this.info.pushAfterTime;
@@ -270,7 +246,16 @@
         methods: {
           handleClick:function (data, type, dataSource) {
             if (dataSource === 1) {
-              this.$router.push({name:'mainMap', params:{point:data.toll_location}});
+              this.$router.push({name:'mainMap', params:{point:data.toll_location,type: 1, data: {
+                    tipsVersion: this.tip.tipsVersion,
+                    updateStartTime: this.tip.updateStartTime,
+                    updateEndTime: this.tip.updateEndTime,
+                    tollName: this.tip.tollName,
+                    adminCode: this.tip.adminCode,
+                    isAdopted:this.tip.isAdopted,
+                    pageSize:this.tip.pageSize,
+                    currentPage:this.tip.currentPage
+                  }}});
               appUtil.setGolbalData({
                 workType: type,
                 adminCode: this.tip.adminCode,
@@ -279,7 +264,15 @@
                 dataSource: dataSource,
               });
             } else {
-              this.$router.push({name:'mainMap', params:{point:this.info.loc}});
+              this.$router.push({name:'mainMap', params:{point:this.info.loc,type: 2, data: {
+                    pushBeforeTime: this.info.pushBeforeTime,
+                    pushAfterTime: this.info.pushAfterTime,
+                    adminCode: this.info.adminCode,
+                    complete: this.info.complete,
+                    pageSize: this.info.pageSize,
+                    currentPage:this.info.currentPage,
+                    infoCode:this.info.infoCode
+                  }}});
               appUtil.setGolbalData({
                 workType: type,
                 adminCode: this.info.adminCode,
@@ -333,16 +326,8 @@
             for (let i = 0; i < this.info.complete.length; i++) {
               complete.push(parseInt(this.info.complete[i], 10));
             }
-            let sendBeforeTime = this.info.sendBeforeTime;
-            let sendAfterTime = this.info.sendAfterTime;
             let pushBeforeTime = this.info.pushBeforeTime;
             let pushAfterTime = this.info.pushAfterTime;
-            if (sendBeforeTime) {
-              sendBeforeTime = sendBeforeTime.replace(new RegExp(/(-)/g), '');
-            }
-            if (sendAfterTime) {
-              sendAfterTime = sendAfterTime.replace(new RegExp(/(-)/g), '');
-            }
             if (pushBeforeTime) {
               pushBeforeTime = pushBeforeTime.replace(new RegExp(/(-)/g), '');
             }
@@ -353,8 +338,6 @@
               adminCode: this.info.adminCode,
               infoCode: this.info.infoCode,
               complete: complete,
-              sendBeforeTime: sendBeforeTime,
-              sendAfterTime: sendAfterTime,
               pushBeforeTime: pushBeforeTime,
               pushAfterTime: pushAfterTime
             };
@@ -368,7 +351,7 @@
                 for (let i = 0; i < resultData.length; i++) {
                   resultData[i].completeName = parseInt(resultData[i].complete, 10) === 1 ? '未处理' : parseInt(resultData[i].complete, 10) === 2 ? '已处理' : '无法处理';
                 }
-                self.info.infoData = resultData
+                self.info.infoData = resultData;
                 getAdminLoc(param1).then(function (data1) {
                   if (data1.errorCode === 0) {
                     self1.info.loc = data1.data[0].geometry;
@@ -379,7 +362,31 @@
           }
         },
         mounted: function() {
-          this.getTollGateTipList();
+          if (this.$route.params.data) {
+            if (this.$route.params.type === 1) {
+              this.tip.tipsVersion = this.$route.params.data.tipsVersion;
+              this.tip.updateStartTime = this.$route.params.data.updateStartTime;
+              this.tip.updateEndTime = this.$route.params.data.updateEndTime;
+              this.tip.tollName = this.$route.params.data.tollName;
+              this.tip.adminCode = this.$route.params.data.adminCode;
+              this.tip.isAdopted = this.$route.params.data.isAdopted;
+              this.tip.pageSize = this.$route.params.data.pageSize;
+              this.tip.currentPage = this.$route.params.data.currentPage;
+              this.getTollGateTipList();
+            } else if (this.$route.params.type === 2) {
+              this.info.pushBeforeTime = this.$route.params.data.pushBeforeTime;
+              this.info.pushAfterTime = this.$route.params.data.pushAfterTime;
+              this.info.adminCode = this.$route.params.data.adminCode;
+              this.info.complete = this.$route.params.data.complete;
+              this.info.pageSize = this.$route.params.data.pageSize;
+              this.info.currentPage = this.$route.params.data.currentPage;
+              this.info.infoCode = this.$route.params.data.infoCode;
+              this.activeName = 'second';
+              this.getTollGateInfoList();
+            }
+          } else {
+            this.getTollGateTipList();
+          }
         }
     }
 </script>
