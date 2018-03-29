@@ -28,6 +28,7 @@
             </div>
           </div>
           <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+          <el-button @click="deleteBridge()" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-delete"></el-button>
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
@@ -55,7 +56,7 @@
             <div title="加费：" class="labelText">加费：</div>
             <div class="inputPart">
               <el-form-item :rules="[{ validator: check_addFee, trigger: 'change'}]" prop="rate_add">
-                <el-input v-model.number="dataModels.rate_add" size="mini"></el-input>
+                <el-input :disabled="dataModels.rate_class!=2" v-model="dataModels.rate_add" size="mini"></el-input>
               </el-form-item>
             </div>
           </div>
@@ -145,7 +146,7 @@
           group_id: null,
           name_bt:'',
           name_bt_id:1,
-          rate_add:0,
+          rate_add:null,
           rate_class:1,
           rato:null,
           source:this.$store.state.source,
@@ -231,8 +232,8 @@
         if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
           callback(new Error('输入必须是数字')); 
         }
-        if (value && (value < 0 || value > 10)) {
-          callback(new Error('加费字段值域错误,必须为0-10的数字'));
+        if (value && (value < 0 || value > 80)) {
+          callback(new Error('加费字段值域错误,必须为0-80的数字'));
         }
         callback();
       },
@@ -247,12 +248,17 @@
       toggleSearchPanel(flag){
         this.serachShow = flag;
       },
+      deleteBridge () {
+        this.dataModels.name_bt = null;
+        this.dataModels.name_bt_id = null;
+      },
       rateClassChange(value){
         if (value != 4) {
           this.dataModels.rato = null;
         }
         if (value != 2) {
           this.dataModels.car_class = null;
+          this.dataModels.rate_add = null;
           this.dataModels.truck_class = null;
           this.dataModels.tunnage_flag = null;
           this.dataModels.tunnage_max = null;
@@ -269,6 +275,7 @@
           let {errorCode, data} = result;
           if (data.length) {
             this.dataModels = Object.assign({},data[0]);
+            this.dataModels.rato = this.dataModels.rato ? parseFloat(this.dataModels.rato.toFixed(5)) : this.dataModels.rato;
           } else {
             this.dataModels = Object.assign({},this.originModel);
             this.dataModels.name_bt_id = this.$store.state.btData.name_groupid;

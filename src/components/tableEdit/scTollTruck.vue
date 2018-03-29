@@ -24,6 +24,7 @@
             </div>
           </div>
           <el-button @click="toggleSearchPanel(true)" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+          <el-button @click="deleteBridge()" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-delete"></el-button>
         </div>
         <div class="grid-wraper">
           <div class="grid-list">
@@ -61,7 +62,7 @@
                 <div class="grid-list">
                   <div title="费率（元/公里）非桥隧道：" class="labelText">费率（元/公里）非桥隧道：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate">
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rate">
                       <el-input @change="validateRate" v-model="dataItem.rate" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -119,7 +120,7 @@
                   <div title="桥隧道费率（元/车次）：" class="labelText">桥隧道费率（元/车次）：</div>
                   <div class="inputPart">
                     <el-form-item prop="rate_bt">
-                      <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate_bt">
+                      <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rate_bt">
                         <el-input @change="validateRateBt" v-model="dataItem.rate_bt" size="mini"></el-input>
                       </el-form-item>
                     </el-form-item>
@@ -150,7 +151,7 @@
                     <el-form-item v-if="!isGuangdong" prop="rate1">
                       <el-input disabled @change="validateRate1" v-model="dataItem.rate1" size="mini"></el-input>
                     </el-form-item>
-                    <el-form-item v-if="isGuangdong" :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate1">
+                    <el-form-item v-if="isGuangdong" :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rate1">
                       <el-input @change="validateRate1" v-model="dataItem.rate1" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -213,7 +214,7 @@
           model: null,
           tunnage_flag: 1,
           tunnage_min: 0,
-          tunnage_max: 1,
+          tunnage_max: 2,
           container: null,
           rate: null,
           fee_add: null,
@@ -290,14 +291,6 @@
       validateNum (rule, value, callback) {
         if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
           callback(new Error('输入必须是数字')); 
-        } else {
-          callback();
-        }
-      },
-      // 如果存在的换验证数字是正实数小数点一位；
-      validateFloat1 (rule, value, callback) {
-        if ((value!==null && value!=='') && !/^[0-9]+(\.[0-9]{1})+$/.test(value)) {
-          callback(new Error('输入的数字必须保留一位小数点')); 
         } else {
           callback();
         }
@@ -385,6 +378,13 @@
       toggleSearchPanel(flag){
         this.serachShow = flag;
       },
+      // 删除桥梁隧道名称;
+      deleteBridge () {
+        this.dataModels.forEach(item => {
+          item.name_bt_id = null;
+          item.name_bt = null;
+        });
+      },
       setBtName() {
         this.originModel.name_bt_id = this.$store.state.btData.name_groupid;
         this.originModel.name_bt = this.$store.state.btData.name;
@@ -397,20 +397,15 @@
       addItem() {
         if (this.dataModels.length===5)return;
         let modelLength = this.dataModels.length;
+        let defaultTunnage = [2,5,10,15,1000];
         let newObj = Object.assign({insertFlag: true}, this.originModel);
         newObj.truck_class = modelLength + 1;
         if (newObj.truck_class == 1) {
           newObj.tunnage_min = 0;
         } else {
           newObj.tunnage_min = this.dataModels.length?this.dataModels[modelLength - 1].tunnage_max:this.originModel.tunnage_max;
-          // 最后类型的最大值为1000
-          if (newObj.truck_class == 5) {
-            newObj.tunnage_max = 1000;
-          } else {
-            // 控制最大值比最小值大1
-            newObj.tunnage_max = parseInt(newObj.tunnage_min) + 1;
-          }
         }
+        newObj.tunnage_max = defaultTunnage[newObj.truck_class - 1];
         this.$set(this.dataModels, this.dataModels.length, newObj);
         this.setBtName();
       },
@@ -425,6 +420,10 @@
             let cloneData = Object.assign({},item);
             cloneData.group_id = outer;
             cloneData.source = this.$store.state.source;
+            if (!cloneData.rate_bt) {
+              cloneData.name_bt = null;
+              cloneData.name_bt_id = null;
+            }
             delete item.insertFlag;
             delete cloneData.insertFlag;
             submitData.push(cloneData);
@@ -551,6 +550,12 @@
           .then(result => {
             let {errorCode,data} = result;
             this.hasData = data.length ? true : false;
+            data.forEach(item => {
+                item.rate = item.rate ? parseFloat(item.rate.toFixed(5)) : item.rate;
+                item.rate_bt = item.rate_bt ? parseFloat(item.rate_bt.toFixed(5)) : item.rate_bt;
+                item.rate1 = item.rate1 ? parseFloat(item.rate1.toFixed(5)) : item.rate1;
+                item.fix_fee = item.fix_fee ? parseFloat(item.fix_fee.toFixed(5)) : item.fix_fee;
+            });
             this.dataModels = data;
           })
           .finally(() => {

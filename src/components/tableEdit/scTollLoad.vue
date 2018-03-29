@@ -25,6 +25,7 @@
               </div>
             </div>
             <el-button @click="toggleSearchPanel(true)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+            <el-button @click="deleteBridge()" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-delete"></el-button>
           </div>
           <!-- 装载类型显示 -->
           <div v-show="innerIndex==0" style="justify-content: flex-end;" class="grid-wraper">
@@ -50,11 +51,14 @@
                   <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
                 <span style="display:block;line-height:28px">-</span> 
-                <el-form-item v-if="outerIndex!=4" prop="tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
+                <el-form-item v-if="outerIndex!=4 && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
+                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item v-if="outerIndex!=4 && outerIndex==dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
                   <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
                 <el-form-item v-if="outerIndex==4" prop="tunnage_max">
-                  <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -76,10 +80,12 @@
                   <div title="正常装载区间吨数范围：" class="labelText">正常装载区间吨数范围：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input disabled v-model.number="innerDataItem.interval_min" size="mini"></el-input>
+                    <el-form-item prop="interval_min" :rules="[{ type: 'number', message: '必须为数字'}]">
+                      <el-input v-model.number="innerDataItem.interval_min" @change="setMinRangeRelate" size="mini"></el-input>
+                    </el-form-item>
                       <span style="display:block;line-height:28px">-</span>
                       <el-form-item v-if="innerIndex!=4" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
-                        <el-input v-model.number="innerDataItem.interval_max" @change="setRangeRelate" size="mini"></el-input>
+                        <el-input v-model.number="innerDataItem.interval_max" @change="setMaxRangeRelate" size="mini"></el-input>
                       </el-form-item>
                       <el-form-item v-if="innerIndex==4" prop="interval_max">
                         <el-input v-model.number="innerDataItem.interval_max" disabled size="mini"></el-input>
@@ -92,7 +98,7 @@
                 <div class="grid-list">
                   <div title="基本费率：" class="labelText">基本费率：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate_base">
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rate_base">
                       <el-input @change="validateRateBase" v-model="innerDataItem.rate_base" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -100,7 +106,7 @@
                 <div class="grid-list">
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_max">
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_max">
                       <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -110,7 +116,7 @@
                 <div class="grid-list">
                   <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ validator: validateFloat1, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_min">
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_min">
                       <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -132,7 +138,7 @@
                     <el-form-item v-if="!isGuangdong" prop="rate_min">
                       <el-input disabled v-model="innerDataItem.rate_base1" size="mini"></el-input>
                     </el-form-item>
-                    <el-form-item v-if="isGuangdong" :rules="[{ validator: validateFloat1, trigger: 'change' }]" prop="rate_min">
+                    <el-form-item v-if="isGuangdong" :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rate_min">
                       <el-input v-model="innerDataItem.rate_base1" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -263,18 +269,18 @@
           callback();
         }
       },
-      // 如果存在的换验证数字是正实数小数点一位；
-      validateFloat1 (rule, value, callback) {
-        if ((value!==null && value!=='') && !/^[0-9]+(\.[0-9]{1})+$/.test(value)) {
-          callback(new Error('输入的数字必须保留一位小数点')); 
+      // 装载机别数
+      validateTunnage1 (rule, value, callback) {
+        if (value >49 || value < 0) {
+          callback(new Error('装载级别吨数不能大于49')); 
         } else {
           callback();
         }
       },
       // 装载机别数
-      validateTunnage (rule, value, callback) {
-        if (value >49 || value < 0) {
-          callback(new Error('装载级别吨数不能大于49')); 
+      validateTunnage2 (rule, value, callback) {
+        if (value >1000) {
+          callback(new Error('装载级别吨数不能大于1000')); 
         } else {
           callback();
         }
@@ -345,22 +351,37 @@
             }
           });
         });
-        this.setRangeRelate();
       },
       // 装载区间吨位关联维护
-      setRangeRelate (value) {
+      setMaxRangeRelate (value) {
         this.dataModels.forEach((outer,outerIndex) => {
           outer.forEach((inner, innerIndex) => {
             if(innerIndex != 0) {
               inner.interval_min = outer[innerIndex - 1].interval_max;
-            } else {
-              inner.interval_min = outer[0].tunnage_min;
+            }
+          });
+        });
+      },
+      setMinRangeRelate (value) {
+        this.dataModels.forEach((outer,outerIndex) => {
+          outer.forEach((inner, innerIndex) => {
+            if(innerIndex != 0) {
+              outer[innerIndex - 1].interval_max = inner.interval_min;
             }
           });
         });
       },
       toggleSearchPanel(flag){
         this.serachShow = flag;
+      },
+      // 删除桥梁隧道名称;
+      deleteBridge () {
+        this.dataModels.forEach(item => {
+          item.forEach(innerItem => {
+            innerItem.name_bt_id = null;
+            innerItem.name_bt = null;
+          });
+        });
       },
       setBtName() {
         this.originModel.name_bt_id = this.$store.state.btData.name_groupid;
@@ -397,7 +418,7 @@
         if (this.dataModels.length === 4) {
           newObj.tunnage_max = 1000;
         }
-        newObj.interval_min = newObj.tunnage_min;
+        newObj.interval_min = 0;
         newObj.interval_max = newObj.tunnage_max;
         // 设置桥梁隧道;
         newObj.name_bt = this.dataModels[0]?this.dataModels[0][0].name_bt:this.originModel.name_bt;
@@ -585,7 +606,12 @@
             let innerArr = [];
             classObjResult[item] = _.groupBy(classObjResult[item], 'loading_subclss');
             Object.keys(classObjResult[item]).forEach(innerItem => {
-              innerArr.push(classObjResult[item][innerItem][0]);
+              let dataItemObj = classObjResult[item][innerItem][0];
+              dataItemObj.rate_max = dataItemObj.rate_max ? parseFloat(dataItemObj.rate_max.toFixed(5)) : dataItemObj.rate_max;
+              dataItemObj.rate_min = dataItemObj.rate_min ? parseFloat(dataItemObj.rate_min.toFixed(5)) : dataItemObj.rate_min;
+              dataItemObj.rate_base = dataItemObj.rate_base ? parseFloat(dataItemObj.rate_base.toFixed(5)) : dataItemObj.rate_base;
+              dataItemObj.rate_base1 = dataItemObj.rate_base1 ? parseFloat(dataItemObj.rate_base1.toFixed(5)) : dataItemObj.rate_base1;
+              innerArr.push(dataItemObj);
             });
             classArrResult.push(innerArr);
           });          

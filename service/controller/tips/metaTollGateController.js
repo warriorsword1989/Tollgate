@@ -122,13 +122,23 @@ class TollGate {
     } else if (source == 4) {
       inCondition = '4';
     }
-    let sql = `SELECT * FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')}) AND source IN (${inCondition})`;
-    let result = await this.db.executeSql(sql);
-    let resultData = changeResult(result);
-    let data = resultData.map(item => {
+    let sql1 = `SELECT * FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')}) AND source IN (${inCondition})`;
+    let updateResult = await this.db.executeSql(sql1);
+    let updateResultData = changeResult(updateResult);
+    console.log(updateResultData);
+    let updateData = updateResultData.map(item => {
       return item[primaryKey.toLowerCase()];
     });
-    return data;
+    let sql2 = `SELECT * FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')})`;
+    let existResult = await this.db.executeSql(sql2);
+    let existResultData = changeResult(existResult);
+    let exist = existResultData.map(item => {
+      return item[primaryKey.toLowerCase()];
+    });
+    let allPid = new Set(pids);
+    let existPid = new Set(exist);
+    let insertData = new Set([...allPid].filter(x => !existPid.has(x)));
+    return updateData.concat([...insertData]);
   }
 
   /**
