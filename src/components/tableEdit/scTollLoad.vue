@@ -48,17 +48,17 @@
               <div class="labelText" title="正常装载级别吨数范围(车货总重)">正常装载级别吨数范围(车货总重)：</div>
               <div class="inputPart">
                 <el-form-item prop="tunnage_min">
-                  <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
+                  <el-input v-model="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
                 <span style="display:block;line-height:28px">-</span> 
                 <el-form-item v-if="outerIndex!=4 && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
-                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
                 <el-form-item v-if="outerIndex!=4 && outerIndex==dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
-                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
                 <el-form-item v-if="outerIndex==4" prop="tunnage_max">
-                  <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" size="mini"></el-input>
+                  <el-input v-model="innerDataItem.tunnage_max" :disabled="outerIndex==4" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -607,10 +607,10 @@
             classObjResult[item] = _.groupBy(classObjResult[item], 'loading_subclss');
             Object.keys(classObjResult[item]).forEach(innerItem => {
               let dataItemObj = classObjResult[item][innerItem][0];
-              dataItemObj.rate_max = dataItemObj.rate_max ? parseFloat(dataItemObj.rate_max.toFixed(5)) : dataItemObj.rate_max;
-              dataItemObj.rate_min = dataItemObj.rate_min ? parseFloat(dataItemObj.rate_min.toFixed(5)) : dataItemObj.rate_min;
-              dataItemObj.rate_base = dataItemObj.rate_base ? parseFloat(dataItemObj.rate_base.toFixed(5)) : dataItemObj.rate_base;
-              dataItemObj.rate_base1 = dataItemObj.rate_base1 ? parseFloat(dataItemObj.rate_base1.toFixed(5)) : dataItemObj.rate_base1;
+              dataItemObj.rate_max = dataItemObj.rate_max ? parseFloat(parseFloat(dataItemObj.rate_max).toFixed(5)) : dataItemObj.rate_max;
+              dataItemObj.rate_min = dataItemObj.rate_min ? parseFloat(parseFloat(dataItemObj.rate_min).toFixed(5)) : dataItemObj.rate_min;
+              dataItemObj.rate_base = dataItemObj.rate_base ? parseFloat(parseFloat(dataItemObj.rate_base).toFixed(5)) : dataItemObj.rate_base;
+              dataItemObj.rate_base1 = dataItemObj.rate_base1 ? parseFloat(parseFloat(dataItemObj.rate_base1).toFixed(5)) : dataItemObj.rate_base1;
               innerArr.push(dataItemObj);
             });
             classArrResult.push(innerArr);

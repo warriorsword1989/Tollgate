@@ -508,10 +508,10 @@
             let transfromData = _.groupBy(data, 'car_class');
             let tempArray = [];
             Object.keys(transfromData).forEach(item => {
-              transfromData[item][0].rate = transfromData[item][0].rate ? parseFloat(transfromData[item][0].rate.toFixed(5)) : transfromData[item][0].rate;
-              transfromData[item][0].rate_bt = transfromData[item][0].rate_bt ? parseFloat(transfromData[item][0].rate_bt.toFixed(5)) : transfromData[item][0].rate_bt;
-              transfromData[item][0].rate1 = transfromData[item][0].rate1 ? parseFloat(transfromData[item][0].rate1.toFixed(5)) : transfromData[item][0].rate1;
-              transfromData[item][0].fix_fee = transfromData[item][0].fix_fee ? parseFloat(transfromData[item][0].fix_fee.toFixed(5)) : transfromData[item][0].fix_fee;
+              transfromData[item][0].rate = transfromData[item][0].rate ? parseFloat(parseFloat(transfromData[item][0].rate).toFixed(5)) : transfromData[item][0].rate;
+              transfromData[item][0].rate_bt = transfromData[item][0].rate_bt ? parseFloat(parseFloat(transfromData[item][0].rate_bt).toFixed(5)) : transfromData[item][0].rate_bt;
+              transfromData[item][0].rate1 = transfromData[item][0].rate1 ? parseFloat(parseFloat(transfromData[item][0].rate1).toFixed(5)) : transfromData[item][0].rate1;
+              transfromData[item][0].fix_fee = transfromData[item][0].fix_fee ? parseFloat(parseFloat(transfromData[item][0].fix_fee).toFixed(5)) : transfromData[item][0].fix_fee;
               tempArray.push(transfromData[item][0])
             });
             this.dataModels = tempArray;

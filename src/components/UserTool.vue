@@ -32,7 +32,7 @@
           }
         },
         mounted () {
-          this.dataSource = appUtil.getGolbalData().dataSource || this.dataSource;
+          this.dataSource = (appUtil.getGolbalData() && appUtil.getGolbalData().dataSource) || this.dataSource;
           if (this.$route.path == '/Home') {
             this.showTips = false;
           }

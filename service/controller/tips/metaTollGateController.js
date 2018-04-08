@@ -145,7 +145,7 @@ class TollGate {
    * 对数据表进行更新
    */
   async updateTollGate() {
-    const param = this.req.body.data;
+    let param = this.req.body.data;
     this.table = this.req.body.table;
     this.adminCode = this.req.body.adminCode;
     if (this.req.body.workFlag == 'dynamic') {
@@ -168,6 +168,7 @@ class TollGate {
     let delSql = `DELETE FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')})`;
     const delResult = await this.db.executeSql(delSql);
     if (delResult.rowsAffected != -1) {
+      param = param.filter(item => pids.indexOf(item[primaryKey.toLowerCase()]) != -1);
       let insertSql = this._getInsertString(param);
       const insertResult = await this.db.executeSql(insertSql);
       if (insertResult.rowsAffected != -1) {
@@ -175,6 +176,7 @@ class TollGate {
         let priamry = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : 'GROUP_ID';
         if (this.tollRelateTable.indexOf(this.table) !=-1){
           let allTollPids = param.map(item => item[priamry.toLowerCase()]);
+          allTollPids = Array.from(new Set(allTollPids));
           // 查询allTollPids看有哪些完全不存在，执行插入操作；
           // 如果存在，则跟据当前workflag来判断到底是 编辑呢还是新增
           let allExistsResult = await this.selfDB.executeSql(`SELECT * FROM SC_TOLL_INDEX WHERE TOLL_PID IN (${allTollPids.join(',')})`);
@@ -262,6 +264,24 @@ class TollGate {
       } else {
         this.res.send({errorCode: 0, message: '删除成功', updateFlag: false});
       }
+    } else {
+      this.res.send({errorCode: -1, message: '删除失败', updateFlag: false});
+    }
+  }
+
+  /**
+   * 根据pid删除桥梁隧道;
+   */
+  async deleteRdLinkBt() {
+    if (this.req.body.workFlag == 'dynamic') {
+      this.db = new connectDynamicOracle();
+    }
+    this.table = this.req.body.table;
+    let pid = this.req.body.pid;
+    let delSql = `DELETE FROM ${this.table} WHERE NAME_BT_ID = ${pid}`;
+    let delResult = await this.db.executeSql(delSql);
+    if (delResult.rowsAffected != -1) { 
+      this.res.send({errorCode: 0, message: '删除成功', updateFlag: false});
     } else {
       this.res.send({errorCode: -1, message: '删除失败', updateFlag: false});
     }

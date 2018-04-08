@@ -551,10 +551,10 @@
             let {errorCode,data} = result;
             this.hasData = data.length ? true : false;
             data.forEach(item => {
-                item.rate = item.rate ? parseFloat(item.rate.toFixed(5)) : item.rate;
-                item.rate_bt = item.rate_bt ? parseFloat(item.rate_bt.toFixed(5)) : item.rate_bt;
-                item.rate1 = item.rate1 ? parseFloat(item.rate1.toFixed(5)) : item.rate1;
-                item.fix_fee = item.fix_fee ? parseFloat(item.fix_fee.toFixed(5)) : item.fix_fee;
+                item.rate = item.rate ? parseFloat(parseFloat(item.rate).toFixed(5)) : item.rate;
+                item.rate_bt = item.rate_bt ? parseFloat(parseFloat(item.rate_bt).toFixed(5)) : item.rate_bt;
+                item.rate1 = item.rate1 ? parseFloat(parseFloat(item.rate1).toFixed(5)) : item.rate1;
+                item.fix_fee = item.fix_fee ? parseFloat(parseFloat(item.fix_fee).toFixed(5)) : item.fix_fee;
             });
             this.dataModels = data;
           })

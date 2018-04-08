@@ -585,13 +585,13 @@
               classObjResult[item] = _.groupBy(classObjResult[item], 'overloading_subclss');
               Object.keys(classObjResult[item]).forEach(innerItem => {
                 let dataItemObj = classObjResult[item][innerItem][0];
-                dataItemObj.rate_base = dataItemObj.rate_base ? parseFloat(dataItemObj.rate_base.toFixed(5)):dataItemObj.rate_base;
-                dataItemObj.sub_rate_base = dataItemObj.sub_rate_base ? parseFloat(dataItemObj.sub_rate_base.toFixed(5)) : dataItemObj.sub_rate_base;
-                dataItemObj.sub_rate_base1 = dataItemObj.sub_rate_base1 ? parseFloat(dataItemObj.sub_rate_base1.toFixed(5)) : dataItemObj.sub_rate_base1;
-                dataItemObj.multiple_max = dataItemObj.multiple_max ? parseFloat(dataItemObj.multiple_max.toFixed(5)) : dataItemObj.multiple_max;
-                dataItemObj.multiple_min = dataItemObj.multiple_min ? parseFloat(dataItemObj.multiple_min.toFixed(5)) : dataItemObj.multiple_min;
-                dataItemObj.multiple_limit = dataItemObj.multiple_limit ? parseFloat(dataItemObj.multiple_limit.toFixed(5)) : dataItemObj.multiple_limit;
-                dataItemObj.rate_limit = dataItemObj.rate_limit ? parseFloat(dataItemObj.rate_limit.toFixed(5)) : dataItemObj.rate_limit;
+                dataItemObj.rate_base = dataItemObj.rate_base ? parseFloat(parseFloat(dataItemObj.rate_base).toFixed(5)):dataItemObj.rate_base;
+                dataItemObj.sub_rate_base = dataItemObj.sub_rate_base ? parseFloat(parseFloat(dataItemObj.sub_rate_base).toFixed(5)) : dataItemObj.sub_rate_base;
+                dataItemObj.sub_rate_base1 = dataItemObj.sub_rate_base1 ? parseFloat(parseFloat(dataItemObj.sub_rate_base1).toFixed(5)) : dataItemObj.sub_rate_base1;
+                dataItemObj.multiple_max = dataItemObj.multiple_max ? parseFloat(parseFloat(dataItemObj.multiple_max).toFixed(5)) : dataItemObj.multiple_max;
+                dataItemObj.multiple_min = dataItemObj.multiple_min ? parseFloat(parseFloat(dataItemObj.multiple_min).toFixed(5)) : dataItemObj.multiple_min;
+                dataItemObj.multiple_limit = dataItemObj.multiple_limit ? parseFloat(parseFloat(dataItemObj.multiple_limit).toFixed(5)) : dataItemObj.multiple_limit;
+                dataItemObj.rate_limit = dataItemObj.rate_limit ? parseFloat(parseFloat(dataItemObj.rate_limit).toFixed(5)) : dataItemObj.rate_limit;
                 innerArr.push(dataItemObj);
               });
               classArrResult.push(innerArr);
