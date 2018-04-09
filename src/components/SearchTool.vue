@@ -113,9 +113,11 @@
             let point = geometryAlgorithm.wktToGeojson(data.geometry);
             const map = window.map;
             map.getLeafletMap().setView([point.coordinates[1], point.coordinates[0]], 17);
-            this.feedback.clear();
-            this.feedback.add(point, this.pointSymbol);
-            this.feedbackCtrl.refresh();
+            setTimeout(() => {
+              this.feedback.clear();
+              this.feedback.add(point, this.pointSymbol);
+              this.feedbackCtrl.refresh();
+            }, 500);
           }
         },
         mounted() {
