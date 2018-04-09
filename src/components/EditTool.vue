@@ -73,7 +73,7 @@
                 _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: tollIds, event: event, flag:'insert',sourceFlag: 4 });
               } else {
                 const param1 = {tollIds: tollIds};
-                getTollListByTollId(param1).then(function (data1) {
+                getTollListByTollId(param1).then(data1 => {
                   if (data1.errorCode === 0) {
                     for (let j = 0; j < data1.data.length; j++) {
                       existTollIds.push(data1.data[j].toll_pid);
