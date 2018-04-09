@@ -98,9 +98,9 @@
                       // 编辑收费信息 existTollIds
                       let editTollIds = [];
                       if (this.dataSource == 1) {
-                        editTollIds = data1.filter(item => item.toll_static_state!=null);
+                        editTollIds = data1.data.filter(item => item.toll_static_state!=null);
                       } else {
-                        editTollIds = data1.filter(item => item.toll_dynamic_state!=null);
+                        editTollIds = data1.data.filter(item => item.toll_dynamic_state!=null);
                       }
                       editTollIds = editTollIds.map(item => item.toll_pid);
                       _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: editTollIds, event: event, flag:'insert',sourceFlag: 4 });

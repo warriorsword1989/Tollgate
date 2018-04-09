@@ -98,6 +98,7 @@
       },
       openRightPanel: function () {
         this.rightPanelFlag = true;
+        this.rightLineWorkFlag = false;
       },
       closeRightPanel: function () {
         this.rightPanelFlag = false;
@@ -110,6 +111,7 @@
       },
       onLineWork: function () {
         this.rightLineWorkFlag = true;
+        this.rightPanelFlag = false;
       },
       closeLineWork: function () {
         this.rightLineWorkFlag = false;
