@@ -62,14 +62,13 @@
           };
           let tollIds = [];
           let existTollIds = [];
-          getTollGateByAdminCode(param).then(function (data) {
+          getTollGateByAdminCode(param).then(data => {
             if (data.errorCode === 0) {
               for (let i = 0; i < data.data.length; i++) {
                 tollIds.push(data.data[i].group_id)
               }
               if (type === 1) {
                 // 编辑所有收费信息 tollIds
-                console.log(tollIds);
                 _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: tollIds, event: event, flag:'insert',sourceFlag: 4 });
               } else {
                 const param1 = {tollIds: tollIds};
@@ -86,12 +85,13 @@
                       let differenceABSet = new Set([...a].filter(x => !b.has(x)));
                       let newTollPids = [...differenceABSet];
                       let otherPids = [];
-                      // 2情报作业;2照片作业;
+                      // 2动态作业;1静态作业;
                       if (this.dataSource == 1) {
-                        otherPids = data1.filter(item => item.toll_static_state==null);
+                        otherPids = data1.data.filter(item => item.toll_static_state==null);
                       } else {
-                        otherPids = data1.filter(item => item.toll_dynamic_state==null);
+                        otherPids = data1.data.filter(item => item.toll_dynamic_state==null);
                       }
+                      otherPids = otherPids.map(item => item.toll_pid);
                       newTollPids = newTollPids.concat(otherPids);
                       _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: newTollPids, event: event, flag:'insert',sourceFlag: 4 });
                     } else {
@@ -102,6 +102,7 @@
                       } else {
                         editTollIds = data1.filter(item => item.toll_dynamic_state!=null);
                       }
+                      editTollIds = editTollIds.map(item => item.toll_pid);
                       _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: editTollIds, event: event, flag:'insert',sourceFlag: 4 });
                       
                     }
