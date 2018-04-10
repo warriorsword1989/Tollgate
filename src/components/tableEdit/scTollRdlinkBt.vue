@@ -211,7 +211,7 @@
         this.setBtName();
       },
       deleteItem () {
-        this.dataModels.pop();
+        this.dataModels.splice(index, 1);
       },
       checkTunage_max  (rule, value, callback) {
         if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {

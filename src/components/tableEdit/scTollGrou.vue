@@ -8,7 +8,7 @@
     <div class="grid-content">
       <div style="justify-content: flex-end;" class="grid-wraper">
         <el-button @click="addItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus">区间添加</el-button>
-        <el-button @click="removeLimitItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-minus">区间删除</el-button>
+        <!--<el-button @click="removeLimitItem" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-minus">区间删除</el-button>-->
       </div>
     </div>
     <el-form
@@ -70,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div class="grid-content">
+      <div style="display: flex; align-items: center" class="grid-content">
         <fieldset :style="dataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
           <legend>{{index+1}} 区间</legend>
           <div class="grid-wraper">
@@ -167,6 +167,7 @@
             </div>
           </div>
         </fieldset>
+        <el-button @click="deleteItem(index)" style="padding:5px;margin-left: 5px" type="primary" class="btn-icon" icon="el-icon-minus"></el-button>
       </div>
     </el-form>
     <div  v-show="((hasData && $store.state.handleFlag=='update')||dataModels.length) || (dataModels.length && $store.state.handleFlag=='insert')" style="padding:10px 10px 0 0;text-align: right;" class="footerPart">
@@ -337,8 +338,8 @@
         let newObj = Object.assign({insertFlag: true}, this.originModel);
         this.$set(this.dataModels, this.dataModels.length, newObj);
       },
-      removeLimitItem() {
-        this.dataModels.pop();
+      deleteItem (index) {
+        this.dataModels.splice(index, 1);
       },
       // ETC打折类型改变的事件监听;
       etcTypeChange (value) {
