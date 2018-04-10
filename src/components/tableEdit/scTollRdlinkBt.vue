@@ -30,82 +30,84 @@
     :inline="true"
     :inline-message="false"
     class="wraper">
+      <div v-show="index==0" style="display: flex;" class="grid-content">
+        <div class="grid-list">
+          <div style="flex:1" title="收费类型：" class="labelText">收费类型：</div>
+          <div style="flex:9" class="inputPart">
+            <el-form-item prop="rate_class">
+              <el-select @change="rateClassChange(dataItem.rate_class,index)" size="mini" v-model.number="dataItem.rate_class" placeholder="请选择">
+                <el-option v-for="item in feeClass" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+        </div>
+      </div>
       <div style="display: flex; align-items: center" class="grid-content">
         <fieldset style="flex: 1" :style="dataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5'">
           <legend>{{index + 1}} 型桥梁隧道详情</legend>
           <div class="grid-wraper">
             <div class="grid-list">
-              <div title="收费类型：" class="labelText">收费类型：</div>
-              <div class="inputPart">
-                <el-form-item prop="rate_class">
-                  <el-select @change="rateClassChange(dataItem.rate_class,index)" size="mini" v-model.number="dataItem.rate_class" placeholder="请选择">
-                    <el-option v-for="item in feeClass" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-            </div>
-            <div class="grid-list">
               <div title="实际收费的长度倍数：" class="labelText">实际收费的长度倍数：</div>
               <div class="inputPart">
                 <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rato">
-                  <el-input :disabled="dataItem.rate_class!=4" v-model="dataItem.rato" size="mini"></el-input>
+                  <el-input :disabled="dataModels[0].rate_class!=4" v-model="dataItem.rato" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
-          </div>
-          <div class="grid-wraper">
             <div class="grid-list">
               <div title="加费：" class="labelText">加费：</div>
               <div class="inputPart">
                 <el-form-item :rules="[{ validator: check_addFee, trigger: 'change'}]" prop="rate_add">
-                  <el-input :disabled="dataItem.rate_class!=2" v-model="dataItem.rate_add" size="mini"></el-input>
-                </el-form-item>
-              </div>
-            </div>
-            <div class="grid-list">
-              <div title="客车车型编号：" class="labelText">客车车型编号：</div>
-              <div class="inputPart">
-                <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="car_class">
-                  <el-input :disabled="dataItem.rate_class!=2" v-model="dataItem.car_class" size="mini"></el-input>
+                  <el-input :disabled="dataModels[0].rate_class!=2" v-model="dataItem.rate_add" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
           </div>
           <div class="grid-wraper">
             <div class="grid-list">
-              <div title="货车车型编号：" class="labelText">货车车型编号：</div>
+              <div title="客车车型编号：" class="labelText">客车车型编号：</div>
               <div class="inputPart">
-                <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="truck_class">
-                  <el-input :disabled="dataItem.rate_class!=2" v-model="dataItem.truck_class" size="mini"></el-input>
+                <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="car_class">
+                  <el-input :disabled="dataModels[0].rate_class!=2" v-model="dataItem.car_class" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
             <div class="grid-list">
+              <div title="货车车型编号：" class="labelText">货车车型编号：</div>
+              <div class="inputPart">
+                <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="truck_class">
+                  <el-input :disabled="dataModels[0].rate_class!=2" v-model="dataItem.truck_class" size="mini"></el-input>
+                </el-form-item>
+              </div>
+            </div>
+          </div>
+          <div class="grid-wraper">
+            <div class="grid-list">
               <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
               <div class="inputPart">
                 <el-form-item prop="tunnage_flag">
-                  <el-select :disabled="dataItem.rate_class!=2" size="mini" v-model.number="dataItem.tunnage_flag" placeholder="请选择">
+                  <el-select :disabled="dataModels[0].rate_class!=2" size="mini" v-model.number="dataItem.tunnage_flag" placeholder="请选择">
                     <el-option v-for="item in flagOptions" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                   </el-select>
                 </el-form-item>
               </div>
             </div>
-          </div>
-          <div class="grid-wraper">
             <div class="grid-list">
               <div title="计重吨数区间：" class="labelText">计重吨数区间：</div>
               <div class="inputPart">
                 <el-form-item :rules="[{ validator: checkTunage_min, trigger: 'change'}]" style="flex:5" prop="tunnage_min">
-                  <el-input :disabled="dataItem.rate_class!=2" v-model.number="dataItem.tunnage_min" size="mini"></el-input>
+                  <el-input :disabled="dataModels[0].rate_class!=2" v-model.number="dataItem.tunnage_min" size="mini"></el-input>
                 </el-form-item>
                 <div style="flex:1">-</div>
                 <el-form-item :rules="[{ validator: checkTunage_max, trigger: 'change'}]" style="flex:5" prop="tunnage_max">
-                  <el-input :disabled="dataItem.rate_class!=2" v-model.number="dataItem.tunnage_max" size="mini"></el-input>
+                  <el-input :disabled="dataModels[0].rate_class!=2" v-model.number="dataItem.tunnage_max" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
+          </div>
+          <div class="grid-wraper">
             <div class="grid-list"></div>
           </div>
         </fieldset>
@@ -253,17 +255,19 @@
         this.dataModels.splice(0,this.dataModels.length);
       },
       rateClassChange(value, index) {
-        if (value != 4) {
-          this.dataModels[index].rato = null;
-        }
-        if (value != 2) {
-          this.dataModels[index].car_class = null;
-          this.dataModels[index].rate_add = null;
-          this.dataModels[index].truck_class = null;
-          this.dataModels[index].tunnage_flag = null;
-          this.dataModels[index].tunnage_max = null;
-          this.dataModels[index].tunnage_min = null;
-        }
+        this.dataModels.forEach(item => {
+          if (value != 4) {
+            item.rato = null;
+          }
+          if (value != 2) {
+            item.car_class = null;
+            item.rate_add = null;
+            item.truck_class = null;
+            item.tunnage_flag = null;
+            item.tunnage_max = null;
+            item.tunnage_min = null;
+          }
+        });
       },
       getTollgateBridge () {
         let param = {
@@ -363,6 +367,7 @@
             let submitData = [];
             this.dataModels.forEach(item => {
               let cloneData = Object.assign({},item);
+              cloneData.rate_class = this.dataModels[0].rate_class;
               delete item.insertFlag;
               delete cloneData.insertFlag;
               submitData.push(cloneData);

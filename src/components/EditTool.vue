@@ -39,6 +39,7 @@
       data() {
         return {
           dataSource: 1,
+          workType: 1, // 默认静态作业;
           eventController: fastmap.uikit.EventController()
         }
       },
@@ -77,7 +78,7 @@
                     for (let j = 0; j < data1.data.length; j++) {
                       existTollIds.push(data1.data[j].toll_pid);
                     }
-                    // 
+                    //
                     if (type === 2) {
                       // 新增收费信息 differenceABSet
                       let a = new Set(tollIds);
@@ -86,25 +87,30 @@
                       let newTollPids = [...differenceABSet];
                       let otherPids = [];
                       // 2动态作业;1静态作业;
-                      if (this.dataSource == 1) {
+                      if (_self.workType == 'static') {
                         otherPids = data1.data.filter(item => item.toll_static_state==null);
                       } else {
                         otherPids = data1.data.filter(item => item.toll_dynamic_state==null);
                       }
                       otherPids = otherPids.map(item => item.toll_pid);
                       newTollPids = newTollPids.concat(otherPids);
+                      if (!newTollPids.length) {
+                        return this.$alert('所有收费站都已编辑', '提示', {
+                          confirmButtonText: '确定',
+                          type: 'info'
+                        })
+                      }
                       _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: newTollPids, event: event, flag:'insert',sourceFlag: 4 });
                     } else {
                       // 编辑收费信息 existTollIds
                       let editTollIds = [];
-                      if (this.dataSource == 1) {
+                      if (_self.workType == 'static') {
                         editTollIds = data1.data.filter(item => item.toll_static_state!=null);
                       } else {
                         editTollIds = data1.data.filter(item => item.toll_dynamic_state!=null);
                       }
                       editTollIds = editTollIds.map(item => item.toll_pid);
-                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: editTollIds, event: event, flag:'insert',sourceFlag: 4 });
-                      
+                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: editTollIds, event: event, flag:'insert',sourceFlag: 4 }); 
                     }
                   }
                 });
@@ -115,6 +121,7 @@
       },
       mounted() {
         this.dataSource = appUtil.getGolbalData().dataSource;
+        this.workType = appUtil.getGolbalData().workType;
       }
     }
 </script>

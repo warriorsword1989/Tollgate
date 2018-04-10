@@ -19,16 +19,61 @@
     :inline="true"
     :rules="rules"
     class="tableEditPanel">
+      <div v-show="index==0" class="grid-content">
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div title="区域标识：" class="labelText">区域标识：</div>
+            <div class="inputPart">
+              <el-input :disabled="true" v-model="dataItem.system_id" size="mini"></el-input>
+            </div>
+          </div>
+          <div class="grid-list">
+            <div title="免费车型：" class="labelText">免费车型：</div>
+            <div class="inputPart">
+              <el-form-item prop="free_type">
+                <el-select size="mini" v-model="dataItem.free_type" @change='onSelectChange' multiple placeholder="请选择">
+                  <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+          </div>
+        </div>
+        <div class="grid-wraper">
+          <div class="grid-list">
+            <div title="是否有绿色通道：" class="labelText">是否有绿色通道：</div>
+            <div class="inputPart">
+              <el-form-item prop="green_path">
+                <el-select size="mini" v-model.number="dataItem.green_path" placeholder="请选择">
+                  <el-option v-for="item in geenPathOptions" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+          </div>
+          <div class="grid-list">
+            <div title="最低收费金额：" class="labelText">最低收费金额：</div>
+            <div class="inputPart">
+              <el-form-item prop="fee_limit">
+                <el-input @change="check_fee_limit" v-model="dataItem.fee_limit" size="mini"></el-input>
+              </el-form-item>
+            </div>
+          </div>
+          <div class="grid-list">
+            <div title="收费取整：" class="labelText">收费取整：</div>
+            <div class="inputPart">
+              <el-form-item prop="round">
+              <el-select size="mini" v-model.number="dataItem.round" placeholder="请选择">
+                <el-option v-for="item in roundTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+              </el-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="grid-content">
         <fieldset :style="dataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
           <legend>{{index+1}} 区间</legend>
           <div class="grid-wraper">
-            <div class="grid-list">
-              <div title="区域标识：" class="labelText">区域标识：</div>
-              <div class="inputPart">
-                <el-input :disabled="true" v-model="dataItem.system_id" size="mini"></el-input>
-              </div>
-            </div>
             <div class="grid-list">
               <div title="ETC打折类型：" class="labelText">ETC打折类型：</div>
               <div class="inputPart">
@@ -40,8 +85,6 @@
               </el-form-item>
               </div>
             </div>
-          </div>
-          <div class="grid-wraper">
             <div class="grid-list">
               <div title="ETC打折：" class="labelText">ETC打折：</div>
               <div class="inputPart">
@@ -52,29 +95,8 @@
                 </el-form-item>
               </div>
             </div>
-            <div class="grid-list">
-              <div title="免费车型：" class="labelText">免费车型：</div>
-              <div class="inputPart">
-                <el-form-item prop="free_type">
-                  <el-select size="mini" v-model="dataItem.free_type" @change='onSelectChange' multiple placeholder="请选择">
-                    <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-            </div>
           </div>
           <div class="grid-wraper">
-            <div class="grid-list">
-              <div title="是否有绿色通道：" class="labelText">是否有绿色通道：</div>
-              <div class="inputPart">
-                <el-form-item prop="green_path">
-                  <el-select size="mini" v-model.number="dataItem.green_path" placeholder="请选择">
-                    <el-option v-for="item in geenPathOptions" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-            </div>
             <div class="grid-list">
               <div title="客车优惠车型：" class="labelText">客车优惠车型：</div>
               <div class="inputPart">
@@ -86,8 +108,6 @@
                 </el-form-item>
               </div>
             </div>
-          </div>
-          <div class="grid-wraper">
             <div class="grid-list">
               <div title="客车优惠降低量：" class="labelText">客车优惠降低量：</div>
               <div class="inputPart">
@@ -99,6 +119,8 @@
                 </el-form-item>
               </div>
             </div>
+          </div>
+          <div class="grid-wraper">
             <div class="grid-list">
               <div title="货车优惠空载车型：" class="labelText">货车优惠空载车型：</div>
               <div class="inputPart">
@@ -110,8 +132,6 @@
                 </el-form-item>
               </div>
             </div>
-          </div>
-          <div class="grid-wraper">
             <div class="grid-list">
               <div title="货车空载优惠降低量：" class="labelText">货车空载优惠降低量：</div>
               <div class="inputPart">
@@ -123,6 +143,8 @@
                 </el-form-item>
               </div>
             </div>
+          </div>
+          <div class="grid-wraper">
             <div class="grid-list">
               <div title="货车正常装载优惠吨数区间：" class="labelText">货车正常装载优惠吨数区间：</div>
               <div class="inputPart">
@@ -135,8 +157,6 @@
                 </el-form-item>
               </div>
             </div>
-          </div>
-          <div class="grid-wraper">
             <div class="grid-list">
               <div title="货车正常装载优惠计费吨数：" class="labelText">货车正常装载优惠计费吨数：</div>
               <div class="inputPart">
@@ -145,27 +165,6 @@
                 </el-form-item>
               </div>
             </div>
-            <div class="grid-list">
-              <div title="最低收费金额：" class="labelText">最低收费金额：</div>
-              <div class="inputPart">
-                <el-form-item prop="fee_limit">
-                  <el-input @change="check_fee_limit" v-model="dataItem.fee_limit" size="mini"></el-input>
-                </el-form-item>
-              </div>
-            </div>
-          </div>
-          <div class="grid-wraper">
-            <div class="grid-list">
-              <div title="收费取整：" class="labelText">收费取整：</div>
-              <div class="inputPart">
-                <el-form-item prop="round">
-                <el-select size="mini" v-model.number="dataItem.round" placeholder="请选择">
-                  <el-option v-for="item in roundTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-                </el-form-item>
-              </div>
-            </div>
-            <div class="grid-list"></div>
           </div>
         </fieldset>
       </div>
@@ -427,11 +426,16 @@
 
           if (validateFlag) {
             let submitData = [];
+            let newFreeType = this.dataModels[0];
             this.$store.state.editSelectedData.forEach(outer => {
-              this.dataModels.forEach(item => {
+              this.dataModels.forEach((item,innerIndex) => {
                 let cloneData = Object.assign({},item);
                 cloneData.group_id = outer;
-                cloneData.free_type = item.free_type ? item.free_type.join('|') : '0';
+                cloneData.free_type = this.dataModels[0].free_type ? this.dataModels[0].free_type.join('|') : '0';
+                cloneData.system_id = this.dataModels[0].system_id;
+                cloneData.green_path = this.dataModels[0].green_path;
+                cloneData.fee_limit = this.dataModels[0].fee_limit;
+                cloneData.round = this.dataModels[0].round;
                 delete item.insertFlag;
                 delete cloneData.insertFlag;
                 submitData.push(cloneData);

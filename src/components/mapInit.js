@@ -2,6 +2,7 @@ import '../../lib/fastmap.min';
 import '../../lib/mapApi.min';
 import '../../lib/dataApi.min';
 import '../../lib/renderApi.min';
+import '../../lib/mapApi.css';
 import featureLayers from '../config/FeatureLayers';
 import referenceLayers from '../config/ReferenceLayers';
 import scenes from '../config/Scenes';
