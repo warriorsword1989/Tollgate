@@ -40,11 +40,10 @@
     export default {
       name: "line-work",
       data() {
-        const symbolFactory = fastmap.mapApi.symbol.GetSymbolFactory();
         return {
           feedbackCtrl: fastmap.mapApi.FeedbackController.getInstance(),
           feedback: new fastmap.mapApi.Feedback(),
-          pointSymbol: symbolFactory.getSymbol('pt_relation_border'),
+          pointSymbol: fastmap.mapApi.symbol.GetSymbolFactory().getSymbol('pt_relation_border'),
           roadName: '',
           tollData: [],
           multipleSelection: [],
