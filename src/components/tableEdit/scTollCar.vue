@@ -210,13 +210,13 @@
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,
         feeOptions: [{
-          value: 0,
+          value: null,
           label: '空'
         }, {
-          value: 1,
+          value: 4,
           label: '4'
         }, {
-          value: 2,
+          value: 6,
           label: '6'
         }],
         seatFlagClass: [{

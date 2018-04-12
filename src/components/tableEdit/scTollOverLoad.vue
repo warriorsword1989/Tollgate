@@ -167,7 +167,7 @@
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div title="超限值费率：" class="labelText">超限值费率：</div>
+                  <div title="超限值费率倍数：" class="labelText">超限值费率倍数：</div>
                   <div class="inputPart">
                     <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rate_limit">
                       <el-input v-model="innerDataItem.rate_limit" size="mini"></el-input>
@@ -185,7 +185,7 @@
               </div>
               <div class="grid-wraper">
                 <div class="grid-list">
-                  <div title="超限值基本费率：" class="labelText">超限值基本费率：</div>
+                  <div title="超限值基本费率倍数：" class="labelText">超限值基本费率倍数：</div>
                   <div class="inputPart">
                     <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="multiple_limit">
                       <el-input v-model="innerDataItem.multiple_limit" size="mini"></el-input>
@@ -254,13 +254,13 @@
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,
         feeOptions: [{
-          value: 0,
+          value: null,
           label: '空'
         }, {
-          value: 1,
+          value: 4,
           label: '4'
         }, {
-          value: 2,
+          value: 6,
           label: '6'
         }],
         seatFlagClass: [{

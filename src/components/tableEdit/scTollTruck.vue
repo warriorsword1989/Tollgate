@@ -260,13 +260,13 @@
           label: '前闭后闭'
         }],
         laneNumOptions: [{
-          value: 0,
+          value: null,
           label: '空'
         }, {
-          value: 1,
+          value: 4,
           label: '4'
         }, {
-          value: 2,
+          value: 6,
           label: '6'
         }]
       }

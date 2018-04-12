@@ -216,7 +216,7 @@
           rate_base: null,
           lane_num: null,
           rate_base1: null,
-          lane_num1: 0,
+          lane_num1: null,
           name_bt_id: 1,
           name_bt: '',
           source: this.$store.state.source
@@ -224,13 +224,13 @@
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,
         feeOptions: [{
-          value: 0,
+          value: null,
           label: '空'
         }, {
-          value: 1,
+          value: 4,
           label: '4'
         }, {
-          value: 2,
+          value: 6,
           label: '6'
         }],
         seatFlagClass: [{
@@ -398,7 +398,8 @@
           [{rateMax: 1.25,rateMin: 1.25}],
           [{rateMax: 1.1,rateMin: 1.1},{rateMax: 1,rateMin: 0.83}],
           [{rateMax: 1,rateMin: 1},{rateMax: 1,rateMin: 0.3}],
-          [{rateMax: 1,rateMin: 1},{rateMax: 0.3,rateMin: 0.3}]
+          [{rateMax: 1,rateMin: 1},{rateMax: 0.3,rateMin: 0.3}],
+          [{rateMax: 1,rateMin: 1}]
         ];
         if (tableBox[outerIndex][innerIndex]) {
           obj.rate_max = tableBox[outerIndex][innerIndex].rateMax;
