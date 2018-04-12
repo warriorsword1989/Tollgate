@@ -45,7 +45,6 @@
           return {
             feedbackCtrl: fastmap.mapApi.FeedbackController.getInstance(),
             feedback: new fastmap.mapApi.Feedback(),
-            pointSymbol: fastmap.mapApi.symbol.GetSymbolFactory().getSymbol('pt_relation_border'),
             searchText: '',
             type: 1,
             advancePanelFlag: false,
@@ -116,7 +115,7 @@
             map.getLeafletMap().setView([point.coordinates[1], point.coordinates[0]], 17);
             setTimeout(() => {
               _self.feedback.clear();
-              _self.feedback.add(point, _self.pointSymbol);
+              _self.feedback.add(point, fastmap.mapApi.symbol.GetSymbolFactory().getSymbol('pt_relation_border'));
               _self.feedbackCtrl.refresh();
             }, 500);
           }
