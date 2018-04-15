@@ -210,7 +210,7 @@
         this.$set(this.dataModels, this.dataModels.length, newObj);
         this.setBtName();
       },
-      deleteItem () {
+      deleteItem (index) {
         this.dataModels.splice(index, 1);
       },
       checkTunage_max  (rule, value, callback) {

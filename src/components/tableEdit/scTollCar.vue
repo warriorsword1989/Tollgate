@@ -469,12 +469,17 @@
               }
             });
           });
+
           // 验证最小值不能大与最大值
           let alertMessage = '';
           this.dataModels.forEach((item,index) => {
             if (item.seat_num_min >= item.seat_num_max) {
               validateFlag = false;
               alertMessage += `${index+1}车型最小值必须比最大值小;`;
+            }
+            if (new Date(item.edate) < new Date(item.sdate)) {
+              validateFlag = false;
+              alertMessage += `${index+1}车型失效日期小于生效日期;`;
             }
           });
 

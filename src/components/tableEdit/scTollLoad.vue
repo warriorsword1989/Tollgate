@@ -574,6 +574,31 @@
                 alertMessage += `${index+1}类型下的${innerIndex+1}区间费率上限不能小于下限;<br />`;
               }
             });
+            //
+            item.forEach((innerItem,innerIndex) => {
+              if(!innerItem.lane_num && this.isGuangdong) {
+                validateFlag = false;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率不能为空;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(!innerItem.lane_num1 && this.isGuangdong) {
+                validateFlag = false;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率1车道数不能为空;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(!innerItem.rate_base && this.isGuangdong) {
+                validateFlag = false;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率不能小于下限;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(!innerItem.rate_base1 && this.isGuangdong) {
+                validateFlag = false;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率1不能为空;<br />`;
+              }
+            });
           });
           if (validateFlag) {
             this.afterSave();
@@ -589,7 +614,7 @@
     },
     mounted() {
       this.mountFlag = true;
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '210000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '110000';
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: this.isGuangdong? 'SC_TOLL_LOAD_GD' : 'SC_TOLL_LOAD',
