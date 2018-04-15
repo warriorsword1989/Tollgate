@@ -578,7 +578,7 @@
             item.forEach((innerItem,innerIndex) => {
               if(!innerItem.lane_num && this.isGuangdong) {
                 validateFlag = false;
-                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率不能为空;<br />`;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率车道数不能为空;<br />`;
               }
             });
             item.forEach((innerItem,innerIndex) => {
@@ -590,7 +590,7 @@
             item.forEach((innerItem,innerIndex) => {
               if(!innerItem.rate_base && this.isGuangdong) {
                 validateFlag = false;
-                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率不能小于下限;<br />`;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率不能为空;<br />`;
               }
             });
             item.forEach((innerItem,innerIndex) => {
