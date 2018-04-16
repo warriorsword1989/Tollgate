@@ -256,6 +256,7 @@
       },
       rateClassChange(value, index) {
         this.dataModels.forEach(item => {
+          item.rate_class = this.dataModels[0].rate_class;
           if (value != 4) {
             item.rato = null;
           }
@@ -367,7 +368,6 @@
             let submitData = [];
             this.dataModels.forEach(item => {
               let cloneData = Object.assign({},item);
-              cloneData.rate_class = this.dataModels[0].rate_class;
               delete item.insertFlag;
               delete cloneData.insertFlag;
               submitData.push(cloneData);

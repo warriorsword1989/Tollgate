@@ -536,8 +536,8 @@
       }
     },
     mounted() {
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '210000';
-      this.isZheJiang = appUtil.getGolbalData().adminCode == '130000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
+      this.isZheJiang = appUtil.getGolbalData().adminCode == '330000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {

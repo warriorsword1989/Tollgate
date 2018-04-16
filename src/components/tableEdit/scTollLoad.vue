@@ -614,7 +614,7 @@
     },
     mounted() {
       this.mountFlag = true;
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '110000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: this.isGuangdong? 'SC_TOLL_LOAD_GD' : 'SC_TOLL_LOAD',
