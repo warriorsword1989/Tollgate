@@ -207,6 +207,9 @@
                 });
         }
         let newObj = Object.assign({insertFlag: true}, this.originModel);
+        if (this.dataModels.length) {
+          newObj.rate_class = this.dataModels[0].rate_class;
+        }
         this.$set(this.dataModels, this.dataModels.length, newObj);
         this.setBtName();
       },
