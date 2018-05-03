@@ -550,13 +550,16 @@
           .then(result => {
             let {errorCode,data} = result;
             this.hasData = data.length ? true : false;
-            data.forEach(item => {
-                item.rate = item.rate ? parseFloat(parseFloat(item.rate).toFixed(5)) : item.rate;
-                item.rate_bt = item.rate_bt ? parseFloat(parseFloat(item.rate_bt).toFixed(5)) : item.rate_bt;
-                item.rate1 = item.rate1 ? parseFloat(parseFloat(item.rate1).toFixed(5)) : item.rate1;
-                item.fix_fee = item.fix_fee ? parseFloat(parseFloat(item.fix_fee).toFixed(5)) : item.fix_fee;
+            let transfromData = _.groupBy(data, 'truck_class');
+            let tempArray = [];
+            Object.keys(transfromData).forEach(item => {
+              transfromData[item][0].rate = transfromData[item][0].rate ? parseFloat(parseFloat(transfromData[item][0].rate).toFixed(5)) : transfromData[item][0].rate;
+              transfromData[item][0].rate_bt = transfromData[item][0].rate_bt ? parseFloat(parseFloat(transfromData[item][0].rate_bt).toFixed(5)) : transfromData[item][0].rate_bt;
+              transfromData[item][0].rate1 = transfromData[item][0].rate1 ? parseFloat(parseFloat(transfromData[item][0].rate1).toFixed(5)) : transfromData[item][0].rate1;
+              transfromData[item][0].fix_fee = transfromData[item][0].fix_fee ? parseFloat(parseFloat(transfromData[item][0].fix_fee).toFixed(5)) : transfromData[item][0].fix_fee;
+              tempArray.push(transfromData[item][0])
             });
-            this.dataModels = data;
+            this.dataModels = tempArray;
           })
           .finally(() => {
             this.loading = false;
