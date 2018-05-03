@@ -111,7 +111,10 @@ class GetInfoData {
   async getTollListByRdName() {
     const param = this.req.query;
     const roadName = param.roadName;
-    const sql = "SELECT DISTINCT GROUP_ID FROM " + this.tollTable + " WHERE NAME_BT = '" + roadName + "'";
+    const adminCode = param.adminCode;
+
+    const sql = `SELECT DISTINCT t.group_id from ${this.tollTable} t LEFT JOIN sc_toll_system a ON t.system_id=a.systemid_old WHERE a.system_id=${adminCode} and t.name_bt='${roadName}'`;
+
     try {
       const result = await this.tollDb.executeSql(sql);
       const resultData = changeResult(result);

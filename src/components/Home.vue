@@ -54,7 +54,7 @@
             <el-table-column prop="isAdoptedName" label="tips反馈" align="center"></el-table-column>
             <el-table-column prop="operation" label="操作" align="center">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row, 'dynamic', 1)" type="button" size="small">动态作业</el-button>
+                <el-button @click="handleClick(scope.row, 'dynamic', 1)" disabled type="button" size="small">动态作业</el-button>
                 <el-button @click="handleClick(scope.row, 'static', 1)" type="button" size="small">静态作业</el-button>
               </template>
             </el-table-column>
@@ -111,7 +111,7 @@
             <el-table-column prop="memo" label="备注" align="center"></el-table-column>
             <el-table-column prop="operation" label="操作" align="center" width="200">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row, 'dynamic', 2)" type="button" size="small">动态作业</el-button>
+                <el-button @click="handleClick(scope.row, 'dynamic', 2)" disabled type="button" size="small">动态作业</el-button>
                 <el-button @click="handleClick(scope.row, 'static', 2)" type="button" size="small">静态作业</el-button>
               </template>
             </el-table-column>

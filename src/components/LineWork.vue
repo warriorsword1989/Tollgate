@@ -37,6 +37,7 @@
 <script>
     import { getTollListByRdName, getTollListByTollId,getSearchData } from '../dataService/api';
     import '../uikits/controllers/EventController';
+    import { appUtil } from '../Application';
     export default {
       name: "line-work",
       data() {
@@ -79,7 +80,8 @@
           }
           const self = this;
           const param = {
-            roadName: this.roadName
+            roadName: this.roadName,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           getTollListByRdName(param).then(function (data) {
             if (data.errorCode === 0) {
