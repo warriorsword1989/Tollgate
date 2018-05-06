@@ -639,8 +639,10 @@
             classObjResult[item] = _.groupBy(classObjResult[item], 'loading_subclss');
             Object.keys(classObjResult[item]).forEach(innerItem => {
               let dataItemObj = classObjResult[item][innerItem][0];
-              dataItemObj.rate_max = dataItemObj.rate_max ? parseFloat(parseFloat(dataItemObj.rate_max).toFixed(5)) : dataItemObj.rate_max;
-              dataItemObj.rate_min = dataItemObj.rate_min ? parseFloat(parseFloat(dataItemObj.rate_min).toFixed(5)) : dataItemObj.rate_min;
+              if (!this.isGuangdong) {
+                dataItemObj.rate_max = dataItemObj.rate_max ? parseFloat(parseFloat(dataItemObj.rate_max).toFixed(5)) : dataItemObj.rate_max;
+                dataItemObj.rate_min = dataItemObj.rate_min ? parseFloat(parseFloat(dataItemObj.rate_min).toFixed(5)) : dataItemObj.rate_min;
+              }
               dataItemObj.rate_base = dataItemObj.rate_base ? parseFloat(parseFloat(dataItemObj.rate_base).toFixed(5)) : dataItemObj.rate_base;
               dataItemObj.rate_base1 = dataItemObj.rate_base1 ? parseFloat(parseFloat(dataItemObj.rate_base1).toFixed(5)) : dataItemObj.rate_base1;
               innerArr.push(dataItemObj);
