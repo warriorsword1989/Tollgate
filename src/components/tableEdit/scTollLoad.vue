@@ -106,8 +106,11 @@
                 <div class="grid-list">
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_max">
+                    <el-form-item v-if="!isGuangdong" :rules="[{ validator: validateNum, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_max">
                       <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item v-if="isGuangdong" :rules="[{ required: true, message: '不能为空'}]" prop="rate_max">
+                      <el-input v-model="innerDataItem.rate_max" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -116,7 +119,10 @@
                 <div class="grid-list">
                   <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_min">
+                    <el-form-item v-if="!isGuangdong" :rules="[{ validator: validateNum, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_min">
+                      <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item v-if="isGuangdong" :rules="[{ required: true, message: '不能为空'}]" prop="rate_min">
                       <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
@@ -135,7 +141,7 @@
                 <div class="grid-list">
                   <div title="费 率 1：" class="labelText">费 率 1：</div>
                   <div class="inputPart">
-                    <el-form-item v-if="!isGuangdong" prop="rate_min">
+                    <el-form-item v-if="!isGuangdong" prop="rate_base1">
                       <el-input disabled v-model="innerDataItem.rate_base1" size="mini"></el-input>
                     </el-form-item>
                     <el-form-item v-if="isGuangdong" :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rate_min">
