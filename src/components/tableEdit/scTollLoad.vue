@@ -575,9 +575,11 @@
               }
             });
             item.forEach((innerItem,innerIndex) => {
-              if(innerItem.rate_max < innerItem.rate_min) {
-                validateFlag = false;
-                alertMessage += `${index+1}类型下的${innerIndex+1}区间费率上限不能小于下限;<br />`;
+              if (!this.isGuangdong) {
+                if(parseFloat(innerItem.rate_max) < parseFloat(innerItem.rate_min)) {
+                  validateFlag = false;
+                  alertMessage += `${index+1}类型下的${innerIndex+1}区间费率上限不能小于下限;<br />`;
+                }
               }
             });
             //

@@ -113,7 +113,7 @@ class GetInfoData {
     const roadName = param.roadName;
     const adminCode = param.adminCode;
 
-    const sql = `SELECT DISTINCT t.group_id from ${this.tollTable} t LEFT JOIN sc_toll_system a ON t.system_id=a.systemid_old WHERE a.system_id=${adminCode} and t.name_bt='${roadName}'`;
+    const sql = `SELECT DISTINCT t.group_id from ${this.tollTable} t LEFT JOIN sc_toll_system a ON t.system_id=a.system_id WHERE a.system_id=${adminCode} and t.name_bt='${roadName}'`;
 
     try {
       const result = await this.tollDb.executeSql(sql);

@@ -546,7 +546,7 @@
               }
             });
             item.forEach((innerItem,innerIndex) => {
-              if(innerItem.multiple_max < innerItem.multiple_min) {
+              if(parseFloat(innerItem.multiple_max) < parseFloat(innerItem.multiple_min)) {
                 validateFlag = false;
                 alertMessage += `${index+1}类型下的${innerIndex+1}超载基本费率上限不能小于下限;<br />`;
               }
