@@ -8,24 +8,24 @@ install:
   - gem install github_changelog_generator
 script:
   - npm run lint
-# before_deploy:
-#   - github_changelog_generator
-#   - git config user.name "travis-ci"
-#   - git config user.email "travis-ci@navinfo.com"
-#   - git add .
-#   - git commit -m 'travis automatic generate changelog'
-#   - git push origin HEAD:master
-#   - npm run build:debug
-#   - . build.sh
-# deploy:
-#   provider: releases
-#   api_key: $GITHUB_TOKEN
-#   file: WebApp.zip
-#   skip_cleanup: true
-#   on:
-#     tags: true
-# cache:
-#   directories:
-#   - node_modules
+before_deploy:
+  - github_changelog_generator
+  - git config user.name "warriorsword1989"
+  - git config user.email "linglong@navinfo.com"
+  - git add .
+  - git commit -m 'travis automatic generate changelog'
+  - git push origin HEAD:master
+  - npm run build
+  - . build.sh
+deploy:
+  provider: releases
+  api_key: $GH_TOKEN
+  file: WebApp.zip
+  skip_cleanup: true
+  on:
+    tags: true
+cache:
+  directories:
+  - node_modules
 # notifications:
 #   slack: navinfo:6troi7FBmywDvUc46jKuSJZE
