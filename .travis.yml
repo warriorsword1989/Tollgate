@@ -14,7 +14,7 @@ before_deploy:
   - git config user.email "linglong@navinfo.com"
   - git add .
   - git commit -m 'travis automatic generate changelog'
-  - git push origin HEAD:master
+  - git push origin master
   - npm run build
   - . build.sh
 deploy:
