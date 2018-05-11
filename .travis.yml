@@ -10,7 +10,7 @@ script:
   - npm run lint
   - npm run build
 before_deploy:
-  - github_changelog_generator
+  # - github_changelog_generator
   - git config user.name "warriorsword1989"
   - git config user.email "linglong@navinfo.com"
   - git add .
