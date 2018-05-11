@@ -10,12 +10,12 @@ echo "extart files end"
 
 echo "compress to zip start"
 cd build
-zip -rq ../WebApp.zip ./*
+zip -rq ../TollGate.zip ./*
 cd ..
 echo "compress to zip end"
 
 echo "remove build tmp file start"
-rm -rf ${deploy_root}/build
+# rm -rf ${deploy_root}/build
 echo "remove build tmp file end"
 
 
