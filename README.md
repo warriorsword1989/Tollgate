@@ -81,7 +81,7 @@ export PATH=~/npm-global/bin:$PATH
 5、 安装pm2
  npm install pm2 -g 
 6、启动服务
- pm2 start index.js
+ pm2 start service.js
 如果是服务器中的端口没有启动,在外部访问不到该服务,请按照如下步骤开启端口
 1)　开放10000端口的解决步骤如下：　
 　1、修改/etc/sysconfig/iptables文件(用vi命令修改该文件)，增加如下一行：　　
