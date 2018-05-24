@@ -109,6 +109,9 @@ const updateTollGate = params => {
 const deleteCarTruckTollGate = params => {
   return baseInstance.post('/tollgate/tips/deleteCarTruckTollGate', params)
 };
+const deleteRdLinkBt = params => {
+  return baseInstance.post('/tollgate/tips/deleteRdLinkBt', params)
+};
 // 查询功能
 const getSearchData = params => {
   return baseInstance.get('/tollgate/search/getSearchData', { params })
@@ -133,6 +136,7 @@ export {
   getTollListByRdName,
   getTollListByTollId,
   deleteCarTruckTollGate,
+  deleteRdLinkBt,
   getTollGateByAdminCode,
   updateInfoList
 };

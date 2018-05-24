@@ -15,7 +15,7 @@ class TollGate {
     this.selfDB = new connetSelfObje();
     this.originDB = connectRenderObj;
     // 与收费站有关的表;
-    this.tollRelateTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP'];
+    this.tollRelateTable = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP_DETAIL'];
   }
 
   /**
@@ -113,24 +113,62 @@ class TollGate {
     return sql;
   }
 
+  async getPidsBySource (primaryKey,pids,source) {
+    let inCondition = '';
+    if (source == 2) {
+      inCondition = '2,4';
+    } else if (source == 3) {
+      inCondition = '2,3,4';
+    } else if (source == 4) {
+      inCondition = '4';
+    }
+    let sql1 = `SELECT * FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')}) AND source IN (${inCondition})`;
+    let updateResult = await this.db.executeSql(sql1);
+    let updateResultData = changeResult(updateResult);
+    console.log(updateResultData);
+    let updateData = updateResultData.map(item => {
+      return item[primaryKey.toLowerCase()];
+    });
+    let sql2 = `SELECT * FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')})`;
+    let existResult = await this.db.executeSql(sql2);
+    let existResultData = changeResult(existResult);
+    let exist = existResultData.map(item => {
+      return item[primaryKey.toLowerCase()];
+    });
+    let allPid = new Set(pids);
+    let existPid = new Set(exist);
+    let insertData = new Set([...allPid].filter(x => !existPid.has(x)));
+    return updateData.concat([...insertData]);
+  }
+
   /**
    * 对数据表进行更新
    */
   async updateTollGate() {
-    const param = this.req.body.data;
+    let param = this.req.body.data;
     this.table = this.req.body.table;
     this.adminCode = this.req.body.adminCode;
     if (this.req.body.workFlag == 'dynamic') {
       this.db = new connectDynamicOracle();
     }
+    let sourceValue = null;
     let primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
     if (this.table == 'SC_TOLL_HOLIDAY' || this.table == 'SC_TOLL_SPEFLOAT') {
       primaryKey = 'ID';
+    } else {
+      sourceValue = param[0].source;
     }
     let pids = param.map(item => item[primaryKey.toLowerCase()]);
+    if (sourceValue != null && sourceValue != 1) {
+      pids = await this.getPidsBySource(primaryKey, pids, sourceValue);
+    } 
+    if (!pids.length) {
+      return this.res.send({errorCode: 0, message: '不存在符合更新原则的数据'});
+    }   
     let delSql = `DELETE FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')})`;
     const delResult = await this.db.executeSql(delSql);
     if (delResult.rowsAffected != -1) {
+      param = param.filter(item => pids.indexOf(item[primaryKey.toLowerCase()]) != -1);
       let insertSql = this._getInsertString(param);
       const insertResult = await this.db.executeSql(insertSql);
       if (insertResult.rowsAffected != -1) {
@@ -138,6 +176,7 @@ class TollGate {
         let priamry = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : 'GROUP_ID';
         if (this.tollRelateTable.indexOf(this.table) !=-1){
           let allTollPids = param.map(item => item[priamry.toLowerCase()]);
+          allTollPids = Array.from(new Set(allTollPids));
           // 查询allTollPids看有哪些完全不存在，执行插入操作；
           // 如果存在，则跟据当前workflag来判断到底是 编辑呢还是新增
           let allExistsResult = await this.selfDB.executeSql(`SELECT * FROM SC_TOLL_INDEX WHERE TOLL_PID IN (${allTollPids.join(',')})`);
@@ -225,6 +264,24 @@ class TollGate {
       } else {
         this.res.send({errorCode: 0, message: '删除成功', updateFlag: false});
       }
+    } else {
+      this.res.send({errorCode: -1, message: '删除失败', updateFlag: false});
+    }
+  }
+
+  /**
+   * 根据pid删除桥梁隧道;
+   */
+  async deleteRdLinkBt() {
+    if (this.req.body.workFlag == 'dynamic') {
+      this.db = new connectDynamicOracle();
+    }
+    this.table = this.req.body.table;
+    let pid = this.req.body.pid;
+    let delSql = `DELETE FROM ${this.table} WHERE NAME_BT_ID = ${pid}`;
+    let delResult = await this.db.executeSql(delSql);
+    if (delResult.rowsAffected != -1) { 
+      this.res.send({errorCode: 0, message: '删除成功', updateFlag: false});
     } else {
       this.res.send({errorCode: -1, message: '删除失败', updateFlag: false});
     }

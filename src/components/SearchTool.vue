@@ -42,11 +42,9 @@
     export default {
         name: "search-tool",
         data() {
-          const symbolFactory = fastmap.mapApi.symbol.GetSymbolFactory();
           return {
             feedbackCtrl: fastmap.mapApi.FeedbackController.getInstance(),
             feedback: new fastmap.mapApi.Feedback(),
-            pointSymbol: symbolFactory.getSymbol('pt_relation_border'),
             searchText: '',
             type: 1,
             advancePanelFlag: false,
@@ -69,6 +67,7 @@
               event.preventDefault();
             } else if (this.searchInputStatus) {
               container.removeClass('active');
+              this.clearFeedBack();
               container.find('.searchInput').val('');
               if (this.advancePanelFlag) {
                 this.advancePanelFlag = !this.advancePanelFlag;
@@ -109,13 +108,16 @@
             this.feedbackCtrl.refresh();
           },
           showInMap: function (data) {
+            var _self = this;
             let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
             let point = geometryAlgorithm.wktToGeojson(data.geometry);
             const map = window.map;
             map.getLeafletMap().setView([point.coordinates[1], point.coordinates[0]], 17);
-            this.feedback.clear();
-            this.feedback.add(point, this.pointSymbol);
-            this.feedbackCtrl.refresh();
+            setTimeout(() => {
+              _self.feedback.clear();
+              _self.feedback.add(point, fastmap.mapApi.symbol.GetSymbolFactory().getSymbol('pt_relation_border'));
+              _self.feedbackCtrl.refresh();
+            }, 500);
           }
         },
         mounted() {

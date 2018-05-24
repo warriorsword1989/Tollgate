@@ -4,7 +4,7 @@
       <div class="grid-content">
         <div class="labelText">费用金额：</div>
         <div class="inputPart">
-          <el-form-item :rules="[{ type: 'number', message: '必须为数字'}]" prop="out_fee">
+          <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="out_fee">
             <el-input v-model.number="dataModels.out_fee" size="mini"></el-input>
           </el-form-item>
         </div>
@@ -12,7 +12,7 @@
       <div class="grid-content">
         <div class="labelText">内埠车牌范围：</div>
         <div class="inputPart">
-          <el-form-item :rules="[{ required: true, message: '内埠车牌范围不能为空'}, { validator: check_local_plate, trigger: 'change'}]" style="display:block" prop="local_plate">
+          <el-form-item :rules="[{ validator: check_local_plate, trigger: 'change'}]" style="display:block" prop="local_plate">
             <el-input v-model="dataModels.local_plate" size="mini"></el-input>
           </el-form-item>
         </div>
@@ -81,6 +81,14 @@
       }
     },
     methods: {
+      // 如果存在的换验证数字是否为>=0的数字；
+      validateNum (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        } else {
+          callback();
+        }
+      },
       check_local_plate (rule, value, callback) {
         if (/[a-z]/.test(value)) {
           callback(new Error('车牌范围字母必须大写'));
@@ -113,6 +121,10 @@
                 let {
                   errorCode
                 } = result;
+                let messageStr = '数据更新成功！'
+                if (result.message) {
+                  messageStr = result.message
+                }
                 const h = this.$createElement;
                 if (errorCode === 0) {
                   this.$emit('tabStatusChange', {
@@ -121,7 +133,7 @@
                   });
                   fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
                   return this.$message({
-                    message: '数据更新成功！',
+                    message: messageStr,
                     type: 'success'
                   });
                 } else {

@@ -21,7 +21,7 @@
       <el-button type="primary" size="small" @click="searchToll()">查询</el-button>
     </div>
     <div style="height: 400px;padding: 10px" v-show="tollData.length > 0">
-      <el-table :data="tollData" border height="400" style="width: 100%;height: 100%;" @selection-change="handleSelectionChange">
+      <el-table :data="tollData" border height="400" style="width: 100%;height: 100%;" @row-click="showInMap" @selection-change="handleSelectionChange">
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="id" label="序号" type="index" align="center"></el-table-column>
         <el-table-column prop="name" label="收费站名称" align="center" ></el-table-column>
@@ -35,12 +35,16 @@
 </template>
 
 <script>
-    import { getTollListByRdName, getTollListByTollId } from '../dataService/api';
+    import { getTollListByRdName, getTollListByTollId,getSearchData } from '../dataService/api';
     import '../uikits/controllers/EventController';
+    import { appUtil } from '../Application';
     export default {
       name: "line-work",
       data() {
         return {
+          feedbackCtrl: fastmap.mapApi.FeedbackController.getInstance(),
+          feedback: new fastmap.mapApi.Feedback(),
+          pointSymbol: fastmap.mapApi.symbol.GetSymbolFactory().getSymbol('pt_relation_border'),
           roadName: '',
           tollData: [],
           multipleSelection: [],
@@ -49,13 +53,35 @@
         }
       },
       methods: {
+        clearFeedBack: function () {
+          this.feedback.clear();
+          this.feedbackCtrl.refresh();
+        },
+        showInMap(row, event, column) {
+          console.log(row,event,column)
+          getSearchData({type: 1,searchText: row.pid})
+            .then(data => {
+              if (data.errorCode === 0) {
+                let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
+                let point = geometryAlgorithm.wktToGeojson(data.data[0].geometry);
+                const map = window.map;
+                map.getLeafletMap().setView([point.coordinates[1], point.coordinates[0]], 17);
+                setTimeout(() => {
+                  this.feedback.clear();
+                  this.feedback.add(point, this.pointSymbol);
+                  this.feedbackCtrl.refresh();
+                }, 500);
+              }
+            });
+        },
         searchToll: function () {
           if (this.roadName === '') {
             return;
           }
           const self = this;
           const param = {
-            roadName: this.roadName
+            roadName: this.roadName,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           getTollListByRdName(param).then(function (data) {
             if (data.errorCode === 0) {
@@ -107,7 +133,10 @@
         }
       },
       mounted() {
-
+        this.feedbackCtrl.add(this.feedback);
+      },
+      destroyed() {
+        this.clearFeedBack();
       }
     }
 </script>

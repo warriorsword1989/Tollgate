@@ -39,6 +39,7 @@
       data() {
         return {
           dataSource: 1,
+          workType: 1, // 默认静态作业;
           eventController: fastmap.uikit.EventController()
         }
       },
@@ -62,36 +63,54 @@
           };
           let tollIds = [];
           let existTollIds = [];
-          getTollGateByAdminCode(param).then(function (data) {
+          getTollGateByAdminCode(param).then(data => {
             if (data.errorCode === 0) {
               for (let i = 0; i < data.data.length; i++) {
                 tollIds.push(data.data[i].group_id)
               }
               if (type === 1) {
                 // 编辑所有收费信息 tollIds
-                console.log(tollIds);
                 _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: tollIds, event: event, flag:'insert',sourceFlag: 4 });
               } else {
-                const param1 = {
-                  tollIds: tollIds
-                };
-                getTollListByTollId(param1).then(function (data1) {
+                const param1 = {tollIds: tollIds};
+                getTollListByTollId(param1).then(data1 => {
                   if (data1.errorCode === 0) {
                     for (let j = 0; j < data1.data.length; j++) {
                       existTollIds.push(data1.data[j].toll_pid);
                     }
+                    //
                     if (type === 2) {
                       // 新增收费信息 differenceABSet
                       let a = new Set(tollIds);
                       let b = new Set(existTollIds)
                       let differenceABSet = new Set([...a].filter(x => !b.has(x)));
-                      console.log([...differenceABSet]);
-                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: [...differenceABSet], event: event, flag:'insert',sourceFlag: 4 });
+                      let newTollPids = [...differenceABSet];
+                      let otherPids = [];
+                      // 2动态作业;1静态作业;
+                      if (_self.workType == 'static') {
+                        otherPids = data1.data.filter(item => item.toll_static_state==null);
+                      } else {
+                        otherPids = data1.data.filter(item => item.toll_dynamic_state==null);
+                      }
+                      otherPids = otherPids.map(item => item.toll_pid);
+                      newTollPids = newTollPids.concat(otherPids);
+                      if (!newTollPids.length) {
+                        return this.$alert('所有收费站都已编辑', '提示', {
+                          confirmButtonText: '确定',
+                          type: 'info'
+                        })
+                      }
+                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: newTollPids, event: event, flag:'insert',sourceFlag: 4 });
                     } else {
                       // 编辑收费信息 existTollIds
-                      console.log(existTollIds);
-                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: existTollIds, event: event, flag:'insert',sourceFlag: 4 });
-                      
+                      let editTollIds = [];
+                      if (_self.workType == 'static') {
+                        editTollIds = data1.data.filter(item => item.toll_static_state!=null);
+                      } else {
+                        editTollIds = data1.data.filter(item => item.toll_dynamic_state!=null);
+                      }
+                      editTollIds = editTollIds.map(item => item.toll_pid);
+                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: editTollIds, event: event, flag:'insert',sourceFlag: 4 }); 
                     }
                   }
                 });
@@ -102,6 +121,7 @@
       },
       mounted() {
         this.dataSource = appUtil.getGolbalData().dataSource;
+        this.workType = appUtil.getGolbalData().workType;
       }
     }
 </script>

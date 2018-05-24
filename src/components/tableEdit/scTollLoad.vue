@@ -25,6 +25,7 @@
               </div>
             </div>
             <el-button @click="toggleSearchPanel(true)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
+            <el-button @click="deleteBridge()" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-delete"></el-button>
           </div>
           <!-- 装载类型显示 -->
           <div v-show="innerIndex==0" style="justify-content: flex-end;" class="grid-wraper">
@@ -46,16 +47,18 @@
             <div class="grid-list">
               <div class="labelText" title="正常装载级别吨数范围(车货总重)">正常装载级别吨数范围(车货总重)：</div>
               <div class="inputPart">
-                > 
                 <el-form-item prop="tunnage_min">
-                  <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
+                  <el-input v-model="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
-                <= 
-                <el-form-item v-if="outerIndex!=4" prop="tunnage_max" :rules="[{ validator: validateTunnage, trigger: 'change' }]">
-                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                <span style="display:block;line-height:28px">-</span> 
+                <el-form-item v-if="outerIndex!=4 && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
+                  <el-input v-model="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item v-if="outerIndex!=4 && outerIndex==dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
+                  <el-input v-model="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
                 <el-form-item v-if="outerIndex==4" prop="tunnage_max">
-                  <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"></el-input>
+                  <el-input v-model="innerDataItem.tunnage_max" :disabled="outerIndex==4" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -77,8 +80,16 @@
                   <div title="正常装载区间吨数范围：" class="labelText">正常装载区间吨数范围：</div>
                   <div class="inputPart">
                     <div class="inputPart">
-                      <el-input disabled v-model.number="innerDataItem.interval_min" size="mini"></el-input> -
-                      <el-input :disabled="innerIndex==dataItem.length-1" @change="setRangeRelate" v-model="innerDataItem.interval_max" size="mini"></el-input>
+                    <el-form-item prop="interval_min" :rules="[{ type: 'number', message: '必须为数字'}]">
+                      <el-input v-model.number="innerDataItem.interval_min" @change="setMinRangeRelate" size="mini"></el-input>
+                    </el-form-item>
+                      <span style="display:block;line-height:28px">-</span>
+                      <el-form-item v-if="innerIndex!=4" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
+                        <el-input v-model.number="innerDataItem.interval_max" @change="setMaxRangeRelate" size="mini"></el-input>
+                      </el-form-item>
+                      <el-form-item v-if="innerIndex==4" prop="interval_max">
+                        <el-input v-model.number="innerDataItem.interval_max" disabled size="mini"></el-input>
+                      </el-form-item>
                     </div>
                   </div>
                 </div>
@@ -87,16 +98,16 @@
                 <div class="grid-list">
                   <div title="基本费率：" class="labelText">基本费率：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate_base">
-                      <el-input @change="validateRateBase" v-model.number="innerDataItem.rate_base" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="rate_base">
+                      <el-input @change="validateRateBase" v-model="innerDataItem.rate_base" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
                   <div title="费率上限(广东为倍数)：" class="labelText">费率上限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate_max">
-                      <el-input @change="validateRateMin" v-model.number="innerDataItem.rate_max" size="mini"></el-input>
+                    <el-form-item :rules="isGuangdong ? [{ required: true, message: '不能为空'}] : [{ validator: validateNum, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_max">
+                      <el-input @change="validateRateMin" v-model="innerDataItem.rate_max" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -105,8 +116,8 @@
                 <div class="grid-list">
                   <div title="费率下限(广东为倍数)：" class="labelText">费率下限(广东为倍数)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="rate_min">
-                      <el-input v-model.number="innerDataItem.rate_min" size="mini"></el-input>
+                    <el-form-item :rules="isGuangdong ? [{ required: true, message: '不能为空'}] : [{ validator: validateNum, trigger: 'change' },{ required: true, message: '不能为空'}]" prop="rate_min">
+                      <el-input v-model="innerDataItem.rate_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -124,7 +135,9 @@
                 <div class="grid-list">
                   <div title="费 率 1：" class="labelText">费 率 1：</div>
                   <div class="inputPart">
-                    <el-input :disabled="!isGuangdong" v-model.number="innerDataItem.rate_base1" size="mini"></el-input>
+                    <el-form-item :rules="isGuangdong?[{ validator: validateNum, trigger: 'change' }]:[]" prop="rate_base1">
+                      <el-input :disabled="!isGuangdong" v-model="innerDataItem.rate_base1" size="mini"></el-input>
+                    </el-form-item>
                   </div>
                 </div>
                 <div class="grid-list">
@@ -141,8 +154,8 @@
                 <div class="grid-list">
                   <div title="最低计重(吨)：" class="labelText">最低计重(吨)：</div>
                   <div class="inputPart">
-                    <el-form-item prop="weight_min">
-                      <el-input @change="validateWeightMin" v-model.number="innerDataItem.weight_min" size="mini"></el-input>
+                    <el-form-item :rules="[{ validator: validateNum, trigger: 'change' }]" prop="weight_min">
+                      <el-input @change="validateWeightMin" v-model="innerDataItem.weight_min" size="mini"></el-input>
                     </el-form-item>
                   </div>
                 </div>
@@ -195,12 +208,12 @@
           interval_max: 1,
           rate_max: 1,
           rate_min: 1,
-          charge_min: 0,
-          weight_min: 0,
-          rate_base: 0,
-          lane_num: 0,
-          rate_base1: 0,
-          lane_num1: 0,
+          charge_min: null,
+          weight_min: null,
+          rate_base: null,
+          lane_num: null,
+          rate_base1: null,
+          lane_num1: null,
           name_bt_id: 1,
           name_bt: '',
           source: this.$store.state.source
@@ -208,13 +221,13 @@
         numberTable: ['一','二','三','四','五'],
         mountFlag: false,
         feeOptions: [{
-          value: 0,
+          value: null,
           label: '空'
         }, {
-          value: 1,
+          value: 4,
           label: '4'
         }, {
-          value: 2,
+          value: 6,
           label: '6'
         }],
         seatFlagClass: [{
@@ -245,10 +258,26 @@
       }
     },
     methods: {
+      // 如果存在的换验证数字是否为>=0的数字；
+      validateNum (rule, value, callback) {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是数字')); 
+        } else {
+          callback();
+        }
+      },
       // 装载机别数
-      validateTunnage (rule, value, callback) {
+      validateTunnage1 (rule, value, callback) {
         if (value >49 || value < 0) {
           callback(new Error('装载级别吨数不能大于49')); 
+        } else {
+          callback();
+        }
+      },
+      // 装载机别数
+      validateTunnage2 (rule, value, callback) {
+        if (value >1000) {
+          callback(new Error('装载级别吨数不能大于1000')); 
         } else {
           callback();
         }
@@ -319,22 +348,37 @@
             }
           });
         });
-        this.setRangeRelate();
       },
       // 装载区间吨位关联维护
-      setRangeRelate (value) {
+      setMaxRangeRelate (value) {
         this.dataModels.forEach((outer,outerIndex) => {
           outer.forEach((inner, innerIndex) => {
             if(innerIndex != 0) {
               inner.interval_min = outer[innerIndex - 1].interval_max;
-            } else {
-              inner.interval_min = outer[0].tunnage_min;
+            }
+          });
+        });
+      },
+      setMinRangeRelate (value) {
+        this.dataModels.forEach((outer,outerIndex) => {
+          outer.forEach((inner, innerIndex) => {
+            if(innerIndex != 0) {
+              outer[innerIndex - 1].interval_max = inner.interval_min;
             }
           });
         });
       },
       toggleSearchPanel(flag){
         this.serachShow = flag;
+      },
+      // 删除桥梁隧道名称;
+      deleteBridge () {
+        this.dataModels.forEach(item => {
+          item.forEach(innerItem => {
+            innerItem.name_bt_id = null;
+            innerItem.name_bt = null;
+          });
+        });
       },
       setBtName() {
         this.originModel.name_bt_id = this.$store.state.btData.name_groupid;
@@ -348,10 +392,11 @@
       },
       _setRateMinMax (outerIndex, innerIndex, obj) {
         let tableBox = [
-          [{rateMax: 1.25,rateMin: 1.35}],
+          [{rateMax: 1.25,rateMin: 1.25}],
           [{rateMax: 1.1,rateMin: 1.1},{rateMax: 1,rateMin: 0.83}],
           [{rateMax: 1,rateMin: 1},{rateMax: 1,rateMin: 0.3}],
-          [{rateMax: 1,rateMin: 1},{rateMax: 0.3,rateMin: 0.3}]
+          [{rateMax: 1,rateMin: 1},{rateMax: 0.3,rateMin: 0.3}],
+          [{rateMax: 1,rateMin: 1}]
         ];
         if (tableBox[outerIndex][innerIndex]) {
           obj.rate_max = tableBox[outerIndex][innerIndex].rateMax;
@@ -371,7 +416,7 @@
         if (this.dataModels.length === 4) {
           newObj.tunnage_max = 1000;
         }
-        newObj.interval_min = newObj.tunnage_min;
+        newObj.interval_min = 0;
         newObj.interval_max = newObj.tunnage_max;
         // 设置桥梁隧道;
         newObj.name_bt = this.dataModels[0]?this.dataModels[0][0].name_bt:this.originModel.name_bt;
@@ -415,6 +460,7 @@
             item.forEach(innerItem => {
               let cloneData = Object.assign({},innerItem);
               cloneData.group_id = outer;
+              cloneData.source = this.$store.state.source;
               delete innerItem.insertFlag;
               delete cloneData.insertFlag;
               submitData.push(cloneData);
@@ -433,6 +479,10 @@
             let {
               errorCode
             } = result;
+            let messageStr = '数据更新成功！'
+            if (result.message) {
+              messageStr = result.message
+            }
             const h = this.$createElement;
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
@@ -441,7 +491,7 @@
               });
               fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
-                message: '数据更新成功！',
+                message: messageStr,
                 type: 'success'
               });
             } else {
@@ -516,9 +566,36 @@
               }
             });
             item.forEach((innerItem,innerIndex) => {
-              if(innerItem.rate_max < innerItem.rate_min) {
+              if (!this.isGuangdong) {
+                if(parseFloat(innerItem.rate_max) < parseFloat(innerItem.rate_min)) {
+                  validateFlag = false;
+                  alertMessage += `${index+1}类型下的${innerIndex+1}区间费率上限不能小于下限;<br />`;
+                }
+              }
+            });
+            //
+            item.forEach((innerItem,innerIndex) => {
+              if(!innerItem.lane_num && this.isGuangdong) {
                 validateFlag = false;
-                alertMessage += `${index+1}类型下的${innerIndex+1}区间费率上限不能小于下限;<br />`;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率车道数不能为空;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(!innerItem.lane_num1 && this.isGuangdong) {
+                validateFlag = false;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率1车道数不能为空;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(!innerItem.rate_base && this.isGuangdong) {
+                validateFlag = false;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率不能为空;<br />`;
+              }
+            });
+            item.forEach((innerItem,innerIndex) => {
+              if(!innerItem.rate_base1 && this.isGuangdong) {
+                validateFlag = false;
+                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率1不能为空;<br />`;
               }
             });
           });
@@ -536,7 +613,7 @@
     },
     mounted() {
       this.mountFlag = true;
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '210000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
       if (this.$store.state.handleFlag === 'update') {
         let param = {
           table: this.isGuangdong? 'SC_TOLL_LOAD_GD' : 'SC_TOLL_LOAD',
@@ -554,7 +631,14 @@
             let innerArr = [];
             classObjResult[item] = _.groupBy(classObjResult[item], 'loading_subclss');
             Object.keys(classObjResult[item]).forEach(innerItem => {
-              innerArr.push(classObjResult[item][innerItem][0]);
+              let dataItemObj = classObjResult[item][innerItem][0];
+              if (!this.isGuangdong) {
+                dataItemObj.rate_max = dataItemObj.rate_max ? parseFloat(parseFloat(dataItemObj.rate_max).toFixed(5)) : dataItemObj.rate_max;
+                dataItemObj.rate_min = dataItemObj.rate_min ? parseFloat(parseFloat(dataItemObj.rate_min).toFixed(5)) : dataItemObj.rate_min;
+              }
+              dataItemObj.rate_base = dataItemObj.rate_base ? parseFloat(parseFloat(dataItemObj.rate_base).toFixed(5)) : dataItemObj.rate_base;
+              dataItemObj.rate_base1 = dataItemObj.rate_base1 ? parseFloat(parseFloat(dataItemObj.rate_base1).toFixed(5)) : dataItemObj.rate_base1;
+              innerArr.push(dataItemObj);
             });
             classArrResult.push(innerArr);
           });          
@@ -589,7 +673,7 @@
   .grid-wraper {
     display: flex;
     flex-direction: row;
-    margin: 10px 0;
+    margin: 15px 0;
   }
 
   .grid-content {
@@ -625,7 +709,8 @@
   }
   .inputPart .el-form-item {
     width: 100%;
-    margin-bottom: 0
+    margin-bottom: 0;
+    margin-right: 0;
   }
 
 </style>

@@ -46,9 +46,6 @@
     <el-tab-pane :label="isEdit[2]?'* 货车计重装载费率(不超限)':'货车计重装载费率(不超限)'">
       <sc-toll-load @tabStatusChange="changeTabStatus"></sc-toll-load>
     </el-tab-pane>
-    <!--<el-tab-pane :label="isEdit[3]?'* 货车计重装载费率(广东不超限)':'货车计重装载费率(广东不超限)'">
-      <sc-toll-load-gd @tabStatusChange="changeTabStatus"></sc-toll-load-gd>
-    </el-tab-pane>-->
     <el-tab-pane :label="isEdit[4]?'* 货车计重装载费率(超限)':'货车计重装载费率(超限)'">
       <sc-toll-over-load @tabStatusChange="changeTabStatus"></sc-toll-over-load>
     </el-tab-pane>
@@ -82,14 +79,12 @@
   import scTollHoliday from './scTollHoliday';
   import scTollLimit from './scTollLimit';
   import scTollLoad from './scTollLoad';
-  import scTollLoadGd from './scTollLoadGd';
   import scTollOverLoad from './scTollOverLoad';
   import scTollRdlinkBt from './scTollRdlinkBt';
   import scTollSpecialPay from './scTollSpecialPay';
   import scTollTruck from './scTollTruck';
-  import {getTollGate} from '../../dataService/api';
+  import {getTollGate, getTollName} from '../../dataService/api';
   import { appUtil } from '../../Application';
-  import {getTollName} from '../../dataService/api';
   export default {
     name: 'tabDiag',
     props: ['dialogTableVisible', 'handleFlag'],
@@ -100,7 +95,6 @@
       scTollHoliday,
       scTollLimit,
       scTollLoad,
-      scTollLoadGd,
       scTollOverLoad,
       scTollRdlinkBt,
       scTollSpecialPay,
