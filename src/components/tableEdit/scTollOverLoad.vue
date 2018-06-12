@@ -35,7 +35,7 @@
           <div v-show="innerIndex==0" class="grid-wraper">
             <div class="grid-list">
               <div class="labelText">
-                <span style="font-weight:bold;font-size:14px;color:#66b1ff">{{numberTable[innerDataItem.overloading_clss - 1]}}类装载：</span>
+                <span style="font-weight:bold;font-size:14px;color:#66b1ff">{{innerDataItem.overloading_clss}}类装载：</span>
               </div>
               <div style="width:180px" class="labelText">区间闭合标识：</div>
               <div class="inputPart">
@@ -91,7 +91,7 @@
           </div>
           <div style="display:flex;flex-direction: row;">
             <fieldset :style="innerDataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
-              <legend style="font-size:12px">{{numberTable[innerDataItem.overloading_subclss - 1]}} 区间</legend>
+              <legend style="font-size:12px">{{innerDataItem.overloading_subclss}} 区间</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
                   <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
