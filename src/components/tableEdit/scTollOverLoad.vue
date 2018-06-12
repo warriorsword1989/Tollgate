@@ -47,15 +47,26 @@
             <div class="grid-list">
               <div title="超载级别百分比范围(超载情况，车货总重)：" class="labelText">超载级别百分比范围(超载情况，车货总重)：</div>
               <div class="inputPart">
+                <!-- 广东的情况 -->
                 <el-form-item prop="rato_min">
                   <el-input v-model.number="innerDataItem.rato_min" disabled size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
                 <span style="display:block;line-height:28px">-</span> 
-                <el-form-item v-if="outerIndex!=4" :rules="[{ validator: validateTunnage, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
+                <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex!=dataModels.length-1" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
                   <el-input v-model.number="innerDataItem.rato_max" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
-                <el-form-item v-if="outerIndex==4" prop="rato_max">
+                <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex==dataModels.length-1" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
+                  <el-input v-model.number="innerDataItem.rato_max" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
+                </el-form-item>
+                <el-form-item v-if="isGuangdong && outerIndex==4" prop="rato_max">
                   <el-input v-model.number="innerDataItem.rato_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
+                </el-form-item>
+                <!-- 非广东的情况 -->
+                <el-form-item v-if="!isGuangdong && outerIndex!=dataModels.length-1" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
+                  <el-input v-model.number="innerDataItem.rato_max" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
+                </el-form-item>
+                <el-form-item v-if="!isGuangdong && outerIndex==dataModels.length-1" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
+                  <el-input v-model.number="innerDataItem.rato_max" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -99,10 +110,18 @@
                         <el-input v-model.number="innerDataItem.interval_min" placeholder="%" @change="setMinRangeRelate" size="mini"><template slot="append">%</template></el-input>
                       </el-form-item>
                       <span style="display:block;line-height:28px">-</span> 
-                      <el-form-item v-if="innerIndex!=4" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
+                      <!-- 广东的情况 -->
+                      <el-form-item v-if="isGuangdong && innerIndex!=4" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
                         <el-input v-model.number="innerDataItem.interval_max" @change="setMaxRangeRelate" size="mini"><template slot="append">%</template></el-input>
                       </el-form-item>
-                      <el-form-item v-if="innerIndex==4" prop="interval_max">
+                      <el-form-item v-if="isGuangdong && innerIndex==4" prop="interval_max">
+                        <el-input v-model.number="innerDataItem.interval_max" disabled size="mini"><template slot="append">%</template></el-input>
+                      </el-form-item>
+                      <!-- 非广东的情况 -->
+                      <el-form-item v-if="!isGuangdong && innerIndex!=dataModels[outerIndex].length-1" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
+                        <el-input v-model.number="innerDataItem.interval_max" @change="setMaxRangeRelate" size="mini"><template slot="append">%</template></el-input>
+                      </el-form-item>
+                      <el-form-item v-if="!isGuangdong && innerIndex==dataModels[outerIndex].length-1" prop="interval_max">
                         <el-input v-model.number="innerDataItem.interval_max" disabled size="mini"><template slot="append">%</template></el-input>
                       </el-form-item>
                     </div>
@@ -318,7 +337,15 @@
         this._setData('weight_min');
       },
       // 装载机别数
-      validateTunnage (rule, value, callback) {
+      validateTunnage1 (rule, value, callback) {
+        if (value >55 || value < 0) {
+          callback(new Error('装载级别吨数不能大于55')); 
+        } else {
+          callback();
+        }
+      },
+      // 装载机别数
+      validateTunnage2 (rule, value, callback) {
         if (value >1000 || value < 0) {
           callback(new Error('超载级别不能大于1000')); 
         } else {
@@ -388,7 +415,7 @@
         });
       },
       addOuter() {
-        if (this.dataModels.length===5)return;
+        if (this.isGuangdong && this.dataModels.length===5)return;
         let newLoadingClass = this.dataModels.length;
         let newObj = Object.assign({}, this.originModel, {insertFlag: true, overloading_clss: newLoadingClass+1});
         if(this.dataModels.length) {
@@ -397,7 +424,7 @@
         } else {
           newObj.rato_min = 0;
         }
-        if (this.dataModels.length === 4) {
+        if (this.isGuangdong && this.dataModels.length === 4) {
           newObj.rato_max = 1000;
         }
         newObj.interval_min = 0;
@@ -412,7 +439,7 @@
         this.dataModels.pop();
       },
       addInner(index) {
-        if (this.dataModels[index].length===5)return;
+        if (this.isGuangdong && this.dataModels[index].length===5)return;
         let newSubLoadingClass = this.dataModels[index].length;
         let newObj = Object.assign({}, this.originModel, {insertFlag: true});
         newObj.overloading_clss = index+1;

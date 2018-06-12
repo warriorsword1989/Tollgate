@@ -344,8 +344,8 @@
       // 最低收费
       validateChargeMin(value) {
         if (this.isClickSave)return;
-        if (value > 20) {
-          this.$alert('最低收费值大于20!', '提示', {
+        if (value > 50) {
+          this.$alert('最低收费值大于50!', '提示', {
             confirmButtonText: '确定',
             type: 'warning'
           });
