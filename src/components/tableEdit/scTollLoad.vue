@@ -35,7 +35,7 @@
           <div v-show="innerIndex==0" class="grid-wraper">
             <div class="grid-list">
               <div class="labelText">
-                <span style="font-weight:bold;font-size:14px;color:#66b1ff">{{numberTable[innerDataItem.loading_class - 1]}}类装载：</span>
+                <span style="font-weight:bold;font-size:14px;color:#66b1ff">{{innerDataItem.loading_class}}类装载：</span>
               </div>
               <div style="width:180px" class="labelText">区间闭合标识：</div>
               <div class="inputPart">
@@ -48,17 +48,25 @@
               <div class="labelText" title="正常装载级别吨数范围(车货总重)">正常装载级别吨数范围(车货总重)：</div>
               <div class="inputPart">
                 <el-form-item prop="tunnage_min">
-                  <el-input v-model="innerDataItem.tunnage_min" disabled size="mini"></el-input>
+                  <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
                 <span style="display:block;line-height:28px">-</span> 
-                <el-form-item v-if="outerIndex!=4 && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
-                  <el-input v-model="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                <!-- 广东的情况 -->
+                <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
+                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
-                <el-form-item v-if="outerIndex!=4 && outerIndex==dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
-                  <el-input v-model="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex==dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
+                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
-                <el-form-item v-if="outerIndex==4" prop="tunnage_max">
-                  <el-input v-model="innerDataItem.tunnage_max" :disabled="outerIndex==4" size="mini"></el-input>
+                <el-form-item v-if="isGuangdong && outerIndex==4" prop="tunnage_max">
+                  <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" size="mini"></el-input>
+                </el-form-item>
+                <!-- 非广东的情况 -->
+                <el-form-item v-if="!isGuangdong && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
+                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item v-if="!isGuangdong && outerIndex==dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
+                  <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -66,7 +74,7 @@
           <!-- 装载类型内装载区间数据循环 -->
           <div style="display:flex;flex-direction: row;">
             <fieldset :style="innerDataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
-              <legend style="font-size:12px">{{numberTable[innerDataItem.loading_subclss - 1]}} 区间</legend>
+              <legend style="font-size:12px">{{innerDataItem.loading_subclss}} 区间</legend>
               <div class="grid-wraper">
                 <div class="grid-list">
                   <div title="区间闭合标识：" class="labelText">区间闭合标识：</div>
@@ -84,10 +92,17 @@
                       <el-input v-model.number="innerDataItem.interval_min" @change="setMinRangeRelate" size="mini"></el-input>
                     </el-form-item>
                       <span style="display:block;line-height:28px">-</span>
-                      <el-form-item v-if="innerIndex!=4" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
+                      <el-form-item v-if="isGuangdong && innerIndex!=4" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
                         <el-input v-model.number="innerDataItem.interval_max" @change="setMaxRangeRelate" size="mini"></el-input>
                       </el-form-item>
-                      <el-form-item v-if="innerIndex==4" prop="interval_max">
+                      <el-form-item v-if="isGuangdong && innerIndex==4" prop="interval_max">
+                        <el-input v-model.number="innerDataItem.interval_max" disabled size="mini"></el-input>
+                      </el-form-item>
+
+                      <el-form-item v-if="!isGuangdong && innerIndex!=dataModels[outerIndex].length-1" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
+                        <el-input v-model.number="innerDataItem.interval_max" @change="setMaxRangeRelate" size="mini"></el-input>
+                      </el-form-item>
+                      <el-form-item v-if="!isGuangdong && innerIndex==dataModels[outerIndex].length-1" prop="interval_max">
                         <el-input v-model.number="innerDataItem.interval_max" disabled size="mini"></el-input>
                       </el-form-item>
                     </div>
@@ -268,8 +283,8 @@
       },
       // 装载机别数
       validateTunnage1 (rule, value, callback) {
-        if (value >49 || value < 0) {
-          callback(new Error('装载级别吨数不能大于49')); 
+        if (value >55 || value < 0) {
+          callback(new Error('装载级别吨数不能大于55')); 
         } else {
           callback();
         }
@@ -404,7 +419,7 @@
         }
       },
       addOuter() {
-        if (this.dataModels.length===5)return;
+        if (this.isGuangdong && this.dataModels.length===5)return;
         let newLoadingClass = this.dataModels.length;
         let newObj = Object.assign({}, this.originModel, {insertFlag: true, loading_class: newLoadingClass+1});
         if(this.dataModels.length) {
@@ -413,7 +428,7 @@
         } else {
           newObj.tunnage_min = 0;
         }
-        if (this.dataModels.length === 4) {
+        if (this.isGuangdong && this.dataModels.length === 4) {
           newObj.tunnage_max = 1000;
         }
         newObj.interval_min = 0;
@@ -423,7 +438,6 @@
         newObj.name_bt_id = this.dataModels[0]?this.dataModels[0][0].name_bt_id:this.originModel.name_bt_id;
         // 如果是广东，自动维护装载费率上线和下限;
         this.isGuangdong && this._setRateMinMax(this.dataModels.length,0,newObj);
-        // this._setRateMinMax(this.dataModels.length,0,newObj);
         this.$set(this.dataModels, newLoadingClass, []);
         this.$set(this.dataModels[newLoadingClass], 0, newObj);
       },
@@ -431,7 +445,7 @@
         this.dataModels.pop();
       },
       addInner(index) {
-        if (this.dataModels[index].length===5)return;
+        if (this.isGuangdong && this.dataModels[index].length===5)return;
         let newSubLoadingClass = this.dataModels[index].length;
         let newObj = Object.assign({}, this.originModel, {insertFlag: true});
         newObj.loading_class = index+1;

@@ -7,6 +7,14 @@
   class="tipsEdit">
     <div  class="row-wraper">
       <div class="row-list">
+        <label>RowKey：</label>
+        <div style="vertical-align: text-bottom;color: #606266;">
+          <span>{{dataModel.rowkey}}</span>
+        </div>
+      </div>
+    </div>
+    <div  class="row-wraper">
+      <div class="row-list">
         <label>Tips反馈：</label>
         <div>
           <el-select style="width:100%" size="mini" v-model.number="dataModel.is_adopted">
@@ -23,8 +31,8 @@
           </div>
         </div>
     </div>
-    <div style="height:30px" class="row-wraper">
-      <el-button style="position: absolute;right: 10px;line-height:1" size="mini" type="primary" @click.prevent="onSumbit">提 交</el-button>
+    <div class="row-wraper">
+      <el-button style="position: absolute;right: 10px;line-height:1;height: 25px" size="mini" type="primary" @click.prevent="onSumbit">提 交</el-button>
     </div>
   </div>
 </template>
@@ -104,7 +112,7 @@
 
 <style scoped>
   .tipsEdit .row-wraper{
-    padding: 7px 10px;
+    padding: 5px 10px;
     display: flex;
     flex-direction: row;
   }

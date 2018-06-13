@@ -202,7 +202,7 @@
     flex-direction: column;
   }
   .tipsData .row-wraper{
-    height: 30px;
+    height: 27px;
     line-height: 30px;
     display: flex;
     flex-direction: row;
