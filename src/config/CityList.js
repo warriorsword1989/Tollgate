@@ -125,13 +125,10 @@ export const cityList = [
   }
 ];
 
-export const getCityNameByCode = function (code) {
-  let adminName = ''
-  cityList.forEach((item, index) => {
-    if (item.adminCode == code) {
-      return adminName = item.cityName;
-    }
-  });
-  return adminName;
-}
+/**
+ * 根据行政区划code查找行政区划名称
+ * @param {*} code 
+ * @return {String}
+ */
+export const getCityNameByCode = (code) => cityList.filter(item => item.adminCode == code)[0];
 

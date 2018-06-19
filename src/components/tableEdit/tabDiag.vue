@@ -1,183 +1,222 @@
 <template>
-<vue-draggable-resizable
-  class="dragWindow"
-  style="background:#fff;box-shadow:0 4px 20px #5c78a7;display:flex;flex-direction:column;height:auto"
-  :w="980"
-  :h="530"
-  :x="leftDis"
-  :y="topDis"
-  :z="10"
-  :parent="true"
-  :drag-handle="'.drag'"
-  :resizable="true"
-  :handles="['mr']"
-  :append-to-body="true">
-  <!-- title-->
-  <div style="display:flex;flex-direction:row;" class="windowTitle">
-    <div style="flex:1"><i class="el-icon-edit-outline drag"> 收费站信息编辑 {{this.workFlag=='static'? '[静态作业]': '[动态作业]'}}</i></div>
-    <div style="width=50px"><i @click="closeDialog" class="el-icon-close"></i></div>
-  </div>
-  <!-- table-->
-  <el-collapse value="1" :v-model="'1'" @change="toggleTable" style="flex:1">
-    <el-collapse-item name="1">
-      <template slot="title">
-        <div style="text-align:center;background: rgb(241, 241, 241)">
-          <i style="font-size: 1.8em;color:#636ef5;vertical-align: sub;" :class="isTableShow?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
-          <span style="color:#636ef5;">{{isTableShow ? '隐藏收费站列表' : '显示收费站列表'}}</span>
-        </div>
-      </template>
-      <el-table v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);" @selection-change="selectChange" ref="multipleTable" :data="tableData" :max-height="100" tooltip-effect="light">
-        <el-table-column label="序号" type="index" width="120"></el-table-column>
-        <el-table-column prop="pid" label="收费站ID"></el-table-column>
-        <el-table-column prop="name" label="收费站名称"></el-table-column>
-        <el-table-column v-if="$store.state.source==1" prop="type" label="收费站类型" show-overflow-tooltip></el-table-column>
-        <el-table-column v-if="$store.state.source!=1" prop="source" label="信息来源" show-overflow-tooltip></el-table-column>
-        <el-table-column type="selection" width="55"></el-table-column>
-      </el-table>
-    </el-collapse-item>
-  </el-collapse>
-  <el-tabs @tab-click='tabOnActive'  :tab-position="tabPosition">
-    <el-tab-pane :label="isEdit[0]?'* 客车车型划分及费率':'客车车型划分及费率'">
-      <sc-toll-car @tabStatusChange="changeTabStatus"></sc-toll-car>
-    </el-tab-pane>
-    <el-tab-pane :label="isEdit[1]?'* 货车车型划分及空载费率': '货车车型划分及空载费率'">
-      <sc-toll-truck @tabStatusChange="changeTabStatus"></sc-toll-truck>
-    </el-tab-pane>
-    <el-tab-pane :label="isEdit[2]?'* 货车计重装载费率(不超限)':'货车计重装载费率(不超限)'">
-      <sc-toll-load @tabStatusChange="changeTabStatus"></sc-toll-load>
-    </el-tab-pane>
-    <el-tab-pane :label="isEdit[4]?'* 货车计重装载费率(超限)':'货车计重装载费率(超限)'">
-      <sc-toll-over-load @tabStatusChange="changeTabStatus"></sc-toll-over-load>
-    </el-tab-pane>
-    <el-tab-pane :label="isEdit[5]?'* 收费站加费信息表':'收费站加费信息表'">
-      <sc-toll-gate-fee @tabStatusChange="changeTabStatus"></sc-toll-gate-fee>
-    </el-tab-pane>
-    <el-tab-pane :label="isEdit[6]?'* 收费站区间表': '收费站区间表'">
-      <sc-toll-grou @tabStatusChange="changeTabStatus"></sc-toll-grou>
-    </el-tab-pane>
-    <el-tab-pane :label="isEdit[7]?'* 限制载重信息表' : '限制载重信息表'">
-      <sc-toll-limit @tabStatusChange="changeTabStatus"></sc-toll-limit>
-    </el-tab-pane>
-    <el-tab-pane :label="isEdit[8] ? '* 桥隧道收费附加表': '桥隧道收费附加表'">
-      <sc-toll-rdlink-bt @tabStatusChange="changeTabStatus"></sc-toll-rdlink-bt>
-    </el-tab-pane>
-    <el-tab-pane v-if="workFlag!='static'" :label="isEdit[9] ? '* 节假日收费浮动信息': '节假日收费浮动信息'">
-      <sc-toll-holiday @tabStatusChange="changeTabStatus"></sc-toll-holiday>
-    </el-tab-pane>
-    <el-tab-pane v-if="workFlag!='static'" :label="isEdit[10] ? '* 特殊收费浮动信息': '特殊收费浮动信息'">
-      <sc-toll-special-pay @tabStatusChange="changeTabStatus"></sc-toll-special-pay>
-    </el-tab-pane>
-  </el-tabs>
-</vue-draggable-resizable>
+  <vue-draggable-resizable
+    class="dragWindow"
+    style="background:#fff;box-shadow:0 4px 20px #5c78a7;display:flex;flex-direction:column;height:auto"
+    :w="boxPros.boxWidth"
+    :h="boxPros.boxHeight"
+    :x="boxPros.leftDis"
+    :y="boxPros.topDis"
+    :z="boxPros.zIndex"
+    :parent="true"
+    :drag-handle="'.drag'"
+    :resizable="true"
+    :handles="['mr']"
+    :append-to-body="true">
+
+    <!-- title-->
+    <div style="display:flex;flex-direction:row;" class="windowTitle">
+      <div style="flex:1"><i class="el-icon-edit-outline drag"> {{ boxTitle }}</i></div>
+      <div><i @click="closeDialog" class="el-icon-close"></i></div>
+    </div>
+
+    <!-- element ui => el-collapse + table components-->
+    <el-collapse :accordion="true" value="1" @change="toggleTable" style="flex:1">
+      <el-collapse-item name="1">
+        <!-- collapse title -->
+        <template slot="title">
+          <div class="titleSet"><i :class="listShowStatus.className"></i><span>{{listShowStatus.text}}</span></div>
+        </template>
+        <!-- collapse content -->
+        <el-table v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);" @selection-change="selectChange" ref="multipleTable" :data="tableData" :max-height="100" tooltip-effect="light">
+          <el-table-column label="序号" type="index" width="120" show-overflow-tooltip></el-table-column>
+          <el-table-column v-for="(item, index) in tableHeader" :key="index" :prop="item.field" :label="item.label" show-overflow-tooltip></el-table-column>
+          <el-table-column type="selection" width="55"></el-table-column>
+        </el-table>
+      </el-collapse-item>
+    </el-collapse>
+
+    <!-- element ui => tab component -->
+    <el-tabs @tab-click="tabOnActive" :tab-position="tabPosition">
+      <!-- tab页切换头 -->
+      <el-tab-pane v-for="(pane, index) in filterPane(bussinessConfig.tableInfos)" :key="index" :label="pane.label"></el-tab-pane>
+      <!-- 根据currentView动态切换组件 -->
+      <component @tabStatusChange="changeTabStatus" :is="currentView"></component>
+    </el-tabs>
+
+  </vue-draggable-resizable>
 </template>
 
 <script>
-  import Vue from 'vue'
-  import scTollCar from './scTollCar';
-  import scTollGateFee from './scTollGateFee';
-  import scTollGrou from './scTollGrou';
-  import scTollHoliday from './scTollHoliday';
-  import scTollLimit from './scTollLimit';
-  import scTollLoad from './scTollLoad';
-  import scTollOverLoad from './scTollOverLoad';
-  import scTollRdlinkBt from './scTollRdlinkBt';
-  import scTollSpecialPay from './scTollSpecialPay';
-  import scTollTruck from './scTollTruck';
-  import {getTollGate, getTollName} from '../../dataService/api';
+  import Vue from 'vue';
+  import config from '../../config/index';
+  import tableContent from '@/components/tableEdit/index';
   import { appUtil } from '../../Application';
+  import { getTollGate, getTollName } from '../../dataService/api';
+  
   export default {
     name: 'tabDiag',
-    props: ['dialogTableVisible', 'handleFlag'],
-    components: {
-      scTollCar,
-      scTollGateFee,
-      scTollGrou,
-      scTollHoliday,
-      scTollLimit,
-      scTollLoad,
-      scTollOverLoad,
-      scTollRdlinkBt,
-      scTollSpecialPay,
-      scTollTruck
-    },
     data() {
       return {
+        boxPros: {
+          topDis:200,
+          leftDis:300,
+          boxWidth: 980,
+          boxHeight: 530,
+          zIndex: 10
+        },
+        componentObj: { ...tableContent },
+        currentView: null,
         loading: true,
         serachShow: false,
-        topDis:200,
-        leftDis:300,
-        activeIndex: 0,
         tabPosition: 'left',
-        isEdit: [false,false,false,false,false,false,false,false,false],
-        isTableShow: false,
+        isTableShow: true,
         multipleSelection: [],
+        tableHeader: [
+          { field: 'pid', label: '收费站ID' },
+          { field: 'name', label: '收费站名称' },
+          { field: 'type', label: '收费站类型' }
+        ],
         tableData: [],
         workFlag: 'static',
-        tollType: {
-          0:'未调查',
-          1:'领卡',
-          2:'交卡付费',
-          3:'固定收费(次费)',
-          4:'交卡付费后再领卡',
-          5:'交卡付费并代收固定费用',
-          6:'验票(无票收费)值先保留',
-          7:'领卡并代收固定费用',
-          8:'持卡打标识不收费',
-          9:'验票领卡',
-          10:'交卡不收费',
-        }
+        bussinessConfig: config.bussinessConfig
       }
     },
+    
+    computed: {
+      // 弹出窗口的title
+      boxTitle: function () {
+        return `收费站信息编辑 ${this.bussinessConfig.workType[this.workFlag]}`;
+      },
+      // 切换显示和隐藏状态显示的文字和小箭头的样式
+      listShowStatus: function () {
+        if (this.isTableShow) {
+          return { className: 'el-icon-caret-bottom',text: '隐藏收费站列表' };
+        }
+        return { className: 'el-icon-caret-top', text: '显示收费站列表' };
+      }
+    },
+
     methods: {
+      _initTableLabel() {
+        this.bussinessConfig.tableInfos.forEach(item => {
+          if (item.label[0] === '*') {
+             return item.label = item.label.substr(1);
+          }
+        });
+      },
+      /**
+        * 显示可以显示的tab;
+       */
+      filterPane() {
+        return this.bussinessConfig.tableInfos.filter(item => item.isShow);
+      },
+      /**
+        * 关闭弹窗表格窗口，并将路由切换为mainMap
+       */
       closeDialog() {
         this.$emit('dialogClose');
+        // 因为切换tab后组件都会重新加载，所以再次清调之前在激活页面改动给label加的*符号
+        this._initTableLabel();
       },
-      toggleTable() {
+
+      /**
+        * 表格列表收缩展开切换行为
+       */
+      toggleTable(param) {
         this.isTableShow = !this.isTableShow;
       },
+
+      /**
+        * 子路由页面发生更改，接收事件改变tab页label的显示;
+       */
       changeTabStatus(eData){
-        //直接通过索引更新数组视图无法更新;这样就能被vue监控到，更新视图 
-        Vue.set(this.isEdit,eData.tabIndex,eData.status) 
+        let currentPane = this.bussinessConfig.tableInfos[eData.tabIndex];
+        currentPane.label = currentPane.label[0] !== '*' ? `*${currentPane.label}` : currentPane.label.substr(1);
       },
+
+      /**
+        * 切换tab页的时候并切换路由，显示对应的组件
+       */
+      tabOnActive(e){
+        // 因为切换tab后组件都会重新加载，所以再次清调之前在激活页面改动给label加的*符号
+        this._initTableLabel();
+        // 动态显示组件;
+        this.currentView = this.componentObj[Object.keys(this.componentObj)[parseInt(e.index)]];
+      },
+
+      /**
+        * 设置收费站列表初始的复选框为选中状态
+       */
       toggleSelection(rows){
-        let self = this;
-        if (rows.length) {
-          rows.forEach(row => {
-            self.$refs.multipleTable.toggleRowSelection(row);
-          });
-        }
+         rows.forEach(row => this.$refs.multipleTable.toggleRowSelection(row), this);
       },
+
+      /**
+        * 列表选择后重新更新选择的收费站的pids
+       */
       selectChange (selection) {
-        let pids = selection.map(item => item.pid);
+        const pids = selection.map(item => item.pid);
         this.$store.commit('changeEditSelectedData', pids);
       },
-      tabOnActive(e){
-        this.activeIndex = parseInt(e.index);
-      },
+
+      /**
+        * 根据地图上选择的收费站pid查询收费站的概略信息，包括收费站的名称，pid，和收费类型
+       */
       async transfromSelectedData(arr) {
-        let param = { table: 'RD_TOLLGATE_NAME', pid: arr};
-        let result = await getTollName(param);
+        let result = null;
+        try {
+          const param = { table: 'RD_TOLLGATE_NAME', pid: arr };
+          result = await getTollName(param);
+        } catch (err) {
+          throw new Error(err);
+        }
+
         this.tableData = result.data.map(item => {
-          item.type = this.tollType[item.type];
-          item.source = ['情报道路对象','情报点对象','情报省份对象'][this.$store.state.source-2];
+          if (this.$store.state.source === 1) {
+            item.type = this.bussinessConfig.tollType[item.type];
+          } else {
+            item.type = this.bussinessConfig.infoSource[this.$store.state.source - 2];
+          }
           return item;
-        });
+        }, this);
+
         this.loading = false;
+
+        // 表格复选框初始设置为选中状态;
         this.$nextTick(() => {
           this.toggleSelection(this.tableData);
         });
       }
     },
+
     mounted() {
       // 查询获得收费站名称;
       this.workFlag = appUtil.getGolbalData().workType;
+      // 动态显示第一个组件;
+      this.currentView = this.componentObj[Object.keys(this.componentObj)[0]];
+
+      if (this.workFlag !== 'static') {
+        this.bussinessConfig.tableInfos.forEach(item => {
+          if (!item.isShow) {
+            item.isShow = !item.isShow;
+          }
+        });
+      }
+      // 如果是情报作业则切换表头;
+      if (this.$store.state.source !== 1) {
+        this.tableHeader[2].label = '信息来源';
+      }
+
       this.transfromSelectedData(this.$store.state.editSelectedData);
     },
+
+    /**
+      * 模板编译挂载之前，设置拖动组件的初始位置
+     */
     beforeMount() {
-      let viewWidth = document.documentElement.clientWidth;
-      let viewHeight = document.documentElement.clientHeight;
-      this.leftDis = (viewWidth - 980) /2;
-      this.topDis = (viewHeight - 530) /2;
+      const documentObj = document.documentElement;
+      this.leftDis = (documentObj.clientWidth - this.boxPros.boxWidth) / 2;
+      this.topDis = (documentObj.clientHeight - this.boxPros.boxHeight) / 2;
     }
   }
 </script>
@@ -204,5 +243,10 @@
     cursor:pointer;
     text-align: center;
     cursor: pointer;
+  }
+  .titleSet {
+    color: rgb(99, 110, 245);
+    text-align: center;
+    background: rgb(233, 233, 239);
   }
 </style>
