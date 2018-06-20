@@ -14,8 +14,8 @@
     :append-to-body="true">
 
     <!-- title-->
-    <div style="display:flex;flex-direction:row;" class="windowTitle">
-      <div style="flex:1"><i class="el-icon-edit-outline drag"> {{ boxTitle }}</i></div>
+    <div class="windowTitle">
+      <div style="flex: 1"><i class="el-icon-edit-outline drag"> {{ boxTitle }}</i></div>
       <div><i @click="closeDialog" class="el-icon-close"></i></div>
     </div>
 
@@ -48,10 +48,10 @@
 
 <script>
   import Vue from 'vue';
-  import config from '../../config/index';
+  import config from '@/config/index';
+  import { appUtil } from '@/Application';
   import tableContent from '@/components/tableEdit/index';
-  import { appUtil } from '../../Application';
-  import { getTollGate, getTollName } from '../../dataService/api';
+  import { getTollGate, getTollName } from '@/dataService/api';
   
   export default {
     name: 'tabDiag',
@@ -211,7 +211,7 @@
     },
 
     /**
-      * 模板编译挂载之前，设置拖动组件的初始位置
+      * 模板编译挂载之前，设置拖动组件的初始位置(有时候没有效果)
      */
     beforeMount() {
       const documentObj = document.documentElement;

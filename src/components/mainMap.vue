@@ -43,7 +43,7 @@
   import sideBar from './layout/sideBar';
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
-  import tableEdit from './tableEdit/tabDiag';
+  import tableEdit from './tabDiag';
   import { appUtil } from '../Application';
   import {getTipsPhoto} from '../dataService/api';
   import EditTool from './EditTool';
