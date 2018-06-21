@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
+  <div style="height:350px;overflow-y: auto" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <!-- 把这一行拿出来防止没有记录 -->
     <div class="grid-content">
       <div style="justify-content: flex-end;" class="grid-wraper">
@@ -300,7 +300,8 @@
         if (value != 20 && value != 40) {
           this.$alert('集装箱尺寸数不等于20或40!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -309,7 +310,8 @@
         if (value < 0 || value > 3) {
           this.$alert('费率值小于0或者大于3!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -318,7 +320,8 @@
         if (value > 20) {
           this.$alert('费率1大于20!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -327,7 +330,8 @@
         if (value > 20) {
           this.$alert('车次加费大于20, 是否继续!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -347,7 +351,8 @@
         if (value > 50) {
           this.$alert('最低收费值大于50!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -357,7 +362,8 @@
         if (value > 10 || value < 0) {
           this.$alert('固定收费站对应次费值大于10或者小于0!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -529,7 +535,8 @@
           } else {
             alertMessage && this.$alert(alertMessage, '错误提示', {
               confirmButtonText: '确定',
-              type: 'error'
+              type: 'error',
+              showClose: false
             })
           }
         }

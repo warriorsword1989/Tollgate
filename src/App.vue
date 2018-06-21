@@ -48,7 +48,7 @@ export default {
 /****************display: block复写tab样式********************/
 .dragWindow .el-tabs__content {
   height: 350px;
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 /****************复写按钮样式********************/
 .dragWindow .el-button {

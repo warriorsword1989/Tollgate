@@ -166,8 +166,17 @@ class TollGate {
       return this.res.send({errorCode: 0, message: '不存在符合更新原则的数据'});
     }   
     let delSql = `DELETE FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')})`;
+    // 如果是这三张表则需要根据有没有桥梁隧道来过滤数据;
+    if (this.table === 'SC_TOLL_OVERLOAD' || this.table === 'SC_TOLL_LOAD') {
+      if (this.req.body.whichKind) {
+        delSql += ` AND NAME_BT IS NULL`;
+      } else {
+        delSql += ` AND NAME_BT IS NOT NULL`;
+      }
+    }
     const delResult = await this.db.executeSql(delSql);
     if (delResult.rowsAffected != -1) {
+      console.log(delResult.rowsAffected)
       param = param.filter(item => pids.indexOf(item[primaryKey.toLowerCase()]) != -1);
       let insertSql = this._getInsertString(param);
       const insertResult = await this.db.executeSql(insertSql);
@@ -247,6 +256,13 @@ class TollGate {
     this.table = this.req.body.table;
     let pid = this.req.body.pid;
     let delSql = `DELETE FROM ${this.table} WHERE GROUP_ID = ${pid}`;
+    if (this.table === 'SC_TOLL_OVERLOAD' || this.table === 'SC_TOLL_LOAD') {
+      if (this.req.body.whichKind) {
+        delSql += ` AND NAME_BT IS NULL`;
+      } else {
+        delSql += ` AND NAME_BT IS NOT NULL`;
+      }
+    }
     let delResult = await this.db.executeSql(delSql);
     if (delResult.rowsAffected != -1) { 
       // 如果删除成功，去查与收费站相关的表，如果不存在该收费站信息，则更新index表;

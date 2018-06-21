@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
+  <div style="height:280px;overflow-y: auto" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <!-- 一条没有的显示 -->
     <div class="grid-content">
       <div style="justify-content: flex-end;" class="grid-wraper">
@@ -11,7 +11,7 @@
     <div v-for="(dataItem, outerIndex) in dataModels" :key="outerIndex" class="wraper">
       <div style="margin-bottom: 5x;display:flex;flex-direction:column" class="grid-content">
         <el-form v-for="(innerDataItem, innerIndex) in dataItem" :key="innerIndex" :model="innerDataItem" ref="dataItem"  style="display: flex;flex-direction: column;;padding:0" class="grid-list">
-          <div v-show="outerIndex==0 && innerIndex==0" class="grid-wraper">
+          <div v-show="outerIndex==0 && innerIndex==0 && !activeInnerPanel" class="grid-wraper">
             <div class="grid-list">
               <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
               <div class="inputPart">
@@ -237,6 +237,7 @@
   import {appUtil} from '../../Application';
   export default {
     name: 'scTollOverLoad',
+    props: ['activeInnerPanel'],
     components: {searchName},
     data() {
       return {
@@ -478,7 +479,8 @@
           table: 'SC_TOLL_OVERLOAD',
           data: submitData,
           workFlag: appUtil.getGolbalData().workType,
-          adminCode: appUtil.getGolbalData().adminCode
+          adminCode: appUtil.getGolbalData().adminCode,
+          whichKind: this.activeInnerPanel
         }
         this.loading = true;
         updateTollGate(params)
@@ -518,7 +520,8 @@
           let params = {
             table: 'SC_TOLL_OVERLOAD',
             pid: this.$store.state.editSelectedData[0],
-            workFlag: appUtil.getGolbalData().workType
+            workFlag: appUtil.getGolbalData().workType,
+            whichKind: this.activeInnerPanel
           };
           this.loading = true;
           deleteCarTruckTollGate(params)
@@ -562,6 +565,10 @@
           // 验证最小值不能大与最大值
           let alertMessage = '';
           this.dataModels.forEach((item,index) => {
+            if (!this.activeInnerPanel && !item[0].name_bt) {
+              validateFlag = false;
+              alertMessage += `在收费站桥隧到下桥梁隧信息不能为空!`;
+            }
             if(item[0].rato_min >= item[0].rato_max) {
               validateFlag = false;
               alertMessage += `${index+1}类型超载最小百分比值必须比最大值小;<br />`;
@@ -585,14 +592,16 @@
             alertMessage && this.$alert(alertMessage, '错误提示', {
               confirmButtonText: '确定',
               type: 'error',
-              dangerouslyUseHTMLString: true
+              dangerouslyUseHTMLString: true,
+              showClose: false
             })
           }
         }
       }
     },
     mounted() {
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
+      console.log(this.activeInnerPanel)
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '110000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
         let param = {
@@ -605,6 +614,8 @@
           .then(result => {
             let {errorCode,data} = result;
             this.hasData = result.data.length ? true : false;
+            // 根据tab页的index数值来对数据根据有桥隧道和没有桥隧道进行过滤。
+            data = data.filter(item => !item.name_bt == !!this.activeInnerPanel);
             let classObjResult = _.groupBy(data, 'overloading_clss');
             let classArrResult = [];
             Object.keys(classObjResult).forEach(item => {

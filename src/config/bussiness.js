@@ -1,15 +1,15 @@
 // 数据库中说有的表信息；
 const tableInfos = [
-  { label: '客车车型划分及费率', tableName: 'SC_TOLL_CAR', isShow: true },
-  { label: '货车车型划分及空载费率', tableName: 'SC_TOLL_TRUCK', isShow: true },
-  { label: '货车计重装载费率(不超限)', tableName: 'SC_TOLL_LOAD', isShow: true },
-  { label: '货车计重装载费率(超限)', tableName: 'SC_TOLL_OVERLOAD', isShow: true },
-  { label: '收费站加费信息表', tableName: 'SC_TOLL_TOLLGATEFEE', isShow: true },
-  { label: '收费站区间表', tableName: 'SC_TOLL_GROUP_DETAIL', isShow: true },
-  { label: '限制载重信息表', tableName: 'SC_TOLL_LIMIT', isShow: true },
-  { label: '桥隧道收费附加表', tableName: 'SC_TOLL_RDLINK_BT', isShow: true },
-  { label: '节假日收费浮动信息', tableName: 'SC_TOLL_HOLIDAY', isShow: false },
-  { label: '特殊收费浮动信息', tableName: 'SC_TOLL_SPEFLOAT', isShow: false }
+  { label: '客车车型划分及费率', tableName: 'SC_TOLL_CAR', isShow: true, comName: 'scTollCar' },
+  { label: '货车车型划分及空载费率', tableName: 'SC_TOLL_TRUCK', isShow: true, comName: 'scTollTruck' },
+  { label: '货车计重装载费率(不超限)', tableName: 'SC_TOLL_LOAD', isShow: true, comName: 'innerTab' },
+  { label: '货车计重装载费率(超限)', tableName: 'SC_TOLL_OVERLOAD', isShow: true, comName: 'innerTab' },
+  { label: '收费站加费信息表', tableName: 'SC_TOLL_TOLLGATEFEE', isShow: true, comName: 'scTollGateFee' },
+  { label: '收费站区间表', tableName: 'SC_TOLL_GROUP_DETAIL', isShow: true, comName: 'scTollGrou' },
+  { label: '限制载重信息表', tableName: 'SC_TOLL_LIMIT', isShow: true, comName: 'scTollLimit' },
+  { label: '桥隧道收费附加表', tableName: 'SC_TOLL_RDLINK_BT', isShow: true, comName: 'scTollRdlinkBt' },
+  { label: '节假日收费浮动信息', tableName: 'SC_TOLL_HOLIDAY', isShow: false, comName: 'scTollHoliday' },
+  { label: '特殊收费浮动信息', tableName: 'SC_TOLL_SPEFLOAT', isShow: false, comName: 'scTollSpecialPay' }
 ];
 
 // 收费站类型列表；

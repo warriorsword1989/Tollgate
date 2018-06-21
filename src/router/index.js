@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import mainMap from '@/components/mainMap'
 import Home from '@/components/Home'
-import tableContent from '@/components/tableEdit/index'
 
 Vue.use(Router);
 

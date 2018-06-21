@@ -24,7 +24,10 @@
       <el-collapse-item name="1">
         <!-- collapse title -->
         <template slot="title">
-          <div class="titleSet"><i :class="listShowStatus.className"></i><span>{{listShowStatus.text}}</span></div>
+          <div class="titleSet">
+            <i :class="listShowStatus.className"></i>
+            <span style="user-select:none;">{{listShowStatus.text}}</span>
+          </div>
         </template>
         <!-- collapse content -->
         <el-table v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);" @selection-change="selectChange" ref="multipleTable" :data="tableData" :max-height="100" tooltip-effect="light">
@@ -40,7 +43,7 @@
       <!-- tab页切换头 -->
       <el-tab-pane v-for="(pane, index) in filterPane(bussinessConfig.tableInfos)" :key="index" :label="pane.label"></el-tab-pane>
       <!-- 根据currentView动态切换组件 -->
-      <component @tabStatusChange="changeTabStatus" :is="currentView"></component>
+      <component @tabStatusChange="changeTabStatus" :currentActive="activeIndex" :is="currentView"></component>
     </el-tabs>
 
   </vue-draggable-resizable>
@@ -66,6 +69,8 @@
         },
         componentObj: { ...tableContent },
         currentView: null,
+        activeIndex: 0,
+        oldActiveIndex: 0,
         loading: true,
         serachShow: false,
         tabPosition: 'left',
@@ -98,8 +103,9 @@
 
     methods: {
       _initTableLabel() {
-        this.bussinessConfig.tableInfos.forEach(item => {
+        this.bussinessConfig.tableInfos.forEach((item, index) => {
           if (item.label[0] === '*') {
+             this.oldActiveIndex = index;
              return item.label = item.label.substr(1);
           }
         });
@@ -131,7 +137,11 @@
        */
       changeTabStatus(eData){
         let currentPane = this.bussinessConfig.tableInfos[eData.tabIndex];
-        currentPane.label = currentPane.label[0] !== '*' ? `*${currentPane.label}` : currentPane.label.substr(1);
+        if (eData.status) {
+          currentPane.label = currentPane.label[0] !== '*' ? `*${currentPane.label}` : currentPane.label;
+        } else {
+          currentPane.label = currentPane.label[0] !== '*' ? currentPane.label : `${currentPane.label.substr(1)}`;
+        }
       },
 
       /**
@@ -141,7 +151,23 @@
         // 因为切换tab后组件都会重新加载，所以再次清调之前在激活页面改动给label加的*符号
         this._initTableLabel();
         // 动态显示组件;
-        this.currentView = this.componentObj[Object.keys(this.componentObj)[parseInt(e.index)]];
+        const activePanel = this.bussinessConfig.tableInfos.filter(item => item.label === e.label);
+        // 销毁组建(对于两次同时加载同一个组件只能在第一个加载时执行的解决办法);
+        if (this.currentView.name === 'innerTab') {
+          this.currentView = null;
+        }
+        this.$nextTick(() => {
+          this.currentView = this.componentObj[activePanel[0].comName];
+          if (this.isGuangdong) {
+            if (e.index == 2) {
+              this.currentView = this.componentObj['scTollLoad'];
+            }
+            // if (e.index == 3) {
+            //   this.currentView = this.componentObj['scTollOverLoad'];
+            // }
+          }
+          this.activeIndex = parseInt(e.index);
+        });
       },
 
       /**
@@ -190,6 +216,7 @@
     },
 
     mounted() {
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '110000';
       // 查询获得收费站名称;
       this.workFlag = appUtil.getGolbalData().workType;
       // 动态显示第一个组件;

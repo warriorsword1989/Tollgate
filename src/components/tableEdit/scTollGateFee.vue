@@ -1,5 +1,5 @@
 <template>
-  <div class="tableEditPanel" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
+  <div style="height:350px;overflow-y: auto" class="tableEditPanel" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <el-form :model="dataModels" ref="dataModels" :inline="false" class="wraper">
       <div class="grid-content">
         <div class="labelText">费用金额：</div>

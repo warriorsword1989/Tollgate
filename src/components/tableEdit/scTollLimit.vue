@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
+  <div style="height:350px;overflow-y: auto" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <div class="grid-content">
       <div class="grid-wraper">
         <div class="grid-list">
@@ -53,7 +53,7 @@
               </div>
             </fieldset>
           </div>
-          <el-button @click="removeLimitItem(index)" style="padding: 5px;height: 28px;margin-top: 40px" type="primary" class="btn-icon"
+          <el-button @click="removeLimitItem(index)" style="padding: 5px;height: 28px;margin-top: 25px" type="primary" class="btn-icon"
             icon="el-icon-minus"></el-button>
         </div>
       </div>
@@ -80,7 +80,7 @@
         dataModels: {},
         originModel: {
           system_id: appUtil.getGolbalData().adminCode,
-          admin_name: getCityNameByCode(appUtil.getGolbalData().adminCode),
+          admin_name: getCityNameByCode(appUtil.getGolbalData().adminCode).cityName,
           axle_num_limit: 2,
           model_limit: 0,
           ton_limit: 1,
@@ -120,7 +120,8 @@
         if (value < 2 || value > 10) {
           this.$alert('轴数小于2或大于10!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -129,7 +130,8 @@
         if (value < 0 || value > 100) {
           this.$alert('吨数小于0或大于100!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         } 
       },
