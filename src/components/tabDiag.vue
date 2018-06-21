@@ -216,7 +216,7 @@
     },
 
     mounted() {
-      this.isGuangdong = appUtil.getGolbalData().adminCode == '110000';
+      this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
       // 查询获得收费站名称;
       this.workFlag = appUtil.getGolbalData().workType;
       // 动态显示第一个组件;
