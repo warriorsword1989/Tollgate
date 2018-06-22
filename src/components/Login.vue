@@ -159,6 +159,9 @@
           }
         });
       }
+    },
+    mounted: function() {
+      console.log('12111111');
     }
   }
 </script>

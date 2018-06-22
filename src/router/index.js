@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import mainMap from '@/components/mainMap'
 import Home from '@/components/Home'
+import homeView from '@/components/homeView/index'
 
 Vue.use(Router);
 
@@ -24,12 +25,12 @@ export default new Router({
       name: 'mainMap'
     },
     {
-      path: '/Home',
+      path: '/home',
       component: Home,
       name: 'Home',
       children:[
-        // { path: '/mainMap/scTollCar', component: scTollCar},
-        // { path: '/mainMap/scTollTruck', component: scTollTruck}
+        { path: '/home/photoWork', component: homeView.photoWork, name: 'photoWork' },
+        { path: '/home/infosWork', component: homeView.infosWork, name: 'infosWork' }
       ]
     }
   ]

@@ -1,9 +1,9 @@
 <template style="height: 100%">
   <!--主页面-->
   <div style="width: 100%;height: 100%;overflow: auto;background-color: #FFFFFF" class="homeContainer">
-    <el-tabs v-model="activeName"  :tab-position="tabPosition" style="height: 100%">
-      <el-tab-pane label="照片作业" name="first" style="height: 100%">
-        <div class="scroll_style" style="height: 190px; padding-top: 20px">
+    <el-tabs @tab-click="toggleWork" v-model="activeName"  :tab-position="tabPosition" style="height: 100%">
+      <el-tab-pane label="照片作业" name="first">
+        <!--<div class="scroll_style" style="height: 190px; padding-top: 20px">
           <div class="photoProject_rightDiv_search">
               <div class="photoProject_rightDiv_choose">
                 <span>行政区划：</span>
@@ -62,11 +62,11 @@
         </div>
         <div class="block">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="tip.currentPage" :page-size="tip.pageSize" :page-sizes="[10, 20, 50]" layout="sizes, total, prev, pager, next" :total="tip.photoData.length"></el-pagination>
-        </div>
+        </div>-->
       </el-tab-pane>
 <!--情报作业-->
-      <el-tab-pane label="情报作业" name="second" style="height: 100%">
-        <div class="scroll_style" style="height: 190px; padding-top: 20px">
+      <el-tab-pane label="情报作业" name="second">
+        <!--<div class="scroll_style" style="height: 190px; padding-top: 20px">
           <div class="photoProject_rightDiv_search">
             <div class="photoProject_rightDiv_choose">
               <span>行政区划：</span>
@@ -119,8 +119,9 @@
         </div>
         <div class="block">
           <el-pagination @size-change="handleInfoSizeChange" @current-change="handleInfoCurrentChange" :current-page.sync="info.currentPage" :page-size="info.pageSize" :page-sizes="[10, 20, 50]" layout="sizes, total, prev, pager, next" :total="info.infoData.length"></el-pagination>
-        </div>
+        </div>-->
       </el-tab-pane>
+      <router-view></router-view>
     </el-tabs>
     <user-tool class="userToolbar" style="50px"></user-tool>
   </div>
@@ -244,6 +245,14 @@
           };
         },
         methods: {
+          /**
+            * 切换路由
+           */
+          toggleWork (e) {
+            const tabIndex = parseInt(e.index);
+            tabIndex ? this.$router.push({ path: '/home/infosWork' }) : this.$router.push({ path: '/home/photoWork' });
+          },
+
           handleClick:function (data, type, dataSource) {
             if (dataSource === 1) {
               this.$router.push({name:'mainMap', params:{point:data.toll_location,type: 1, data: {
@@ -359,6 +368,14 @@
                 })
               }
             });
+          }
+        },
+        watch: {
+          /**
+            * 对路由的监听来切换数据
+           */
+          '$route': function (newVal, oldVal) {
+            console.log(newVal, oldVal);
           }
         },
         mounted: function() {
