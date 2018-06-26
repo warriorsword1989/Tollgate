@@ -14,37 +14,33 @@ class Tips {
 
   async getTollGateTipList() {
     const param = this.req.query;
-    const adminCode = param.adminCode;
-    const tipsVersion = param.tipsVersion;
-    const tollName = param.tollName;
-    const updateStartTime = param.updateStartTime;
-    const updateEndTime = param.updateEndTime;
-    const isAdopted = param.isAdopted;
-    let sql = "SELECT a.ROWKEY, a.TIPS_LIFECYCLE, a.PHOTO_ID, a.TOLL_NAME, a.TOLL_TYPE, to_char(a.TOLL_LOCATION.get_wkt()) as TOLL_LOCATION, a.ADMIN_CODE, a.TIPS_VERSION, a.UPDATE_TIME, a.TOLL_PNUM, a.TOLL_LOC, a.IS_ADOPTED, a.MEMO FROM " + this.table + " a WHERE ADMIN_CODE = '" + adminCode + "'";
-    if (tipsVersion) {
-      sql = sql + " AND upper(TIPS_VERSION) = '" + tipsVersion.toUpperCase() + "'";
+    let fields = `A.ROWKEY, A.TIPS_LIFECYCLE, A.PHOTO_ID, A.TOLL_NAME, A.TOLL_TYPE,
+                  to_char(A.TOLL_LOCATION.get_wkt()) as TOLL_LOCATION, A.ADMIN_CODE,
+                  A.TIPS_VERSION, A.UPDATE_TIME, A.TOLL_PNUM, A.TOLL_LOC, A.IS_ADOPTED, A.MEMO, ROWNUM RN`;
+    let condition = `ADMIN_CODE=${param.adminCode}`;
+    if (param.tipsVersion) {
+      condition += ` AND upper(TIPS_VERSION) = ${param.tipsVersion.toUpperCase()}`;
     }
-    if (tollName) {
-      sql = sql + " AND TOLL_NAME LIKE '%" + tollName + "%'";
+    if (param.tollName) {
+      condition += ` AND TOLL_NAME LIKE %${param.tollName}%`;
     }
-    if (updateStartTime && updateEndTime) {
-      sql = sql + " AND trunc(UPDATE_TIME) BETWEEN TO_DATE('" + updateStartTime + "', 'yyyy-MM-dd') AND TO_DATE('" + updateEndTime + "', 'yyyy-MM-dd')";
+    if (param.updateStartTime && param.updateEndTime) {
+      condition += ` AND UPDATE_TIME BETWEEN TO_DATE('${param.updateStartTime}','yyyy-MM-dd')
+                    AND TO_DATE('${param.updateEndTime}','yyyy-MM-dd')`;
     }
-    if (isAdopted.length > 0) {
-      sql = sql + " AND IS_ADOPTED IN (" + isAdopted.toString() + ")";
+    if (param.isAdopted && param.isAdopted.length > 0) {
+      condition += ` AND IS_ADOPTED IN (${param.isAdopted.toString()})`;
     }
+    let sql = `SELECT * FROM (SELECT ${fields} FROM (SELECT * FROM ${this.table} WHERE ${condition}) A ) WHERE
+               RN BETWEEN ${(param.currentPage - 1) * param.pageSize + 1} AND ${param.currentPage * param.pageSize}`;
     try {
       const result = await this.db.executeSql(sql);
       const resultData = changeResult(result);
-      this.res.send({
-        errorCode: 0,
-        data: resultData
-      });
+      const reuslt2 = await this.db.executeSql(`SELECT COUNT(*) AS total FROM ${this.table} WHERE ${condition}`);
+      const totalResult = changeResult(reuslt2);
+      this.res.send({ errorCode: 0, total: totalResult[0].total, data: resultData});
     } catch(error) {
-      this.res.send({
-        errorCode: -1,
-        data: error
-      });
+      this.res.send({ errorCode: -1, data: error });
     }
   }
 

@@ -1,5 +1,5 @@
 import scenes from './Scenes';
-import cityList from './CityList';
+import * as cityList from './CityList';
 import tipLayers from './TipLayers';
 import symbolsFile from './SymbolsFile';
 import bussinessConfig from './bussiness';
