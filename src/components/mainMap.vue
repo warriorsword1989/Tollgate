@@ -47,7 +47,7 @@
   import { appUtil } from '../Application';
   import {getTipsPhoto} from '../dataService/api';
   import EditTool from './EditTool';
-  import UserTool from './UserTool';
+  import UserTool from '@/components/UserTool';
   import SceneTool from './SceneTool';
   import '../uikits/controllers/EventController';
   import SearchTool from './SearchTool';
