@@ -1,5 +1,6 @@
 <template>
-  <div 
+  <div
+    style="height:350px;overflow-y: auto"
     v-loading="loading"
     element-loading-text="拼命加载中"
     element-loading-spinner="el-icon-loading"
@@ -484,7 +485,8 @@
           } else {
             alertMessage && this.$alert(alertMessage, '错误提示', {
               confirmButtonText: '确定',
-              type: 'error'
+              type: 'error',
+              showClose: false
             })
           }
         }

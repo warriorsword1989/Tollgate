@@ -3,12 +3,7 @@ import '../../lib/mapApi.min';
 import '../../lib/dataApi.min';
 import '../../lib/renderApi.min';
 import '../../lib/mapApi.css';
-import featureLayers from '../config/FeatureLayers';
-import referenceLayers from '../config/ReferenceLayers';
-import scenes from '../config/Scenes';
-import sourceConfig from '../config/SourceConfig';
-import symbolsFile from '../config/SymbolsFile';
-import tipLayers from '../config/TipLayers';
+import config from '../config/index';
 import { appUtil } from '../Application';
 import '../uikits/tools/Tool';
 import '../uikits/tools/MapTool';
@@ -114,19 +109,19 @@ class MapInit {
   };
 
   loadConfigs = () => {
-    this.symbolFactory.loadSymbols(symbolsFile);
+    this.symbolFactory.loadSymbols(config.symbolsFile);
     this.sceneCtrl.setDefaultZoom({
       minZoom: 10,
       maxZoom: 21,
       minEditZoom: 15
     });
-    this.sceneCtrl.loadLayers(referenceLayers);
-    this.sceneCtrl.loadLayers(featureLayers, 'feature');
-    this.sceneCtrl.loadLayers(tipLayers, 'tip');
-    this.sceneCtrl.loadBackground(scenes.background);
-    this.sceneCtrl.loadOverlay(scenes.overlay);
-    this.sceneCtrl.loadScenes(scenes.scenes);
-    this.sourceCtrl.loadConfig(sourceConfig);
+    this.sceneCtrl.loadLayers(config.referenceLayers);
+    this.sceneCtrl.loadLayers(config.featureLayers, 'feature');
+    this.sceneCtrl.loadLayers(config.tipLayers, 'tip');
+    this.sceneCtrl.loadBackground(config.scenes.background);
+    this.sceneCtrl.loadOverlay(config.scenes.overlay);
+    this.sceneCtrl.loadScenes(config.scenes.scenes);
+    this.sourceCtrl.loadConfig(config.sourceConfig);
   };
   initModules = map => {
     const leafletMap = map.getLeafletMap();

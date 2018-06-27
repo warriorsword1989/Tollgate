@@ -1,6 +1,5 @@
 <template>
-  <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
-    <!-- 一条没有的显示 -->
+  <div :style="diyStyle" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <div class="grid-content">
       <div style="justify-content: flex-end;" class="grid-wraper">
         <el-button @click="addOuter" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus">装载类别添加</el-button>
@@ -10,8 +9,8 @@
     <div v-for="(dataItem, outerIndex) in dataModels" :key="outerIndex" :inline="true" class="wraper">
       <div style="margin-bottom: 5x;display:flex;flex-direction:column" class="grid-content">
         <el-form v-for="(innerDataItem, innerIndex) in dataItem" :key="innerIndex" :model="innerDataItem" ref="dataItem" style="display: flex;flex-direction: column;padding:0" class="grid-list">
-          <!-- 桥梁隧道名称 -->
-          <div v-show="outerIndex==0 && innerIndex==0" class="grid-wraper">
+          
+          <div v-show="outerIndex==0 && innerIndex==0 && !activeInnerPanel" class="grid-wraper">
             <div class="grid-list">
               <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
               <div class="inputPart">
@@ -27,7 +26,7 @@
             <el-button @click="toggleSearchPanel(true)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
             <el-button @click="deleteBridge()" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-delete"></el-button>
           </div>
-          <!-- 装载类型显示 -->
+          
           <div v-show="innerIndex==0" style="justify-content: flex-end;" class="grid-wraper">
             <el-button @click="addInner(outerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-circle-plus-outline">装载区间添加</el-button>
             <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间删除</el-button>
@@ -51,7 +50,7 @@
                   <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
                 <span style="display:block;line-height:28px">-</span> 
-                <!-- 广东的情况 -->
+                
                 <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
                   <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
@@ -61,7 +60,7 @@
                 <el-form-item v-if="isGuangdong && outerIndex==4" prop="tunnage_max">
                   <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" size="mini"></el-input>
                 </el-form-item>
-                <!-- 非广东的情况 -->
+                
                 <el-form-item v-if="!isGuangdong && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
                   <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
@@ -71,7 +70,7 @@
               </div>
             </div>
           </div>
-          <!-- 装载类型内装载区间数据循环 -->
+          
           <div style="display:flex;flex-direction: row;">
             <fieldset :style="innerDataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
               <legend style="font-size:12px">{{innerDataItem.loading_subclss}} 区间</legend>
@@ -196,13 +195,13 @@
     <search-name @selectBtName="setBtName" @toggleSearch="toggleSearchPanel" v-if="serachShow"></search-name>
   </div>
 </template>
-
 <script>
   import searchName from './searchName';
-  import {updateTollGate,getTollGate, deleteCarTruckTollGate} from '../../dataService/api';
-  import {appUtil} from '../../Application';
+  import { updateTollGate, getTollGate, deleteCarTruckTollGate } from '../../dataService/api';
+  import { appUtil } from '../../Application';
   export default {
     name: 'scTollCar',
+    props: ['activeInnerPanel'],
     components: {searchName},
     data() {
       return {
@@ -272,6 +271,14 @@
         deep: true
       }
     },
+    computed: {
+      diyStyle: function () {
+        if (this.isGuangdong) {
+          return 'height:350px; overflow-y: auto';
+        }
+        return 'height:280px; overflow-y: auto';
+      }
+    },
     methods: {
       // 如果存在的换验证数字是否为>=0的数字；
       validateNum (rule, value, callback) {
@@ -302,7 +309,8 @@
         if (value > 20) {
           this.$alert('最低收费值大于20!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -311,7 +319,8 @@
         if (value > 10) {
           this.$alert('最低计重值大于10?', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -320,7 +329,8 @@
         if (value >= 3) {
           this.$alert('费率上限必须小于3!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -329,7 +339,8 @@
         if (value > 10 || value < 0) {
           this.$alert('基本费率值大于10或者小于0!', '提示', {
             confirmButtonText: '确定',
-            type: 'warning'
+            type: 'warning',
+            showClose: false
           });
         }
       },
@@ -485,7 +496,8 @@
           table: this.isGuangdong? 'SC_TOLL_LOAD_GD' : 'SC_TOLL_LOAD',
           data: submitData,
           workFlag: appUtil.getGolbalData().workType,
-          adminCode: appUtil.getGolbalData().adminCode
+          adminCode: appUtil.getGolbalData().adminCode,
+          whichKind: this.activeInnerPanel
         };
         this.loading = true;
         updateTollGate(params)
@@ -529,7 +541,8 @@
           let params = {
             table: this.isGuangdong? 'SC_TOLL_LOAD_GD' : 'SC_TOLL_LOAD',
             pid: this.$store.state.editSelectedData[0],
-            workFlag: appUtil.getGolbalData().workType
+            workFlag: appUtil.getGolbalData().workType,
+            whichKind: this.activeInnerPanel
           };
           this.loading = true;
           deleteCarTruckTollGate(params)
@@ -569,6 +582,10 @@
           // 验证最小值不能大与最大值
           let alertMessage = '';
           this.dataModels.forEach((item,index) => {
+            if (!this.isGuangdong && !this.activeInnerPanel && !item[0].name_bt) {
+              validateFlag = false;
+              alertMessage += `在收费站桥隧到下桥梁隧信息不能为空!`;
+            }
             if(item[0].tunnage_min >= item[0].tunnage_max) {
               validateFlag = false;
               alertMessage += `${index+1}类型装载吨位最小值必须比最大值小;<br />`;
@@ -619,7 +636,8 @@
             alertMessage && this.$alert(alertMessage, '错误提示', {
               confirmButtonText: '确定',
               type: 'error',
-              dangerouslyUseHTMLString: true
+              dangerouslyUseHTMLString: true,
+              showClose: false
             })
           }
         }
@@ -639,6 +657,10 @@
         .then(result => {
           let {errorCode,data} = result;
           this.hasData = result.data.length ? true : false;
+          // 根据tab页的index数值来对数据根据有桥隧道和没有桥隧道进行过滤(非广东的情况)。
+          if (!this.isGuangdong) {
+            data = data.filter(item => !item.name_bt == !!this.activeInnerPanel);
+          }
           let classObjResult = _.groupBy(data, 'loading_class');
           let classArrResult = [];
           Object.keys(classObjResult).forEach(item => {
@@ -669,10 +691,10 @@
       }
     }
   }
-
 </script>
 
 <style scoped>
+
   fieldset {
     padding: 0;
     width:100%;
@@ -726,5 +748,4 @@
     margin-bottom: 0;
     margin-right: 0;
   }
-
 </style>

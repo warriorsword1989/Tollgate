@@ -1,41 +1,54 @@
 <template>
   <div class="userToolContainer">
-    <div>
-      <!-- <div class="innerImg"></div> -->
-    </div>
+    <div><!-- <div class="innerImg"></div> --></div>
     <ul class="list-group fm-dropdown-menu">
-      <li v-show="showTips" @click="backToTips()">{{this.dataSource === 1 ? '返回tips列表': '返回情报列表'}}</li>
+      <li v-show="showTips" @click="backToTips()">{{showText}}</li>
+			<li v-show="showBridge" @click="showDataList()">桥梁隧道</li>
       <li><a @click="logout" href="#/login">退出</a></li>
     </ul>
   </div>
 </template>
 
 <script>
-    import { appUtil } from '../Application';
+    import { appUtil } from '@/Application';
     export default {
         name: "user-tool",
         data() {
           return {
+						workType: 'static',
             dataSource: 1,
-            showTips: true
+            showTips: false,
+						showBridge: false
           }
         },
+				watch: {},
+				computed: {
+					showText () {
+						return this.dataSource === 1 ? '返回tips列表': '返回情报列表';
+					}
+				},
         methods: {
+
           backToTips: function () {
             const data = this.$route.params.data;
             const type = this.$route.params.type;
-            this.$router.push({name:'Home', params:{data: data, type: type}});
+            this.$router.push({ name:'Home', params:{ data: data, type: type } });
           },
+
           logout: function () {
             this.$router.push('/login');
             appUtil.removeTollgateToken();
-          }
+          },
+
+					showDataList: function () {
+
+					}
         },
         mounted () {
+					this.showTips = (this.$route.name === 'mainMap');
+					this.showBridge = (this.$route.name === 'mainMap' && this.workType === 'static');
           this.dataSource = (appUtil.getGolbalData() && appUtil.getGolbalData().dataSource) || this.dataSource;
-          if (this.$route.path == '/Home') {
-            this.showTips = false;
-          }
+					this.workType = (appUtil.getGolbalData() && appUtil.getGolbalData().workType) || this.workType;
         }
     }
 </script>
@@ -43,8 +56,8 @@
 <style scoped>
   .userToolContainer {
     position: absolute;
-    top: 10px;
-    right: 50px;
+    top: 16px;
+    right: 30px;
     text-align: center;
     padding-bottom: 10px;
     z-index: 10;

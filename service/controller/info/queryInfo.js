@@ -1,9 +1,7 @@
 import ConnectOracle from '../../oracle/connectOracle';
 import ConnectGdbOracle from '../../oracle/connectGdbOracle';
 import ConnectMetaOracle from '../../oracle/connectMetaOracle';
-import logger from '../../config/logs';
 import { changeResult } from '../../Util';
-import { stringify } from 'querystring';
 
 class GetInfoData {
   constructor(req, res, next) {
@@ -20,33 +18,29 @@ class GetInfoData {
 
   async getTollGateInfoList() {
     const param = this.req.query;
-    const adminCode = param.adminCode;
-    const infoCode = param.infoCode;
-    const complete = param.complete;
-    const pushBeforeTime = param.pushBeforeTime;
-    const pushAfterTime = param.pushAfterTime;
-    let sql = "SELECT * FROM " + this.table + " WHERE ADMIN_CODE LIKE '" + adminCode.substr(0,2) + "%'";
-    if (infoCode) {
-      sql = sql + " AND INFO_CODE = '" + infoCode + "'";
+    let condition = `ADMIN_CODE LIKE '${param.adminCode.substr(0,2)}%'`;
+    if (param.infoCode) {
+      condition += ` AND INFO_CODE = ${param.infoCode}`;
     }
-    if (pushBeforeTime && pushAfterTime) {
-      sql = sql + " AND PUBLIC_TIME BETWEEN '" + pushBeforeTime + "' AND '" + pushAfterTime + "'";
+    if (param.tollName) {
+      condition += ` AND TOLL_NAME LIKE %${param.tollName}%`;
     }
-    if (complete.length > 0) {
-      sql = sql + " AND COMPLETE IN (" + complete.toString() + ")";
+    if (param.updateStartTime && param.updateEndTime) {
+      condition += ` AND PUBLIC_TIME BETWEEN ${param.pushBeforeTime} AND ${param.pushAfterTime}`;
     }
+    if (param.complete && param.complete.length > 0) {
+      condition += ` AND COMPLETE IN (${param.complete.toString()})`;
+    }
+    let sql = `SELECT * FROM (SELECT A.*, ROWNUM RN FROM (SELECT * FROM ${this.table} WHERE ${condition}) A ) WHERE
+               RN BETWEEN ${(param.currentPage - 1) * param.pageSize + 1} AND ${param.currentPage * param.pageSize}`;
     try {
       const result = await this.db.executeSql(sql);
       const resultData = changeResult(result);
-      this.res.send({
-        errorCode: 0,
-        data: resultData
-      });
+      const reuslt2 = await this.db.executeSql(`SELECT COUNT(*) AS total FROM ${this.table} WHERE ${condition}`);
+      const totalResult = changeResult(reuslt2);
+      this.res.send({ errorCode: 0, data: resultData, total: totalResult[0].total });
     } catch(error) {
-      this.res.send({
-        errorCode: -1,
-        data: error
-      });
+      this.res.send({ errorCode: -1, data: error });
     }
   }
 
