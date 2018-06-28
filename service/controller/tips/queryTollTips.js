@@ -19,10 +19,10 @@ class Tips {
                   A.TIPS_VERSION, A.UPDATE_TIME, A.TOLL_PNUM, A.TOLL_LOC, A.IS_ADOPTED, A.MEMO, ROWNUM RN`;
     let condition = `ADMIN_CODE=${param.adminCode}`;
     if (param.tipsVersion) {
-      condition += ` AND upper(TIPS_VERSION) = ${param.tipsVersion.toUpperCase()}`;
+      condition += ` AND upper(TIPS_VERSION) = '${param.tipsVersion.toUpperCase()}'`;
     }
     if (param.tollName) {
-      condition += ` AND TOLL_NAME LIKE %${param.tollName}%`;
+      condition += ` AND TOLL_NAME LIKE '%${param.tollName}%'`;
     }
     
     if (param.updateStartTime && param.updateEndTime) {

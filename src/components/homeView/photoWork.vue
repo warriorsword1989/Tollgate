@@ -11,7 +11,7 @@
 
 			<div class="headerItem">
 				<div>版本号：</div>
-				<el-input :v-model="searchCondition.tipsVersion" placeholder="请输入内容"></el-input>
+				<el-input v-model="searchCondition.tipsVersion" placeholder="请输入内容"></el-input>
 			</div>
 
 			<div class="headerItem">
@@ -23,7 +23,7 @@
 
 			<div class="headerItem">
 				<div>收费站名称：</div>
-				<el-input :v-model="searchCondition.tollName" placeholder="请输入内容"></el-input>
+				<el-input v-model="searchCondition.tollName" placeholder="请输入内容"></el-input>
 			</div>
 
 			<div class="headerItem">

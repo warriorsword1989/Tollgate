@@ -20,10 +20,7 @@ class GetInfoData {
     const param = this.req.query;
     let condition = `ADMIN_CODE LIKE '${param.adminCode.substr(0,2)}%'`;
     if (param.infoCode) {
-      condition += ` AND INFO_CODE = ${param.infoCode}`;
-    }
-    if (param.tollName) {
-      condition += ` AND TOLL_NAME LIKE %${param.tollName}%`;
+      condition += ` AND INFO_CODE = '${param.infoCode}'`;
     }
     if (param.pushBeforeTime && param.pushAfterTime) {
       condition += ` AND PUBLIC_TIME BETWEEN ${param.pushBeforeTime} AND ${param.pushAfterTime}`;

@@ -11,7 +11,7 @@
 
 			<div class="headerItem">
 				<div>情报编码：</div>
-				<el-input :v-model="searchCondition.infoCode" placeholder="请输入内容"></el-input>
+				<el-input v-model="searchCondition.infoCode" placeholder="请输入内容"></el-input>
 			</div>
 
 			<div class="headerItem">
