@@ -65,7 +65,7 @@
           leftDis:300,
           boxWidth: 980,
           boxHeight: 530,
-          zIndex: 10
+          zIndex: 100
         },
         componentObj: { ...tableContent },
         currentView: null,
