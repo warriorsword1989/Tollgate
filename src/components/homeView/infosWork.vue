@@ -81,8 +81,8 @@
 				searchCondition: {
 					adminCode: '110000',
 					infoCode: '',
-					pushBeforeTime: utils.newDateFormat(preDate, 'yyyyMMdd'),
-					pushAfterTime: utils.newDateFormat(new Date(), 'yyyyMMdd'),
+					pushBeforeTime: utils.newDateFormat(preDate, 'yyyy-MM-dd'),
+					pushAfterTime: utils.newDateFormat(new Date(), 'yyyy-MM-dd'),
 					complete: [1, 2, 3],
 					currentPage: 1,
 					pageSize: 10

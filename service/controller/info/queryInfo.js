@@ -25,13 +25,13 @@ class GetInfoData {
     if (param.tollName) {
       condition += ` AND TOLL_NAME LIKE %${param.tollName}%`;
     }
-    if (param.updateStartTime && param.updateEndTime) {
+    if (param.pushBeforeTime && param.pushAfterTime) {
       condition += ` AND PUBLIC_TIME BETWEEN ${param.pushBeforeTime} AND ${param.pushAfterTime}`;
     }
     if (param.complete && param.complete.length > 0) {
       condition += ` AND COMPLETE IN (${param.complete.toString()})`;
     }
-    let sql = `SELECT * FROM (SELECT A.*, ROWNUM RN FROM (SELECT * FROM ${this.table} WHERE ${condition}) A ) WHERE
+    let sql = `SELECT * FROM (SELECT A.*, ROWNUM RN FROM (SELECT * FROM ${this.table} WHERE ${condition}) A) WHERE
                RN BETWEEN ${(param.currentPage - 1) * param.pageSize + 1} AND ${param.currentPage * param.pageSize}`;
     try {
       const result = await this.db.executeSql(sql);

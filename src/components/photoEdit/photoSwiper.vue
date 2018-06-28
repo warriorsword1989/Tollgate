@@ -44,7 +44,7 @@
   export default {
     data() {
       return {
-        loading: true,
+        loading: false,
         imageList: [],
         options: {
           inline: true,
@@ -126,6 +126,7 @@
       }
     },
     mounted() {
+      return;
       if (appUtil.getGolbalData().dataSource !== 1) {
         return;
       }
@@ -134,6 +135,7 @@
       let promises = photoIds.map(item => {
         return getTipsPhoto({rowKey: item, url: appConfig.hbaseUrl});
       });
+      this.loading = true;
       Promise.all(promises).then(posts => {
         var i=1;
         this.imageList = posts.map(item => {

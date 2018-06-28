@@ -1,7 +1,5 @@
 import connectRenderObj from '../../oracle/connectRenderObj';
 import connectTipObj from '../../oracle/connectRenderTip';
-import logger from '../../config/logs';
-import { changeResult } from '../../Util';
 import SearchFactory from './search/SearchFactory'
 
 class Render {

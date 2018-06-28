@@ -26,7 +26,7 @@
             <span>来源网址</span>
           </div>
           <div style="display: inline-block;width: 200px">
-            <div style="word-wrap: break-word" v-for="item in infoData.url.split(';')">
+            <div style="word-wrap: break-word" v-for="item in Url()">
               <a target="_blank" v-bind:href="item">{{item}}</a>
             </div>
           </div>
@@ -119,6 +119,12 @@
       }
     },
     methods: {
+      Url: function () {
+        if (this.infoData.url) {
+          return this.infoData.url.split(';');
+        }
+        return [];
+      },
       saveInfo: function () {
         const self = this;
         const param = {
@@ -173,7 +179,7 @@
     height: 100%;
     background-color: #ffffff;
     box-shadow: 0 0 10px #93bbff;
-    width: 300px;
+    width: 400px;
     font-family: "Microsoft Yahei", Verdana, Arial, Helvetica, sans-serif;
     font-size: 12px;
     padding-top: 40px;

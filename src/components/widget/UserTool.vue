@@ -41,7 +41,7 @@
           },
 
 					showDataList: function () {
-
+            this.$emit('showList');
 					}
         },
         mounted () {
@@ -67,16 +67,16 @@
     /*border-radius: 15px;*/
     height: 30px;
     width: 30px;
-    background: url("../assets/toolIcon/icon/menu_normal.png") no-repeat center center;
+    background: url("../../assets/toolIcon/icon/menu_normal.png") no-repeat center center;
   }
   .userToolContainer:hover > div{
-    background: url("../assets/toolIcon/icon/menu_active.png") no-repeat center center;
+    background: url("../../assets/toolIcon/icon/menu_active.png") no-repeat center center;
   }
   .userToolContainer > div > .innerImg{
     width: 10px;
     height: 10px;
     margin-left: 20px;
-    background: url("../assets/toolIcon/icon/menu_icon_notice.png") no-repeat center center;
+    background: url("../../assets/toolIcon/icon/menu_icon_notice.png") no-repeat center center;
   }
   .userToolContainer > div + ul {
     padding: 0;
