@@ -1,5 +1,8 @@
 import express from 'express';
 import http from 'http';
+import path from 'path';
+import fastXmlParser from 'fast-xml-parser';
+let images = require('images');
 import Tips from '../controller/tips/queryTollTips';
 import TollGateCtrl from '../controller/tips/metaTollGateController';
 const router = express.Router ();
@@ -131,12 +134,33 @@ router.get ('/photo', function (req, res, next) {
   "use strict";
   return http.get(`${req.query.url}/${req.query.rowKey}`, httpRes => {
     let body = '';
+    httpRes.setEncoding('binary');
     httpRes.on('data', function(chunk) {
-      httpRes.setEncoding('utf8'); 
       body += chunk;
     })
     httpRes.on('end', function() {
-      res.send(body);
+      let result = fastXmlParser.validate(body);
+      if(!result) throw new Error(result.err);
+      let xmlJson = fastXmlParser.parse(body)
+      let photoObj = {};
+      photoObj.properties = JSON.parse(new Buffer(xmlJson.CellSet.Row.Cell[0], 'base64').toString());
+      let sourceImg = images(new Buffer(xmlJson.CellSet.Row.Cell[1], 'base64'));
+      let waterImg = images(path.join(__dirname, '../images/logo.png'));
+      // 比如放置在右下角，先获取原图的尺寸和水印图片尺寸
+      const sWidth = sourceImg.width();
+      const sHeight = sourceImg.height();
+      const wmWidth = waterImg.width();
+      const wmHeight = waterImg.height();
+      // 设置绘制的坐标位置，右下角距离 10px
+      let imageBuffer = images(sourceImg)
+        .draw(waterImg, 10, 10)
+        .draw(waterImg, sWidth - wmWidth - 10, 10)
+        .draw(waterImg, (sWidth - wmWidth)/2, (sHeight - wmHeight)/2)
+        .draw(waterImg, 10, sHeight - wmHeight - 10)
+        .draw(waterImg, sWidth - wmWidth - 10, sHeight - wmHeight - 10)
+        .encode("jpg", {operation:50});
+      photoObj.imageUrl = imageBuffer.toString('base64');
+      res.send(photoObj);
     })
     httpRes.on('error', function(e) {
       next(e);

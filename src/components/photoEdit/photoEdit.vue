@@ -7,14 +7,6 @@
   class="tipsEdit">
     <div  class="row-wraper">
       <div class="row-list">
-        <label>RowKey：</label>
-        <div style="vertical-align: text-bottom;color: #606266;">
-          <span>{{dataModel.rowkey}}</span>
-        </div>
-      </div>
-    </div>
-    <div  class="row-wraper">
-      <div class="row-list">
         <label>Tips反馈：</label>
         <div>
           <el-select style="width:100%" size="mini" v-model.number="dataModel.is_adopted">
@@ -48,8 +40,7 @@
         loading: true,
         dataModel: {
           is_adopted: 1,
-          memo: '描述信息',
-          rowkey: ''
+          memo: '描述信息'
         },
         options: [{
           value: 1,
@@ -89,14 +80,13 @@
        }
        let _self = this;
        // 加载tips信息；
-        let param = {rowkey: appUtil.getGolbalData().rowkey};
+       let param = {rowkey: appUtil.getGolbalData().rowkey};
         getTollGateTip(param)
         .then(result => {
           let { errorCode, data } = result;
           if (errorCode == 0) {
               _self.dataModel = {
                 is_adopted: data[0].is_adopted,
-                rowkey: data[0].rowkey,
                 memo: data[0].memo || ''
               }
             }

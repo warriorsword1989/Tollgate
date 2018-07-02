@@ -34,6 +34,11 @@
           <label>版本号：</label><span>{{currentActivePhoto.a_version}}</span>
         </div>
       </div>
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>RowKey：</label><span>{{currentActivePhoto.rowkey}}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -83,7 +88,8 @@
           a_uploadDate: '',
           a_sourceId: '',
           a_content: '',
-          a_version: ''
+          a_version: '',
+          rowkey: ''
         },
         photoInfo: {
           uploadDate: '',
@@ -123,10 +129,10 @@
           this.currentActivePhoto.a_sourceId = this.imageList[activeIndex].properties.a_sourceId;
           this.currentActivePhoto.a_content = this.imageList[activeIndex].properties.a_content;
           this.currentActivePhoto.a_version = this.imageList[activeIndex].properties.a_version;
+          this.currentActivePhoto.rowkey =  this.imageList[activeIndex].properties.rowkey;
       }
     },
     mounted() {
-      return;
       if (appUtil.getGolbalData().dataSource !== 1) {
         return;
       }
@@ -137,19 +143,15 @@
       });
       this.loading = true;
       Promise.all(promises).then(posts => {
-        var i=1;
         this.imageList = posts.map(item => {
-          let result = fastXmlParser.validate(item);
-          if(!result) throw new Error(result.err);
-          let xmlJson = fastXmlParser.parse(item)
           let photoObj = {};
-          photoObj.properties = JSON.parse(new Buffer(xmlJson.CellSet.Row.Cell[0], 'base64').toString());
-          photoObj.imageUrl = `data:image/jpeg;base64,${xmlJson.CellSet.Row.Cell[1]}`;
+          photoObj.properties = item.properties;
+          photoObj.imageUrl = `data:image/jpeg;base64,${item.imageUrl}`;
           return photoObj;
         });
         this.loading = false;
         this.$nextTick(()=>{
-          this.setCurrentInfo()
+          this.setCurrentInfo();
         });
       }).catch(function(err){
         throw new Error(err);
