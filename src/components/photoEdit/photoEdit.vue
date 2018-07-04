@@ -63,7 +63,8 @@
         loading: true,
         dataModel: {
           is_adopted: 1,
-          memo: '描述信息'
+          memo: '描述信息',
+          rowkey: ''
         },
         options: [{
           value: 1,
@@ -99,16 +100,7 @@
         })
       }
     },
-    watch: {
-      photoData: {
-        handler(newValue, oldValue) {
-          console.log(newValue, oldValue)
-        },
-        deep: true
-      }
-    },
      mounted () {
-       console.log(this.photoData);
        if (appUtil.getGolbalData().dataSource !== 1) {
          return;
        }
@@ -121,6 +113,7 @@
           if (errorCode == 0) {
               _self.dataModel = {
                 is_adopted: data[0].is_adopted,
+                rowkey: data[0].rowkey,
                 memo: data[0].memo || ''
               }
             }
