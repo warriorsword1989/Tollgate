@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import fastXmlParser from 'fast-xml-parser';
-let images = require('images');
+import images from 'images';
 import Tips from '../controller/tips/queryTollTips';
 import TollGateCtrl from '../controller/tips/metaTollGateController';
 const router = express.Router ();

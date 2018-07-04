@@ -2,8 +2,8 @@
   <div class="mainMap">
     <!-- 左侧照片面板 -->
     <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-show="dataSource === 1 && !showDataList">
-      <photo-swiper slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
-      <photo-edit slot="dataView"></photo-edit>
+      <photo-swiper @dataChange="whenDataChange" slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
+      <photo-edit :photo-data="photoModel" slot="dataView"></photo-edit>
     </side-bar>
     <!-- 左侧数据列表 -->
     <toll-list @closeList="closeDataListFn" v-if="showDataList"></toll-list>
@@ -83,6 +83,13 @@
         leftPanelFlag: false,
         rightLineWorkFlag: false,
         dataSource: 1,
+        photoModel: {
+          a_uploadDate:'',
+          a_sourceId:'',
+          a_content:'',
+          a_version:'',
+          rowkey: ''
+        },
         dataModel: {
           uploadTime: '2012-10-7',
           sourceId: '111111',
@@ -95,6 +102,9 @@
     },
     computed: {},
     methods: {
+      whenDataChange: function (data) {
+        this.photoModel = data;
+      },
       toggleLeftPanel: function (event) {
         this.leftFloatArrow = !this.leftFloatArrow;
       },

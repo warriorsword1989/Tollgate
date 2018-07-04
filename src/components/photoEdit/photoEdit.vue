@@ -5,6 +5,29 @@
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(243, 239, 239, 0.5);"
   class="tipsEdit">
+    <div style="border-bottom: 1px solid #eee;color: #606266;" class="tipsData">
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>上传时间:</label><span>{{photoData.a_uploadDate}}</span>
+        </div>
+        <div class="row-list">
+          <label>来源ID:</label><span>{{photoData.a_sourceId}}</span>
+        </div>
+      </div>
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>照片内容:</label><span>{{photoData.a_content}}</span>
+        </div>
+        <div class="row-list">
+          <label>版本号:</label><span>{{photoData.a_version}}</span>
+        </div>
+      </div>
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>RowKey:</label><span>{{photoData.rowkey}}</span>
+        </div>
+      </div>
+    </div>
     <div  class="row-wraper">
       <div class="row-list">
         <label>Tips反馈：</label>
@@ -51,9 +74,11 @@
         }, {
           value: 3,
           label: '无法处理'
-        }]
+        }],
+
       }
     },
+    props: ['photoData'],
     methods: {
       onSumbit(event) {
         this.loading = true;
@@ -74,7 +99,16 @@
         })
       }
     },
+    watch: {
+      photoData: {
+        handler(newValue, oldValue) {
+          console.log(newValue, oldValue)
+        },
+        deep: true
+      }
+    },
      mounted () {
+       console.log(this.photoData);
        if (appUtil.getGolbalData().dataSource !== 1) {
          return;
        }
