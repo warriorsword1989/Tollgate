@@ -31,7 +31,7 @@
 			</div>
 
 			<div class="headerItem">
-				<el-button icon="el-icon-search" @click="showData">查询</el-button>
+				<el-button :disabled="loading" icon="el-icon-search" @click="showData">查询</el-button>
 			</div>
 		</div>
 		<!-- 表格(height属性必须卸载table上，如果写css，固定表头不起作用) -->
