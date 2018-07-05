@@ -16,25 +16,6 @@
         <div @click="prePhoto()" class="swiper-button-prev swiper-button-white" slot="button-prev"></div>
       </swiper>
     </div>
-    <!-- 图片信息显示 -->
-    <div class="tipsData">
-      <div class="row-wraper">
-        <div class="row-list">
-          <label>上传时间：</label><span>{{currentActivePhoto.a_uploadDate}}</span>
-        </div>
-        <div class="row-list">
-          <label>来源ID：</label><span>{{currentActivePhoto.a_sourceId}}</span>
-        </div>
-      </div>
-      <div class="row-wraper">
-        <div class="row-list">
-          <label>照片内容：</label><span>{{currentActivePhoto.a_content}}</span>
-        </div>
-        <div class="row-list">
-          <label>版本号：</label><span>{{currentActivePhoto.a_version}}</span>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 <script>
@@ -44,7 +25,7 @@
   export default {
     data() {
       return {
-        loading: true,
+        loading: false,
         imageList: [],
         options: {
           inline: true,
@@ -83,12 +64,8 @@
           a_uploadDate: '',
           a_sourceId: '',
           a_content: '',
-          a_version: ''
-        },
-        photoInfo: {
-          uploadDate: '',
-          rowkey: '',
-          version: ''
+          a_version: '',
+          rowkey: ''
         }
       }
     },
@@ -96,17 +73,23 @@
       nextPhoto() {
         const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
         viewer.next();
-        this.setCurrentInfo()
+        this.$nextTick(() => {
+          this.setCurrentInfo();
+        })
       },
       prePhoto() {
         const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
         viewer.prev();
-        this.setCurrentInfo()
+        this.$nextTick(() => {
+          this.setCurrentInfo();
+        })
       },
       clickPhoto(index) {
         const viewer = this.$el.querySelector('.gallery-thumbs').$viewer;
         viewer.view(index);
-        this.setCurrentInfo(index)
+        this.$nextTick(() => {
+          this.setCurrentInfo();
+        })
       },
       formatTime(str) {
         let year = str.substr(0,4);
@@ -123,6 +106,8 @@
           this.currentActivePhoto.a_sourceId = this.imageList[activeIndex].properties.a_sourceId;
           this.currentActivePhoto.a_content = this.imageList[activeIndex].properties.a_content;
           this.currentActivePhoto.a_version = this.imageList[activeIndex].properties.a_version;
+          this.currentActivePhoto.rowkey =  this.imageList[activeIndex].properties.rowkey;
+          this.$emit('dataChange',this.currentActivePhoto);
       }
     },
     mounted() {
@@ -134,20 +119,17 @@
       let promises = photoIds.map(item => {
         return getTipsPhoto({rowKey: item, url: appConfig.hbaseUrl});
       });
+      this.loading = true;
       Promise.all(promises).then(posts => {
-        var i=1;
         this.imageList = posts.map(item => {
-          let result = fastXmlParser.validate(item);
-          if(!result) throw new Error(result.err);
-          let xmlJson = fastXmlParser.parse(item)
           let photoObj = {};
-          photoObj.properties = JSON.parse(new Buffer(xmlJson.CellSet.Row.Cell[0], 'base64').toString());
-          photoObj.imageUrl = `data:image/jpeg;base64,${xmlJson.CellSet.Row.Cell[1]}`;
+          photoObj.properties = item.properties;
+          photoObj.imageUrl = `data:image/jpeg;base64,${item.imageUrl}`;
           return photoObj;
         });
         this.loading = false;
         this.$nextTick(()=>{
-          this.setCurrentInfo()
+          this.setCurrentInfo();
         });
       }).catch(function(err){
         throw new Error(err);
@@ -195,32 +177,4 @@
     left: 50%;
     top: 50%;
   }
-
-  .tipsData {
-    padding: 5px 10px;
-    display: flex;
-    flex-direction: column;
-  }
-  .tipsData .row-wraper{
-    height: 27px;
-    line-height: 30px;
-    display: flex;
-    flex-direction: row;
-  }
-  .tipsData .row-wraper .row-list {
-    flex:1
-  }
-  .tipsData .row-wraper .row-list label{
-    font-size: 12px;
-    font-weight: bold;
-    color: #606266;
-    padding: 0 12px 0 0;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-  .tipsData .row-wraper .row-list span {
-    font-size: 12px;
-    color: #606266;
-  }
-
 </style>

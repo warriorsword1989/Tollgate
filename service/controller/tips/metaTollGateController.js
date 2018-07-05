@@ -323,6 +323,23 @@ class TollGate {
     }
     return existFlag;
   }
+
+  async getTollGateByBridgeName() {
+    const param = this.req.query;
+    const tables = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_LOAD_GD','SC_TOLL_OVERLOAD'];
+    let sql = '';
+    tables.forEach((item, index) => {
+      sql += `SELECT GROUP_ID, NAME_BT FROM ${item} WHERE NAME_BT LIKE '%${param.searchName}%'`;
+      if (index !== 4) {sql += ` UNION `;}
+    });
+    try {
+      let result = await this.db.executeSql(sql);
+      const resultData = changeResult(result);
+      this.res.send({ errorCode: 0, data: resultData });
+    } catch(error) {
+      this.res.send({ errorCode: -1, data: error });
+    }
+  }
   /**
    * toll_index表查询;
    */

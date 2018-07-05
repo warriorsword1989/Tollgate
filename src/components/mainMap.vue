@@ -1,10 +1,12 @@
 <template>
   <div class="mainMap">
     <!-- 左侧照片面板 -->
-    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-show="dataSource === 1">
-      <photo-swiper slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
-      <photo-edit slot="dataView"></photo-edit>
+    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-show="dataSource === 1 && !showDataList">
+      <photo-swiper @dataChange="whenDataChange" slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
+      <photo-edit :photo-data="photoModel" slot="dataView"></photo-edit>
     </side-bar>
+    <!-- 左侧数据列表 -->
+    <toll-list @closeList="closeDataListFn" v-if="showDataList"></toll-list>
     <!-- 左侧情报面板 -->
     <div class="fm-layout-container left" v-if="leftPanelFlag && dataSource === 2">
       <info-list>
@@ -25,7 +27,7 @@
         <span>{{zoom}}</span>
       </div>
     </div>
-    <user-tool class="userToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '350px': '50px'}"></user-tool>
+    <user-tool @showList="showDataListFn" class="userToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '350px': '50px'}"></user-tool>
     <div class="sceneToolbar" @click="openRightPanel()" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '310px': '10px'}"><div></div></div>
     <div class="fm-layout-container right" v-if="rightPanelFlag" style="overflow: hidden">
       <scene-tool></scene-tool>
@@ -49,6 +51,7 @@
   import {getTipsPhoto} from '../dataService/api';
   import EditTool from './EditTool';
   import UserTool from '@/components/widget/UserTool';
+  import tollList from '@/components/tollGateList';
   import SceneTool from './SceneTool';
   import '../uikits/controllers/EventController';
   import SearchTool from './SearchTool';
@@ -66,7 +69,8 @@
       photoSwiper,
       tableEdit,
       LineWork,
-      sideBar
+      sideBar,
+      tollList
     },
     data() {
       return {
@@ -75,10 +79,18 @@
         editFlag: 'update',
         leftFloatArrow: false,
         showDialog: false,
+        showDataList: false,
         rightPanelFlag: false,
         leftPanelFlag: false,
         rightLineWorkFlag: false,
         dataSource: 1,
+        photoModel: {
+          a_uploadDate:'',
+          a_sourceId:'',
+          a_content:'',
+          a_version:'',
+          rowkey: ''
+        },
         dataModel: {
           uploadTime: '2012-10-7',
           sourceId: '111111',
@@ -91,6 +103,9 @@
     },
     computed: {},
     methods: {
+      whenDataChange: function (data) {
+        this.photoModel = data;
+      },
       toggleLeftPanel: function (event) {
         this.leftFloatArrow = !this.leftFloatArrow;
       },
@@ -116,6 +131,12 @@
       },
       closeLineWork: function () {
         this.rightLineWorkFlag = false;
+      },
+      showDataListFn: function(){
+        this.showDataList = true;
+      },
+      closeDataListFn: function(){
+        this.showDataList = false;
       }
     },
     watch: {
@@ -187,6 +208,8 @@
     },
     destroyed: function () {
       mapInit.destorySingletons();
+      this.$off('closeDataList');
+      this.$off('showDataList');
     }
   }
 

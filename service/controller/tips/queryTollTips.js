@@ -19,19 +19,20 @@ class Tips {
                   A.TIPS_VERSION, A.UPDATE_TIME, A.TOLL_PNUM, A.TOLL_LOC, A.IS_ADOPTED, A.MEMO, ROWNUM RN`;
     let condition = `ADMIN_CODE=${param.adminCode}`;
     if (param.tipsVersion) {
-      condition += ` AND upper(TIPS_VERSION) = ${param.tipsVersion.toUpperCase()}`;
+      condition += ` AND upper(TIPS_VERSION) = '${param.tipsVersion.toUpperCase()}'`;
     }
     if (param.tollName) {
-      condition += ` AND TOLL_NAME LIKE %${param.tollName}%`;
+      condition += ` AND TOLL_NAME LIKE '%${param.tollName}%'`;
     }
+    
     if (param.updateStartTime && param.updateEndTime) {
-      condition += ` AND UPDATE_TIME BETWEEN TO_DATE('${param.updateStartTime}','yyyy-MM-dd')
+      condition += ` AND trunc(UPDATE_TIME) BETWEEN TO_DATE('${param.updateStartTime}','yyyy-MM-dd')
                     AND TO_DATE('${param.updateEndTime}','yyyy-MM-dd')`;
     }
     if (param.isAdopted && param.isAdopted.length > 0) {
       condition += ` AND IS_ADOPTED IN (${param.isAdopted.toString()})`;
     }
-    let sql = `SELECT * FROM (SELECT ${fields} FROM (SELECT * FROM ${this.table} WHERE ${condition}) A ) WHERE
+    let sql = `SELECT * FROM (SELECT ${fields} FROM (SELECT * FROM ${this.table} WHERE ${condition}) A) WHERE
                RN BETWEEN ${(param.currentPage - 1) * param.pageSize + 1} AND ${param.currentPage * param.pageSize}`;
     try {
       const result = await this.db.executeSql(sql);

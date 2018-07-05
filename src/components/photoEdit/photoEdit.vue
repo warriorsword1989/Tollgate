@@ -5,11 +5,26 @@
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(243, 239, 239, 0.5);"
   class="tipsEdit">
-    <div  class="row-wraper">
-      <div class="row-list">
-        <label>RowKey：</label>
-        <div style="vertical-align: text-bottom;color: #606266;">
-          <span>{{dataModel.rowkey}}</span>
+    <div style="border-bottom: 1px solid #eee;color: #606266;" class="tipsData">
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>上传时间:</label><span>{{photoData.a_uploadDate}}</span>
+        </div>
+        <div class="row-list">
+          <label>来源ID:</label><span>{{photoData.a_sourceId}}</span>
+        </div>
+      </div>
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>照片内容:</label><span>{{photoData.a_content}}</span>
+        </div>
+        <div class="row-list">
+          <label>版本号:</label><span>{{photoData.a_version}}</span>
+        </div>
+      </div>
+      <div class="row-wraper">
+        <div class="row-list">
+          <label>RowKey:</label><span>{{photoData.rowkey}}</span>
         </div>
       </div>
     </div>
@@ -60,9 +75,11 @@
         }, {
           value: 3,
           label: '无法处理'
-        }]
+        }],
+
       }
     },
+    props: ['photoData'],
     methods: {
       onSumbit(event) {
         this.loading = true;
@@ -89,7 +106,7 @@
        }
        let _self = this;
        // 加载tips信息；
-        let param = {rowkey: appUtil.getGolbalData().rowkey};
+       let param = {rowkey: appUtil.getGolbalData().rowkey};
         getTollGateTip(param)
         .then(result => {
           let { errorCode, data } = result;

@@ -41,7 +41,7 @@
           },
 
 					showDataList: function () {
-
+            this.$emit('showList');
 					}
         },
         mounted () {

@@ -79,7 +79,7 @@
     border-bottom: 1px dashed #ccc;
   }
   .sidbar-panel .dataView {
-    height: 150px;
+    height: 200px;
     padding: 10px 0;
   }
   .sidebar-layout .el-button.sidebar-ctrl-btn{
