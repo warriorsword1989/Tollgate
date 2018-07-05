@@ -12,7 +12,7 @@ class GetInfoData {
     this.db = new ConnectOracle();
     this.adminTable = 'AD_ADMIN';
     this.adminDb = new ConnectGdbOracle();
-    this.tollTable = 'SC_TOLL_RDLINK';
+    this.tollTable = 'SC_TOLL_GROUP';
     this.tollDb = new ConnectMetaOracle();
   }
 
@@ -107,7 +107,7 @@ class GetInfoData {
     const roadName = param.roadName;
     const adminCode = param.adminCode;
 
-    const sql = `SELECT DISTINCT t.group_id from ${this.tollTable} t LEFT JOIN sc_toll_system a ON t.system_id=a.system_id WHERE a.system_id=${adminCode} and t.name_bt='${roadName}'`;
+    const sql = `SELECT DISTINCT t.group_id from ${this.tollTable} t LEFT JOIN sc_toll_system a ON t.system_id=a.system_id WHERE a.system_id=${adminCode} and t.name='${roadName}'`;
 
     try {
       const result = await this.tollDb.executeSql(sql);
@@ -153,7 +153,7 @@ class GetInfoData {
   async getTollGateByAdminCode() {
     const param = this.req.query;
     const adminCode = param.adminCode;
-    let sql = "select distinct STR.GROUP_ID from SC_TOLL_RDLINK STR left join SC_TOLL_SYSTEM STS ON STR.system_id=STS.systemid_old WHERE STS.system_id = " + adminCode;
+    let sql = "select distinct STR.GROUP_ID from SC_TOLL_GROUP STR left join SC_TOLL_SYSTEM STS ON STR.system_id=STS.systemid_old WHERE STS.system_id = " + adminCode;
     try {
       const result = await this.tollDb.executeSql(sql);
       const resultData = changeResult(result);
