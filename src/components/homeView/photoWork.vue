@@ -11,7 +11,7 @@
 
 			<div class="headerItem">
 				<div>版本号：</div>
-				<el-input :v-model="searchCondition.tipsVersion" placeholder="请输入内容"></el-input>
+				<el-input v-model="searchCondition.tipsVersion" placeholder="请输入内容"></el-input>
 			</div>
 
 			<div class="headerItem">
@@ -23,7 +23,7 @@
 
 			<div class="headerItem">
 				<div>收费站名称：</div>
-				<el-input :v-model="searchCondition.tollName" placeholder="请输入内容"></el-input>
+				<el-input v-model="searchCondition.tollName" placeholder="请输入内容"></el-input>
 			</div>
 
 			<div class="headerItem">
@@ -39,7 +39,7 @@
 			<el-table height="100%" :data="tableData" border>
 				<el-table-column width="70" prop="id" label="序号" type="index" :index="indexMethod" align="center"></el-table-column>
 				<el-table-column v-for="(item, index) in tableHeader" :key="index" :prop="item.field" :label="item.label" align="center"></el-table-column>
-				<el-table-column prop="operation" label="操作" align="center">
+				<el-table-column width="200" prop="operation" label="操作" align="center">
 					<template slot-scope="scope">
 						<el-button @click="handleClick(scope.row, 'dynamic')" disabled type="button" size="small">动态作业</el-button>
 						<el-button @click="handleClick(scope.row, 'static')" type="button" size="small">静态作业</el-button>

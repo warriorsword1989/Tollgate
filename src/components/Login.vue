@@ -160,9 +160,7 @@
         });
       }
     },
-    mounted: function() {
-      console.log('12111111');
-    }
+    mounted: function() {}
   }
 </script>
 

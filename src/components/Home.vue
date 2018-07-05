@@ -31,6 +31,7 @@ export default {
 		}
 	},
 	mounted() {
+		// 这里目的是从地图返回时也能回到进入时的路由;
 		if (!this.$route.params.type || this.$route.params.type === 1) {
 			this.activeTab = 'photo';
 			return this.$router.push({ path: '/home/photoWork' });

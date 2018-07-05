@@ -600,7 +600,6 @@
       }
     },
     mounted() {
-      console.log(this.activeInnerPanel)
       this.isGuangdong = appUtil.getGolbalData().adminCode == '440000';
       this.mountFlag = true;
       if (this.$store.state.handleFlag === 'update') {
