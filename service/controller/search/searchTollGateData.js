@@ -13,7 +13,8 @@ class TollData {
     const param = this.req.query;
     const searchText = param.searchText;
     const isId = param.isId;
-    let sql = "SELECT t.pid, tn.name , to_char(rn.geometry.get_wkt()) as geometry FROM RD_TOLLGATE T, RD_TOLLGATE_NAME TN, RD_NODE RN WHERE T.PID = TN.PID AND T.NODE_PID = RN.NODE_PID AND TN.LANG_CODE='CHI' AND ";
+    const systemId = param.systemId;
+    let sql = "SELECT t.pid, tn.name , to_char(rn.geometry.get_wkt()) as geometry FROM RD_TOLLGATE T, RD_TOLLGATE_NAME TN, RD_NODE RN WHERE T.PID = TN.PID AND T.NODE_PID = RN.NODE_PID AND TN.LANG_CODE='CHI' AND T.SYSTEM_ID=" + systemId + " AND ";
     if (parseInt(isId, 10) === 0) {
       sql = sql + "tn.name LIKE '%" + searchText + "%'";
     } else {

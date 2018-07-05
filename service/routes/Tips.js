@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import fastXmlParser from 'fast-xml-parser';
-import sharp from 'sharp';
+import Jimp from 'jimp';
 import Tips from '../controller/tips/queryTollTips';
 import TollGateCtrl from '../controller/tips/metaTollGateController';
 const router = express.Router ();
@@ -145,30 +145,36 @@ router.get ('/photo', function (req, res, next) {
       let count = 0;
       let photoObj = {};
       photoObj.properties = JSON.parse(new Buffer(xmlJson.CellSet.Row.Cell[0], 'base64').toString());
-      function setWaterMark(imageBuffer, metadata) {
+      
+      function setWaterMark (image) {
         count++;
+        let metadata = image.bitmap;
         let topPos = Math.floor(Math.random() * metadata.height);
         let leftPos = Math.floor(Math.random() * metadata.width);
         topPos = topPos > metadata.height - 34 ? metadata.height - 34 : topPos;
         leftPos = leftPos > metadata.width - 234 ? metadata.width - 234 : topPos;
-        sharp(imageBuffer)
-        .overlayWith(path.join(__dirname, '../images/logo.png'), { top: topPos, left: leftPos})
-        .toBuffer((err, data) => {
-          if (err) throw new Error(err);
-          if (count < 5) {
-            setWaterMark(data, metadata);
-          } else {
-            photoObj.imageUrl = data.toString('base64');
-            res.send(photoObj);
-          }
-        })
+        Jimp.read(path.join(__dirname, '../images/logo.png'))
+          .then(waterImage => {
+            image.composite(waterImage, leftPos, topPos); 
+            if (count < 5) {
+              setWaterMark(image);
+            } else {
+              image.getBuffer(Jimp.MIME_JPEG, (err, bufferRes) => {
+                if (err) throw new Error(err);
+                photoObj.imageUrl = bufferRes.toString('base64');
+                res.send(photoObj);
+              });
+            }
+          });
       }
-      sharp(new Buffer(xmlJson.CellSet.Row.Cell[1], 'base64'))
-        .metadata()
-        .then(metadata => {
-          setWaterMark(new Buffer(xmlJson.CellSet.Row.Cell[1], 'base64'), metadata);
-        })
+      Jimp.read(new Buffer(xmlJson.CellSet.Row.Cell[1], 'base64'))
+        .then(image => {
+          setWaterMark(image);
+        }).catch(err => {
+          throw new Error(err);
+        });
     })
+
     httpRes.on('error', function(e) {
       next(e);
     });

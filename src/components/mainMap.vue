@@ -46,6 +46,7 @@
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
   import tableEdit from './tabDiag';
+  import {cityList, getCityNameByCode} from '../config/CityList';
   import { appUtil } from '../Application';
   import {getTipsPhoto} from '../dataService/api';
   import EditTool from './EditTool';
@@ -148,6 +149,18 @@
       this.eventController.off('CHANGECOORDNITES');
       this.eventController.on('ObjectSelected', data => {
         if (data.features.length) {
+          if (data.systemIds) {
+            for (let i = 0; i < data.systemIds.length; i++) {
+              if (data.systemIds[i] !== getCityNameByCode(appUtil.getGolbalData().adminCode).systemId) {
+                this.$alert('所选择的收费站不在可编辑行政区划内！', '提示', {
+                  confirmButtonText: '确定',
+                  type: 'warning',
+                  showClose: false
+                });
+                return;
+              }
+            }
+          }
           this.showDialog = false;
           setTimeout(()=>{
             this.showDialog = true;
