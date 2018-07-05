@@ -13,7 +13,7 @@
 
 <script>
 import { appUtil } from '@/Application';
-import UserTool from '@/components/UserTool';
+import UserTool from '@/components/widget/UserTool';
 import { cityList } from '@/config/CityList';
 import { getTollGateTipList, getTollGateInfoList, getAdminLoc } from '@/dataService/api';
 

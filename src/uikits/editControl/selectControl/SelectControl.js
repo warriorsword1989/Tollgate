@@ -47,14 +47,15 @@ fastmap.uikit.editControl.SelectControl = fastmap.uikit.editControl.EditControl.
 
     onSelectFinish: function (features, event) {
         let ids = features.map(item => item.properties.id);
+        let systemIds = features.map(item => item.properties.systemId);
         if (features.length > 0) {
             if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
                 if (features[0].properties.static === 0 || features[0].properties.static === 1) {
-                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, event: event, flag:'update',sourceFlag: 3 });
+                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, systemIds: systemIds, event: event, flag:'update',sourceFlag: 3 });
                 }
             } else {
                 if (features[0].properties.dynamic === 0 || features[0].properties.dynamic === 1) {
-                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, event: event, flag:'update',sourceFlag: 3 });
+                    this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, systemIds: systemIds, event: event, flag:'update',sourceFlag: 3 });
                 }
             }
         }

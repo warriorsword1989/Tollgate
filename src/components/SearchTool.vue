@@ -39,6 +39,8 @@
 
 <script>
     import { getSearchData } from '../dataService/api';
+    import {cityList, getCityNameByCode} from '../config/CityList';
+    import { appUtil } from '../Application';
     export default {
         name: "search-tool",
         data() {
@@ -88,7 +90,8 @@
               this.searchLoading = true;
               const param = {
                 type: type,
-                searchText: this.searchText
+                searchText: this.searchText,
+                systemId: getCityNameByCode(appUtil.getGolbalData().adminCode).systemId
               };
               if (isNaN(this.searchText)) {
                 param.isId = 0;
