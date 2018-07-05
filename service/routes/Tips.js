@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import fastXmlParser from 'fast-xml-parser';
-import images from 'images';
+import sharp from 'sharp';
 import Tips from '../controller/tips/queryTollTips';
 import TollGateCtrl from '../controller/tips/metaTollGateController';
 const router = express.Router ();
@@ -141,26 +141,33 @@ router.get ('/photo', function (req, res, next) {
     httpRes.on('end', function() {
       let result = fastXmlParser.validate(body);
       if(!result) throw new Error(result.err);
-      let xmlJson = fastXmlParser.parse(body)
+      let xmlJson = fastXmlParser.parse(body);
+      let count = 0;
       let photoObj = {};
       photoObj.properties = JSON.parse(new Buffer(xmlJson.CellSet.Row.Cell[0], 'base64').toString());
-      let sourceImg = images(new Buffer(xmlJson.CellSet.Row.Cell[1], 'base64'));
-      let waterImg = images(path.join(__dirname, '../images/logo.png'));
-      // 比如放置在右下角，先获取原图的尺寸和水印图片尺寸
-      const sWidth = sourceImg.width();
-      const sHeight = sourceImg.height();
-      const wmWidth = waterImg.width();
-      const wmHeight = waterImg.height();
-      // 设置绘制的坐标位置，右下角距离 10px
-      let imageBuffer = images(sourceImg)
-        .draw(waterImg, 10, 10)
-        .draw(waterImg, sWidth - wmWidth - 10, 10)
-        .draw(waterImg, (sWidth - wmWidth)/2, (sHeight - wmHeight)/2)
-        .draw(waterImg, 10, sHeight - wmHeight - 10)
-        .draw(waterImg, sWidth - wmWidth - 10, sHeight - wmHeight - 10)
-        .encode("jpg", {operation:50});
-      photoObj.imageUrl = imageBuffer.toString('base64');
-      res.send(photoObj);
+      function setWaterMark(imageBuffer, metadata) {
+        count++;
+        let topPos = Math.floor(Math.random() * metadata.height);
+        let leftPos = Math.floor(Math.random() * metadata.width);
+        topPos = topPos > metadata.height - 34 ? metadata.height - 34 : topPos;
+        leftPos = leftPos > metadata.width - 234 ? metadata.width - 234 : topPos;
+        sharp(imageBuffer)
+        .overlayWith(path.join(__dirname, '../images/logo.png'), { top: topPos, left: leftPos})
+        .toBuffer((err, data) => {
+          if (err) throw new Error(err);
+          if (count < 5) {
+            setWaterMark(data, metadata);
+          } else {
+            photoObj.imageUrl = data.toString('base64');
+            res.send(photoObj);
+          }
+        })
+      }
+      sharp(new Buffer(xmlJson.CellSet.Row.Cell[1], 'base64'))
+        .metadata()
+        .then(metadata => {
+          setWaterMark(new Buffer(xmlJson.CellSet.Row.Cell[1], 'base64'), metadata);
+        })
     })
     httpRes.on('error', function(e) {
       next(e);
