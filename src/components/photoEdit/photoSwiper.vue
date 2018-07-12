@@ -19,6 +19,7 @@
   </div>
 </template>
 <script>
+  import mapInit from '../mapInit';
   import fastXmlParser from 'fast-xml-parser';
   import { getTipsPhoto } from '../../dataService/api';
   import { appUtil, appConfig } from '../../Application';
@@ -121,6 +122,7 @@
       });
       this.loading = true;
       Promise.all(promises).then(posts => {
+        mapInit.initialize();
         this.imageList = posts.map(item => {
           let photoObj = {};
           photoObj.properties = item.properties;
@@ -134,6 +136,9 @@
       }).catch(function(err){
         throw new Error(err);
       });
+    },
+    destroyed: function () {
+      mapInit.destorySingletons();
     }
   }
 </script>

@@ -224,17 +224,6 @@ class MapInit {
 
     const mapLocation = appUtil.getSessionStorage('mapLocation');
     map.getLeafletMap().setView([mapLocation.point.lat, mapLocation.point.lng], mapLocation.zoom);
-    // let wktPoint = this.geometryAlgorithm.wktToGeojson(`POINT (${mapLocation.point.lng} ${mapLocation.point.lat})`);
-    // this.feedback = new fastmap.mapApi.Feedback();
-    // this.feedbackCtrl.add(this.feedback);
-    // this.pointSymbol = this.symbolFactory.getSymbol('pt_relation_border'),
-    // setTimeout(() => {
-    //   this.feedback.clear();
-    //   this.feedback.add(wktPoint, this.pointSymbol);
-    //   this.feedbackCtrl.refresh();
-    // }, 1000);
-
-    const self = this;
     map.getLeafletMap().on('moveend', function () {
       appUtil.setSessionStorage('mapLocation', {
         zoom: map.getLeafletMap().getZoom(),
