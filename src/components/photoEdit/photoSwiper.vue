@@ -135,8 +135,10 @@
         this.$nextTick(()=>{
           this.setCurrentInfo();
         });
-      }).catch(function(err){
+      }).catch(err => {
         mapInit.initialize();
+        this.imageList = [];
+        this.loading = false;
         throw new Error(err);
       });
     },
