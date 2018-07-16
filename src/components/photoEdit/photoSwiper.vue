@@ -122,18 +122,21 @@
       });
       this.loading = true;
       Promise.all(promises).then(posts => {
-        mapInit.initialize();
         this.imageList = posts.map(item => {
           let photoObj = {};
           photoObj.properties = item.properties;
           photoObj.imageUrl = `data:image/jpeg;base64,${item.imageUrl}`;
           return photoObj;
         });
+        setTimeout(function () {
+          mapInit.initialize();
+        });
         this.loading = false;
         this.$nextTick(()=>{
           this.setCurrentInfo();
         });
       }).catch(function(err){
+        mapInit.initialize();
         throw new Error(err);
       });
     },
