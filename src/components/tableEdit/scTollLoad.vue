@@ -572,13 +572,26 @@
             throw new Error(err);
           });
         } else {
-          this.$refs[formName].forEach((formItem, index) => {
-            formItem.validate((valid) => {
-              if (!valid) {
-                return validateFlag = false;
-              }
+          try {
+            this.$refs[formName].forEach((formItem, index) => {
+              formItem.validate((valid, errorObj) => {
+                if (!valid) {
+                  validateFlag = false;
+                  const errorArr = errorObj[Object.keys(errorObj)[0]];
+                  let errMesage = errorArr.map(item => `第${index+1}装载级别${item}`);
+                  throw new Error(errMesage.join('<br />'));
+                }
+              });
             });
-          });
+          } catch (err) {
+            return this.$alert(err.message, '错误提示', {
+              confirmButtonText: '确定',
+              type: 'error',
+              dangerouslyUseHTMLString: true,
+              showClose: false
+            });
+          }
+
           // 验证最小值不能大与最大值
           let alertMessage = '';
           this.dataModels.forEach((item,index) => {

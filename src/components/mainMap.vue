@@ -41,7 +41,6 @@
 
 
 <script>
-  import mapInit from './mapInit';
   import sideBar from './layout/sideBar';
   import photoEdit from './photoEdit/photoEdit';
   import photoSwiper from './photoEdit/photoSwiper';
@@ -203,12 +202,8 @@
         self.zoom = data.zoom;
       });
       appUtil.setSessionStorage('mapLocation', param);
-      setTimeout(() => {
-        mapInit.initialize();
-      }, 1000);
     },
     destroyed: function () {
-      mapInit.destorySingletons();
       this.$off('closeDataList');
       this.$off('showDataList');
     }

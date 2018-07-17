@@ -469,6 +469,7 @@
         })
         .finally(() => {
           this.loading = false;
+          this.isClickSave = false;
         })
         .catch(err => {
           console.log(err);

@@ -19,6 +19,7 @@
   </div>
 </template>
 <script>
+  import mapInit from '../mapInit';
   import fastXmlParser from 'fast-xml-parser';
   import { getTipsPhoto } from '../../dataService/api';
   import { appUtil, appConfig } from '../../Application';
@@ -127,13 +128,22 @@
           photoObj.imageUrl = `data:image/jpeg;base64,${item.imageUrl}`;
           return photoObj;
         });
+        setTimeout(function () {
+          mapInit.initialize();
+        });
         this.loading = false;
         this.$nextTick(()=>{
           this.setCurrentInfo();
         });
-      }).catch(function(err){
+      }).catch(err => {
+        mapInit.initialize();
+        this.imageList = [];
+        this.loading = false;
         throw new Error(err);
       });
+    },
+    destroyed: function () {
+      mapInit.destorySingletons();
     }
   }
 </script>
