@@ -9,7 +9,7 @@
     <div v-for="(dataItem, outerIndex) in dataModels" :key="outerIndex" :inline="true" class="wraper">
       <div style="margin-bottom: 5x;display:flex;flex-direction:column" class="grid-content">
         <el-form v-for="(innerDataItem, innerIndex) in dataItem" :key="innerIndex" :model="innerDataItem" ref="dataItem" style="display: flex;flex-direction: column;padding:0" class="grid-list">
-          
+
           <div v-show="outerIndex==0 && innerIndex==0 && !activeInnerPanel" class="grid-wraper">
             <div class="grid-list">
               <div title="桥梁或隧道名称组号：" class="labelText">桥梁或隧道名称组号：</div>
@@ -26,7 +26,7 @@
             <el-button @click="toggleSearchPanel(true)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-edit"></el-button>
             <el-button @click="deleteBridge()" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-delete"></el-button>
           </div>
-          
+
           <div v-show="innerIndex==0" style="justify-content: flex-end;" class="grid-wraper">
             <el-button @click="addInner(outerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-circle-plus-outline">装载区间添加</el-button>
             <el-button @click="minusInner(outerIndex, innerIndex)" style="padding:5px;height:28px;margin:3px" type="primary" class="btn-icon" icon="el-icon-minus">装载区间删除</el-button>
@@ -49,8 +49,8 @@
                 <el-form-item prop="tunnage_min">
                   <el-input v-model.number="innerDataItem.tunnage_min" disabled size="mini"></el-input>
                 </el-form-item>
-                <span style="display:block;line-height:28px">-</span> 
-                
+                <span style="display:block;line-height:28px">-</span>
+
                 <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
                   <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
@@ -60,7 +60,7 @@
                 <el-form-item v-if="isGuangdong && outerIndex==4" prop="tunnage_max">
                   <el-input v-model.number="innerDataItem.tunnage_max" :disabled="outerIndex==4" size="mini"></el-input>
                 </el-form-item>
-                
+
                 <el-form-item v-if="!isGuangdong && outerIndex!=dataModels.length-1" prop="tunnage_max" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ required: true, message: '不能为空'},{ type: 'number', message: '必须为数字'}]">
                   <el-input v-model.number="innerDataItem.tunnage_max" @change="setLevelRelate" size="mini"></el-input>
                 </el-form-item>
@@ -70,7 +70,7 @@
               </div>
             </div>
           </div>
-          
+
           <div style="display:flex;flex-direction: row;">
             <fieldset :style="innerDataItem.insertFlag ? 'border: 1px dashed red': 'border: 1px dashed #636ef5;'">
               <legend style="font-size:12px">{{innerDataItem.loading_subclss}} 区间</legend>
@@ -283,7 +283,7 @@
       // 如果存在的换验证数字是否为>=0的数字；
       validateNum (rule, value, callback) {
         if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
-          callback(new Error('输入必须是数字')); 
+          callback(new Error('输入必须是数字'));
         } else {
           callback();
         }
@@ -291,7 +291,7 @@
       // 装载机别数
       validateTunnage1 (rule, value, callback) {
         if (value >55 || value < 0) {
-          callback(new Error('装载级别吨数不能大于55')); 
+          callback(new Error('装载级别吨数不能大于55'));
         } else {
           callback();
         }
@@ -299,7 +299,7 @@
       // 装载机别数
       validateTunnage2 (rule, value, callback) {
         if (value >1000) {
-          callback(new Error('装载级别吨数不能大于1000')); 
+          callback(new Error('装载级别吨数不能大于1000'));
         } else {
           callback();
         }
@@ -464,7 +464,7 @@
         newObj.tunnage_max = this.dataModels[index][0].tunnage_max;
         newObj.tunnage_min = this.dataModels[index][0].tunnage_min;
         newObj.tunnage_flag = this.dataModels[index][0].tunnage_flag;
-        
+
         newObj.interval_min = this.dataModels[index][newSubLoadingClass - 1].interval_max;
         newObj.interval_max = this.dataModels[index][newSubLoadingClass - 1].tunnage_max;
         // 设置桥梁隧道;
@@ -575,7 +575,7 @@
           this.$refs[formName].forEach((formItem, index) => {
             formItem.validate((valid) => {
               if (!valid) {
-                return validateFlag = false; 
+                return validateFlag = false;
               }
             });
           });
@@ -584,7 +584,7 @@
           this.dataModels.forEach((item,index) => {
             if (!this.isGuangdong && !this.activeInnerPanel && !item[0].name_bt) {
               validateFlag = false;
-              alertMessage += `在收费站桥隧到下桥梁隧信息不能为空!`;
+              alertMessage += `在收费站桥隧道下桥梁隧道信息不能为空!`;
             }
             if(item[0].tunnage_min >= item[0].tunnage_max) {
               validateFlag = false;
@@ -677,7 +677,7 @@
               innerArr.push(dataItemObj);
             });
             classArrResult.push(innerArr);
-          });          
+          });
           this.dataModels = classArrResult;
         })
         .finally(() => {

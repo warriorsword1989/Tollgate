@@ -109,6 +109,13 @@ class GetInfoData {
     try {
       const result = await this.tollDb.executeSql(sql);
       const resultData = changeResult(result);
+      if (resultData.length === 0) {
+        this.res.send({
+          errorCode: 0,
+          data: []
+        });
+        return;
+      }
       let groupId = [];
       for (let i = 0; i < resultData.length; i++) {
         groupId.push(resultData[i].group_id)

@@ -51,7 +51,7 @@
                 <el-form-item prop="rato_min">
                   <el-input v-model.number="innerDataItem.rato_min" disabled size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
-                <span style="display:block;line-height:28px">-</span> 
+                <span style="display:block;line-height:28px">-</span>
                 <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex!=dataModels.length-1" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
                   <el-input v-model.number="innerDataItem.rato_max" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
@@ -109,7 +109,7 @@
                       <el-form-item prop="interval_min" :rules="[{ type: 'number', message: '必须为数字'}]">
                         <el-input v-model.number="innerDataItem.interval_min" placeholder="%" @change="setMinRangeRelate" size="mini"><template slot="append">%</template></el-input>
                       </el-form-item>
-                      <span style="display:block;line-height:28px">-</span> 
+                      <span style="display:block;line-height:28px">-</span>
                       <!-- 广东的情况 -->
                       <el-form-item v-if="isGuangdong && innerIndex!=4" prop="interval_max" :rules="[{ type: 'number', message: '必须为数字'}]">
                         <el-input v-model.number="innerDataItem.interval_max" @change="setMaxRangeRelate" size="mini"><template slot="append">%</template></el-input>
@@ -314,7 +314,7 @@
       // 如果存在的换验证数字是否为>=0的数字；
       validateNum (rule, value, callback) {
         if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
-          callback(new Error('输入必须是数字')); 
+          callback(new Error('输入必须是数字'));
         } else {
           callback();
         }
@@ -340,7 +340,7 @@
       // 装载机别数
       validateTunnage1 (rule, value, callback) {
         if (value >55 || value < 0) {
-          callback(new Error('装载级别吨数不能大于55')); 
+          callback(new Error('装载级别吨数不能大于55'));
         } else {
           callback();
         }
@@ -348,7 +348,7 @@
       // 装载机别数
       validateTunnage2 (rule, value, callback) {
         if (value >1000 || value < 0) {
-          callback(new Error('超载级别不能大于1000')); 
+          callback(new Error('超载级别不能大于1000'));
         } else {
           callback();
         }
@@ -450,7 +450,7 @@
         newObj.rato_flag = this.dataModels[index][0].rato_flag;
         newObj.rate_base = this.dataModels[index][0].rate_base;
         newObj.weight_min = this.dataModels[index][0].weight_min;
-        
+
         newObj.interval_min = this.dataModels[index][newSubLoadingClass - 1].interval_max;
         newObj.interval_max = this.dataModels[index][newSubLoadingClass - 1].rato_max;
         // 设置桥梁隧道;
@@ -567,7 +567,7 @@
           this.dataModels.forEach((item,index) => {
             if (!this.activeInnerPanel && !item[0].name_bt) {
               validateFlag = false;
-              alertMessage += `在收费站桥隧到下桥梁隧信息不能为空!`;
+              alertMessage += `在收费站桥隧道下桥梁隧道信息不能为空!`;
             }
             if(item[0].rato_min >= item[0].rato_max) {
               validateFlag = false;
@@ -632,7 +632,7 @@
                 innerArr.push(dataItemObj);
               });
               classArrResult.push(innerArr);
-            });          
+            });
             this.dataModels = classArrResult;
           })
           .finally(() => {

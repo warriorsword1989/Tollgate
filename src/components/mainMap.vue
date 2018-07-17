@@ -151,6 +151,7 @@
         if (data.features.length) {
           if (data.systemIds) {
             for (let i = 0; i < data.systemIds.length; i++) {
+              console.log(getCityNameByCode(appUtil.getGolbalData().adminCode).systemId);
               if (data.systemIds[i] !== getCityNameByCode(appUtil.getGolbalData().adminCode).systemId) {
                 this.$alert('所选择的收费站不在可编辑行政区划内！', '提示', {
                   confirmButtonText: '确定',
