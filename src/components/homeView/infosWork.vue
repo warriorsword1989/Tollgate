@@ -184,7 +184,8 @@
 					name:'mainMap',
 					params:{
 						point:this.loc,
-						type: 2, 
+						type: 2,
+						prePage: 'info', 
 						data: {
 							pushBeforeTime: this.searchCondition.pushBeforeTime,
 							pushAfterTime: this.searchCondition.pushAfterTime,

@@ -56,6 +56,7 @@
   import SearchTool from './SearchTool';
   import InfoList from './InfoList';
   import LineWork from './LineWork';
+  import mapInit from './mapInit';
   export default {
     name: 'mainMap',
     components: {
@@ -144,6 +145,9 @@
       },
     },
     mounted() {
+      if (this.$route.params.prePage === 'info') {
+        mapInit.initialize();
+      }
       this.eventController.off('ObjectSelected');
       this.eventController.off('CHANGECOORDNITES');
       this.eventController.on('ObjectSelected', data => {
@@ -206,6 +210,7 @@
     destroyed: function () {
       this.$off('closeDataList');
       this.$off('showDataList');
+      mapInit.destorySingletons();
     }
   }
 

@@ -181,6 +181,7 @@
 					params:{
 						point: data.toll_location,
 						type: 1,
+						prePage: 'photo', 
 						data: {
 							tipsVersion: this.searchCondition.tipsVersion,
 							updateStartTime: this.searchCondition.updateStartTime,
