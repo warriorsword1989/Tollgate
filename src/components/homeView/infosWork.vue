@@ -144,7 +144,7 @@
 							if (this.tableData.length) {
 								getAdminLoc({ adminCode: this.searchCondition.adminCode })
 									.then(innerResult => {
-										const { data, errorCode } = result;
+										const { data, errorCode } = innerResult;
 										if (!errorCode) {
 											this.loc = data[0].geometry;
 										}
