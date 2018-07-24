@@ -357,7 +357,7 @@
       addItem() {
         if (this.dataModels.length===4)return;
         let modelLength = this.dataModels.length;
-        let defaultSeat = [7,20,40,1000];
+        let defaultSeat = [7,19,39,1000];
         let newObj = Object.assign({insertFlag: true}, this.originModel);
         newObj.car_class = modelLength + 1;
         if (newObj.car_class == '1') {
