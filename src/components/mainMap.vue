@@ -9,8 +9,7 @@
     <toll-list @closeList="closeDataListFn" v-if="showDataList"></toll-list>
     <!-- 左侧情报面板 -->
     <div class="fm-layout-container left" v-if="leftPanelFlag && dataSource === 2">
-      <info-list>
-      </info-list>
+      <info-list></info-list>
       <img class="left-panel-hide" @click="hideLeftPanel()" src="../assets/toolIcon/icon/icon-back-left.png"/>
     </div>
     <!-- 右侧线作业面板 -->
@@ -151,7 +150,6 @@
         if (data.features.length) {
           if (data.systemIds) {
             for (let i = 0; i < data.systemIds.length; i++) {
-              console.log(getCityNameByCode(appUtil.getGolbalData().adminCode).systemId);
               if (data.systemIds[i] !== getCityNameByCode(appUtil.getGolbalData().adminCode).systemId) {
                 this.$alert('所选择的收费站不在可编辑行政区划内！', '提示', {
                   confirmButtonText: '确定',
