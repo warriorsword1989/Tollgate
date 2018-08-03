@@ -167,7 +167,7 @@
             this.$store.commit('changeSourceValue',sourceValue);
             if (data.flag=='update') {
               this.$store.commit('changeHandleFlag', 'update');
-              this.$store.commit('changeEditSelectedData', [data.features[0]]);
+              this.$store.commit('changeEditSelectedData', data.features);
             } else if (data.flag=='insert') {
               this.$store.commit('changeEditSelectedData', data.features);
               this.$store.commit('changeHandleFlag', 'insert');

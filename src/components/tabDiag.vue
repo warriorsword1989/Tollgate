@@ -60,6 +60,7 @@
     name: 'tabDiag',
     data() {
       return {
+        originSeleceData: [],
         boxPros: {
           topDis:200,
           leftDis:300,
@@ -182,7 +183,11 @@
        */
       selectChange (selection) {
         const pids = selection.map(item => item.pid);
-        this.$store.commit('changeEditSelectedData', pids);
+        if (this.$store.state.handleFlag === 'update') {
+          this.$store.commit('changeEditSelectedData', this.originSeleceData);
+        } else {
+          this.$store.commit('changeEditSelectedData', pids);
+        }
       },
 
       /**
@@ -233,7 +238,7 @@
       if (this.$store.state.source !== 1) {
         this.tableHeader[2].label = '信息来源';
       }
-
+      this.originSeleceData = [...this.$store.state.editSelectedData];
       this.transfromSelectedData(this.$store.state.editSelectedData);
     },
 
