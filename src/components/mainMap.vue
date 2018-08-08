@@ -32,7 +32,7 @@
       <scene-tool></scene-tool>
       <img class="right-float-close" @click="closeRightPanel()" src="../assets/toolIcon/icon/button-close-normal.png" />
     </div>
-    <search-tool class="searchToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? (dataSource === 1 ? '540px' :'620px'): (dataSource === 1 ? '240px' :'320px')}">
+    <search-tool class="searchToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? (dataSource === 1 ? '570px' :'650px'): (dataSource === 1 ? '270px' :'350px')}">
     </search-tool>
     <table-edit v-if="showDialog" :handle-flag="editFlag" @dialogClose="closeDialog"></table-edit>
   </div>

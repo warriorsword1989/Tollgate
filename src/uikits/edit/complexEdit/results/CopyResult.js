@@ -7,6 +7,7 @@ fastmap.uikit.complexEdit.CopyResult = fastmap.uikit.EditResult.extend({
         fastmap.uikit.EditResult.prototype.initialize.call(this, 'CopyResult');
         this.links = [];
         this.types = [];
+        this.editType = '';
     },
 
     clone: function () {
@@ -19,5 +20,6 @@ fastmap.uikit.complexEdit.CopyResult = fastmap.uikit.EditResult.extend({
         fastmap.uikit.EditResult.prototype.cloneProperties.call(this, editResult);
         editResult.links = FM.Util.clone(this.links);
         editResult.types = FM.Util.clone(this.types);
+        editResult.editType = FM.Util.clone(this.editType);
     }
 });
