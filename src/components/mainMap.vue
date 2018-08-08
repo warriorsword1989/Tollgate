@@ -12,6 +12,7 @@
       <info-list></info-list>
       <img class="left-panel-hide" @click="hideLeftPanel()" src="../assets/toolIcon/icon/icon-back-left.png"/>
     </div>
+    <data-list :list-data="lists" v-show="dataListShow" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '350px': '50px'}"></data-list>
     <!-- 右侧线作业面板 -->
     <div class="fm-layout-container right" style="overflow: hidden" v-if="rightLineWorkFlag">
       <line-work></line-work>
@@ -51,6 +52,7 @@
   import UserTool from '@/components/widget/UserTool';
   import tollList from '@/components/tollGateList';
   import SceneTool from './SceneTool';
+  import dataList from './dataList';
   import '../uikits/controllers/EventController';
   import SearchTool from './SearchTool';
   import InfoList from './InfoList';
@@ -69,11 +71,14 @@
       tableEdit,
       LineWork,
       sideBar,
-      tollList
+      tollList,
+      dataList
     },
     data() {
       return {
         zoom: 15,
+        dataListShow: false,
+        lists: [],
         leftWidth: '25%',
         editFlag: 'update',
         leftFloatArrow: false,
@@ -161,6 +166,14 @@
             }
           }
           this.showDialog = false;
+          if (data.sourceFlag === 3 && data.features.length > 1) {
+            this.eventController.fire('moreData', { data: data.features });
+            this.dataListShow = true;
+            return;
+          } else {
+            this.dataListShow = false;
+            this.eventController.fire('moreData', { data: [] });
+          }
           setTimeout(()=>{
             this.showDialog = true;
             let sourceValue = appUtil.getGolbalData().dataSource==1?1:data.sourceFlag;

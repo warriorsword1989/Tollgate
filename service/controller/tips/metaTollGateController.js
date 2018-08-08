@@ -62,9 +62,10 @@ class TollGate {
     const param = this.req.query;
     const pids = param.pid;
     this.table = param.table;
-    let sql = `SELECT b.type, b.pid, a.name FROM ${this.table} a, RD_TOLLGATE b WHERE a.pid=b.pid AND a.pid IN (${pids.join(',')}) AND a.lang_code='CHI'`;
+    let sql = `SELECT b.type, b.pid, a.name, b.system_id FROM ${this.table} a, RD_TOLLGATE b WHERE a.pid=b.pid AND a.pid IN (${pids.join(',')}) AND a.lang_code='CHI'`;
     const result = await this.originDB.executeSql2(sql);
     const resultData = changeResult(result);
+    console.log(resultData)
     this.res.send({
       errorCode: 0,
       data: resultData
