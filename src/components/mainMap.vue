@@ -1,7 +1,7 @@
 <template>
   <div class="mainMap">
     <!-- 左侧照片面板 -->
-    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-show="dataSource === 1 && !showDataList">
+    <side-bar :side-bar-title="'照片详情'" :side-bar-icon="'el-icon-picture'" v-show="$route.params.prePage === 'photo' && !showDataList">
       <photo-swiper @dataChange="whenDataChange" slot="photoView" :image-list="dataModel.imageList"></photo-swiper>
       <photo-edit :photo-data="photoModel" slot="dataView"></photo-edit>
     </side-bar>
@@ -9,8 +9,7 @@
     <toll-list @closeList="closeDataListFn" v-if="showDataList"></toll-list>
     <!-- 左侧情报面板 -->
     <div class="fm-layout-container left" v-if="leftPanelFlag && dataSource === 2">
-      <info-list>
-      </info-list>
+      <info-list></info-list>
       <img class="left-panel-hide" @click="hideLeftPanel()" src="../assets/toolIcon/icon/icon-back-left.png"/>
     </div>
     <!-- 右侧线作业面板 -->
@@ -56,6 +55,7 @@
   import SearchTool from './SearchTool';
   import InfoList from './InfoList';
   import LineWork from './LineWork';
+  import mapInit from './mapInit';
   export default {
     name: 'mainMap',
     components: {
@@ -150,7 +150,6 @@
         if (data.features.length) {
           if (data.systemIds) {
             for (let i = 0; i < data.systemIds.length; i++) {
-              console.log(getCityNameByCode(appUtil.getGolbalData().adminCode).systemId);
               if (data.systemIds[i] !== getCityNameByCode(appUtil.getGolbalData().adminCode).systemId) {
                 this.$alert('所选择的收费站不在可编辑行政区划内！', '提示', {
                   confirmButtonText: '确定',
@@ -168,7 +167,7 @@
             this.$store.commit('changeSourceValue',sourceValue);
             if (data.flag=='update') {
               this.$store.commit('changeHandleFlag', 'update');
-              this.$store.commit('changeEditSelectedData', [data.features[0]]);
+              this.$store.commit('changeEditSelectedData', data.features);
             } else if (data.flag=='insert') {
               this.$store.commit('changeEditSelectedData', data.features);
               this.$store.commit('changeHandleFlag', 'insert');
@@ -202,10 +201,14 @@
         self.zoom = data.zoom;
       });
       appUtil.setSessionStorage('mapLocation', param);
+      if (this.$route.params.prePage === 'info') {
+        mapInit.initialize();
+      }
     },
     destroyed: function () {
       this.$off('closeDataList');
       this.$off('showDataList');
+      mapInit.destorySingletons();
     }
   }
 

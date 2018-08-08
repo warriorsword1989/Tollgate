@@ -144,7 +144,7 @@
 							if (this.tableData.length) {
 								getAdminLoc({ adminCode: this.searchCondition.adminCode })
 									.then(innerResult => {
-										const { data, errorCode } = result;
+										const { data, errorCode } = innerResult;
 										if (!errorCode) {
 											this.loc = data[0].geometry;
 										}
@@ -184,7 +184,8 @@
 					name:'mainMap',
 					params:{
 						point:this.loc,
-						type: 2, 
+						type: 2,
+						prePage: 'info', 
 						data: {
 							pushBeforeTime: this.searchCondition.pushBeforeTime,
 							pushAfterTime: this.searchCondition.pushAfterTime,

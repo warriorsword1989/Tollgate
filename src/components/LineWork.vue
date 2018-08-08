@@ -1,35 +1,26 @@
 <template>
   <div class="fm-panel">
-    <div class="header">
-      <div class="title">
-            <span>
-                线作业
-            </span>
-      </div>
+    <div class="header"><div class="title"><span>线作业</span></div></div>
+    <!-- 线作业顶部搜索 -->
+    <div style="padding: 5px;">
+      <el-input placeholder="请输入内容" size="small" v-model="roadName" class="input-with-select">
+        <template slot="prepend">道路名称</template>
+        <el-button type="primary" slot="append" icon="el-icon-search" @click="searchToll()"></el-button>
+      </el-input>
     </div>
-    <div>
-      <ul class="list-group detailUlCss">
-        <li style="padding-top: 10px">
-          <div class="blockDescLiDiv">
-            <span>道路名称</span>
-          </div>
-          <el-input v-model="roadName" placeholder="请输入道路名称" size="small" style="width: 200px"></el-input>
-        </li>
-      </ul>
-    </div>
-    <div style="float: right;padding-right: 20px;padding-top: 20px">
-      <el-button type="primary" size="small" @click="searchToll()">查询</el-button>
-    </div>
-    <div style="height: 400px;padding: 10px" v-show="tollData.length > 0">
-      <el-table :data="tollData" border height="400" style="width: 100%;height: 100%;" @row-click="showInMap" @selection-change="handleSelectionChange">
-        <el-table-column type="selection"></el-table-column>
-        <el-table-column prop="id" label="序号" type="index" align="center"></el-table-column>
-        <el-table-column prop="name" label="收费站名称" align="center" ></el-table-column>
-        <el-table-column prop="pid" label="收费站ID" align="center"></el-table-column>
+    <!-- 线作业数据列表 -->
+    <div v-show="tollData.length">
+      <el-table :data="tollData" border :height="getTableHeight()" @row-click="showInMap" @selection-change="handleSelectionChange">
+        <el-table-column width="35" type="selection"></el-table-column>
+        <el-table-column width="50" prop="id" label="序号" type="index" align="center"></el-table-column>
+        <el-table-column width="125" prop="name" label="收费站名称" align="center" ></el-table-column>
+        <el-table-column prop="pid" label="ID" align="center"></el-table-column>
       </el-table>
     </div>
-    <div style="float: right;padding-right: 20px;padding-top: 50px" v-show="tollData.length > 0">
-      <el-button type="primary" size="small" @click="addTollData()">新增收费信息</el-button>
+    <!-- 线作业编辑按钮 -->
+    <div class="bottomBtn" v-show="tollData.length">
+      <el-button type="primary" size="small" @click="addOrEditTollData('update')">编辑收费站信息</el-button>
+      <el-button type="primary" size="small" @click="addOrEditTollData('insert')">新增收费站信息</el-button>
     </div>
   </div>
 </template>
@@ -57,8 +48,11 @@
           this.feedback.clear();
           this.feedbackCtrl.refresh();
         },
+        getTableHeight() {
+          const documentObj = document.documentElement;
+          return documentObj.clientHeight - 140;
+        },
         showInMap(row, event, column) {
-          console.log(row,event,column)
           getSearchData({type: 1,searchText: row.pid})
             .then(data => {
               if (data.errorCode === 0) {
@@ -89,7 +83,7 @@
             }
           });
         },
-        addTollData: function () {
+        addOrEditTollData: function (handleFlag) {
           if (this.multipleSelection.length === 0) {
             return;
           }
@@ -99,9 +93,7 @@
           for (let i = 0; i < this.multipleSelection.length; i++) {
             id.push(this.multipleSelection[i].pid)
           }
-          const param = {
-            tollIds: id
-          };
+          const param = {tollIds: id};
           getTollListByTollId(param).then(function (data) {
             if (data.errorCode === 0) {
               for (let j = 0; j < data.data.length; j++) {
@@ -114,7 +106,7 @@
                   type: 'warning'
                 }).then(() => {
                   self.tollIds = id;
-                  self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:'insert',sourceFlag: 2 });
+                  self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:handleFlag,sourceFlag: 2 });
                 }).catch(() => {
                   self.$message({
                     type: 'info',
@@ -123,7 +115,7 @@
                 });
               } else {
                 self.tollIds = id;
-                self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:'insert',sourceFlag: 2 });
+                self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: id, event: event, flag:handleFlag,sourceFlag: 2 });
               }
             }
           });
@@ -135,40 +127,18 @@
       mounted() {
         this.feedbackCtrl.add(this.feedback);
       },
-      destroyed() {
+      destroyed(e) {
+        console.log(e);
         this.clearFeedBack();
       }
     }
 </script>
 
 <style scoped>
-  .detailUlCss {
-    margin-bottom: 0;
-    background-color: #ffffff;
-    display: block;
-    box-shadow: none;
-    padding-left: 20px;
-  }
-  .detailUlCss > li {
-    list-style: none;
-    background-color: #ffffff;
-    font-size: 12px;
-    height: auto;
-    line-height: 30px;
-    color: #182848;
-  }
-  .detailUlCss > div > li {
-    list-style: none;
-    background-color: #ffffff;
-    font-size: 12px;
-    height: 30px;
-    line-height: 30px;
-    color: #182848;
-  }
-  .blockDescLiDiv {
-    display: inline-block;
-    width: 58px;
-    line-height: 30px;
-    vertical-align: top;
+  .bottomBtn {
+    display: flex;
+    margin-top: 15px;
+    flex-direction: row;
+    justify-content: center;
   }
 </style>
