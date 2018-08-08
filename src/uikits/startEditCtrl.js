@@ -13,9 +13,9 @@ class startEditCtrl {
 
     selectControl.run();
   };
-  batchSelect = geoLiveType => {
+  batchSelect = (geoLiveType, type) => {
     const factory = fastmap.uikit.editControl.EditControlFactory.getInstance();
-    const createTipsControl = factory.copyLineControl(map, geoLiveType);
+    const createTipsControl = factory.copyLineControl(map, geoLiveType, type);
 
     createTipsControl.run();
   }

@@ -3,10 +3,13 @@
     <div title="编辑收费站" style="border-left: none" @click="selectTool('RDTOLLGATE')">
       <img src="../assets/quickToolIcon/select.png"/>
     </div>
+    <div title="批量编辑收费站" @click="batchSelectTool('RDTOLLGATE', 'update')">
+      <img src="../assets/quickToolIcon/frame-select-point.png"/>
+    </div>
     <div title="地图漫游" @click="panMove()">
       <img src="../assets/quickToolIcon/mapPan.png"/>
     </div>
-    <div title="新增收费站" @click="batchSelectTool('RDTOLLGATE')">
+    <div title="新增收费站" @click="batchSelectTool('RDTOLLGATE', 'insert')">
       <img src="../assets/quickToolIcon/copyPolygon.png"/>
     </div>
     <div title="线作业" v-show="dataSource === 2" @click="lineWork()">
@@ -50,8 +53,8 @@
         selectTool: function (type) {
           startEditCtrl.select(type);
         },
-        batchSelectTool: function (type) {
-          startEditCtrl.batchSelect(type);
+        batchSelectTool: function (geoLiveType, type) {
+          startEditCtrl.batchSelect(geoLiveType, type);
         },
         lineWork: function () {
           this.$emit('lineWork')
@@ -110,7 +113,7 @@
                         editTollIds = data1.data.filter(item => item.toll_dynamic_state!=null);
                       }
                       editTollIds = editTollIds.map(item => item.toll_pid);
-                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: editTollIds, event: event, flag:'insert',sourceFlag: 4 }); 
+                      _self.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: editTollIds, event: event, flag:'insert',sourceFlag: 4 });
                     }
                   }
                 });
