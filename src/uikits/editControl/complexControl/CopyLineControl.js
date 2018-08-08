@@ -3,12 +3,13 @@
  */
 
 fastmap.uikit.editControl.CopyLineControl = fastmap.uikit.editControl.EditControl.extend({
-    initialize: function (map, options) {
+    initialize: function (map, geoLiveType, options) {
         fastmap.uikit.editControl.EditControl.prototype.initialize.apply(this, map);
 
         // 绑定函数作用域
         FM.Util.bind(this);
-        this.geoLiveType = options;
+        this.geoLiveType = geoLiveType;
+        this.type = options;
         this.complexEditor = fastmap.uikit.complexEdit.ComplexEditor.getInstance();
         this.topoEditor = this.topoEditFactory.createTopoEditor(this.geoLiveType, this.map);
     },
@@ -18,7 +19,7 @@ fastmap.uikit.editControl.CopyLineControl = fastmap.uikit.editControl.EditContro
             return false;
         }
 
-        var editResult = this.topoEditor.getCopyResult();
+        var editResult = this.topoEditor.getCopyResult(this.type);
         this.complexEditor.start(editResult, this.onFinish);
 
         return true;
@@ -41,7 +42,7 @@ fastmap.uikit.editControl.CopyLineControl = fastmap.uikit.editControl.EditContro
         this.complexEditor.stop();
         let ids = editResult.links.map(item => item.properties.id);
         let systemIds = editResult.links.map(item => item.properties.systemId);
-        this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, systemIds: systemIds, event: event, flag:'insert',sourceFlag: 3 });
+        this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids, systemIds: systemIds, event: event, flag: editResult.editType, sourceFlag: 3 });
         console.log(editResult);
         this.run();
     }

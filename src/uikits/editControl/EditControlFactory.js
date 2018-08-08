@@ -18,8 +18,8 @@ fastmap.uikit.editControl.EditControlFactory = L.Class.extend({
         return new fastmap.uikit.editControl.StartupToolControl(map, toolName, options);
     },
 
-    copyLineControl: function (map, geoLiveType) {
-        return new fastmap.uikit.editControl.CopyLineControl(map, geoLiveType);
+    copyLineControl: function (map, geoLiveType, type) {
+        return new fastmap.uikit.editControl.CopyLineControl(map, geoLiveType, type);
     },
 
     BatchIndexGuideAutoControl: function (map, geoLiveType, options) {

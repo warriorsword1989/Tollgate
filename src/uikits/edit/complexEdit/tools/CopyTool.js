@@ -81,13 +81,25 @@ fastmap.uikit.complexEdit.CopyTool = fastmap.uikit.complexEdit.RectSelectTool.ex
         const links = [];
         const selectLinks = remainItems.concat(addItems);
         for (let i = 0; i < selectLinks.length; i++) {
-            if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
-                if (selectLinks[i].properties.static === null || selectLinks[i].properties.static === 2) {
-                    links.push(selectLinks[i]);
+            if (newEditResult.editType === 'insert') {
+                if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
+                    if (selectLinks[i].properties.static === null || selectLinks[i].properties.static === 2) {
+                        links.push(selectLinks[i]);
+                    }
+                } else {
+                    if (selectLinks[i].properties.dynamic === null || selectLinks[i].properties.dynamic === 2) {
+                        links.push(selectLinks[i]);
+                    }
                 }
-            } else {
-                if (selectLinks[i].properties.dynamic === null || selectLinks[i].properties.dynamic === 2) {
-                    links.push(selectLinks[i]);
+            } else if (newEditResult.editType === 'update') {
+                if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
+                    if (selectLinks[i].properties.static === 0 || selectLinks[i].properties.static === 1) {
+                        links.push(selectLinks[i]);
+                    }
+                } else {
+                    if (selectLinks[i].properties.dynamic === 0 || selectLinks[i].properties.dynamic === 1) {
+                        links.push(selectLinks[i]);
+                    }
                 }
             }
         }
@@ -99,13 +111,25 @@ fastmap.uikit.complexEdit.CopyTool = fastmap.uikit.complexEdit.RectSelectTool.ex
         const newEditResult = FM.Util.clone(this.editResult);
         const links = [];
         for (let i = 0; i < this.selectedFeatures.length; i++) {
-            if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
-                if (this.selectedFeatures[i].properties.static === null || this.selectedFeatures[i].properties.static === 2) {
-                    links.push(this.selectedFeatures[i]);
+            if (newEditResult.editType === 'insert') {
+                if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
+                    if (this.selectedFeatures[i].properties.static === null || this.selectedFeatures[i].properties.static === 2) {
+                        links.push(this.selectedFeatures[i]);
+                    }
+                } else {
+                    if (this.selectedFeatures[i].properties.dynamic === null || this.selectedFeatures[i].properties.dynamic === 2) {
+                        links.push(this.selectedFeatures[i]);
+                    }
                 }
-            } else {
-                if (this.selectedFeatures[i].properties.dynamic === null || this.selectedFeatures[i].properties.dynamic === 2) {
-                    links.push(this.selectedFeatures[i]);
+            } else if (newEditResult.editType === 'update') {
+                if (this.appUtil.appUtil.getGolbalData().workType === 'static') {
+                    if (this.selectedFeatures[i].properties.static === 0 || this.selectedFeatures[i].properties.static === 1) {
+                        links.push(this.selectedFeatures[i]);
+                    }
+                } else {
+                    if (this.selectedFeatures[i].properties.dynamic === 0 || this.selectedFeatures[i].properties.dynamic === 1) {
+                        links.push(this.selectedFeatures[i]);
+                    }
                 }
             }
         }

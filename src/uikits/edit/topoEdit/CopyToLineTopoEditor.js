@@ -17,14 +17,15 @@ fastmap.uikit.topoEdit.CopyToLineTopoEditor = fastmap.uikit.topoEdit.TopoEditor.
 
     /**
      * 创建工具需要使用的CopyResult
-     * @param {object} options 包括选项
+     * @param {object} type 包括选项
      * @returns {object} editResult 编辑结果
      */
 
-    getCopyResult: function (options) {
+    getCopyResult: function (type) {
         var editResult = new fastmap.uikit.complexEdit.CopyResult();
         editResult.geoLiveType = 'RDTOLLGATE';
         editResult.types = ['RDTOLLGATE'];
+        editResult.editType = type;
         return editResult;
     },
 
