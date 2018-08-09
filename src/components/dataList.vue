@@ -1,5 +1,5 @@
 <template>
-  <div class="dataList">
+  <div v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);" class="dataList">
     <ul>
       <li :index="index" @click="clickPid(item)" v-for="(item, index) in tableData">{{`${item.name} - ${item.pid}`}}</li>
     </ul>
@@ -12,13 +12,14 @@
         name: "dataList",
         data() {
           return {
+            loading: true,
             tableData: [],
             eventController: fastmap.uikit.EventController()
           }
         },
         methods: {
           clickPid(eData) {
-            this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: [eData.pid], systemIds: [eData.system_id], event: event, flag: 'update', sourceFlag: 3 });
+            this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: [eData.pid], systemIds: [eData.system_id], event: event, flag: 'update', sourceFlag: 3, toolType: 'tableList' });
           }
         },
         mounted() {
@@ -27,7 +28,8 @@
             const param = { table: 'RD_TOLLGATE_NAME', pid: data.data };
             getTollName(param).then(res => {
               this.$nextTick(() => {
-                this.tableData = res.data
+                this.tableData = res.data;
+                this.loading = false;
               });
             });
           });

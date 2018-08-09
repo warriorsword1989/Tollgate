@@ -16,7 +16,7 @@ class TollData {
     const systemId = param.systemId;
     let sql = "SELECT t.pid, tn.name , to_char(rn.geometry.get_wkt()) as geometry FROM RD_TOLLGATE T, RD_TOLLGATE_NAME TN, RD_NODE RN WHERE T.PID = TN.PID AND T.NODE_PID = RN.NODE_PID AND TN.LANG_CODE='CHI' AND ";
     if (parseInt(isId, 10) === 0) {
-      sql = sql + `t.SYSTEM_ID = ${systemId} AND tn.name LIKE '% ${searchText} %'`;
+      sql = sql + `t.SYSTEM_ID = ${systemId} AND tn.name LIKE '%${searchText}%'`;
     } else {
       sql = sql + "t.pid = " + searchText;
     }

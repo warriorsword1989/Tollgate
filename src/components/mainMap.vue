@@ -166,14 +166,17 @@
             }
           }
           this.showDialog = false;
-          if (data.sourceFlag === 3 && data.features.length > 1) {
+          
+          if (data.toolType === 'point' && data.features.length > 1) {
             this.eventController.fire('moreData', { data: data.features });
             this.dataListShow = true;
             return;
-          } else {
-            this.dataListShow = false;
-            this.eventController.fire('moreData', { data: [] });
           }
+          
+          if ((data.toolType === 'point' && data.features.length === 1) || data.toolType === 'box') {
+            this.dataListShow = false;
+          }
+ 
           setTimeout(()=>{
             this.showDialog = true;
             let sourceValue = appUtil.getGolbalData().dataSource==1?1:data.sourceFlag;

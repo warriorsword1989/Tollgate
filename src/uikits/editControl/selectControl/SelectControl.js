@@ -54,7 +54,7 @@ fastmap.uikit.editControl.SelectControl = fastmap.uikit.editControl.EditControl.
             } else {
                 ids = features.filter(item => [0, 1].includes(item.properties.dynamic));
             }
-            this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids.map(item => item.properties.id), systemIds: systemIds, event: event, flag: 'update', sourceFlag: 3 });
+            this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: ids.map(item => item.properties.id), systemIds: systemIds, event: event, flag: 'update', sourceFlag: 3, toolType: 'point' });
         }
         // 支持连续选择
         this.run();
