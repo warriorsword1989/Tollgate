@@ -19,7 +19,7 @@
     <div class="advancePanel" v-if="advancePanelFlag">
       <div style="text-align: center; padding: 10px;" v-if="searchLoading">正在加载....</div>
       <div style="text-align: center; padding: 10px;" v-if="!tollData.length && !searchLoading">没有搜到结果</div>
-      <table v-if="tollData.length" class="fm-scroll" style="width: 100%;">
+      <table v-if="tollData.length && !searchLoading" class="fm-scroll" style="width: 100%;">
         <thead>
         <tr>
           <td class="trPid">pid</td>
