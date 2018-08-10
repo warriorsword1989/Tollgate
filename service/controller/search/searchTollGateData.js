@@ -18,7 +18,7 @@ class TollData {
     if (parseInt(isId, 10) === 0) {
       sql = sql + `T.SYSTEM_ID = ${systemId} AND tn.name LIKE '%${searchText}%'`;
     } else {
-      sql = sql + "t.pid = " + searchText;
+      sql = sql + `T.SYSTEM_ID = ${systemId} AND t.pid = ${searchText}`;
     }
     console.log(sql);
     const result = await this.db.executeSql(sql);

@@ -36,6 +36,7 @@
 
 <script>
     import { getTollListByRdName, getTollListByTollId,getSearchData } from '../dataService/api';
+    import { getCityNameByCode } from '../config/CityList';
     import '../uikits/controllers/EventController';
     import { appUtil } from '../Application';
     export default {
@@ -59,7 +60,7 @@
         },
         showInMap(row, event, column) {
           console.log(row,event,column)
-          getSearchData({type: 1,searchText: row.pid})
+          getSearchData({type: 1,searchText: row.pid, systemId: getCityNameByCode(appUtil.getGolbalData().adminCode).systemId})
             .then(data => {
               if (data.errorCode === 0) {
                 let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();

@@ -145,9 +145,6 @@
       },
     },
     mounted() {
-      if (this.$route.params.prePage === 'info') {
-        mapInit.initialize();
-      }
       this.eventController.off('ObjectSelected');
       this.eventController.off('CHANGECOORDNITES');
       this.eventController.on('ObjectSelected', data => {
@@ -206,6 +203,9 @@
         self.zoom = data.zoom;
       });
       appUtil.setSessionStorage('mapLocation', param);
+      if (this.$route.params.prePage === 'info') {
+        mapInit.initialize();
+      }
     },
     destroyed: function () {
       this.$off('closeDataList');
