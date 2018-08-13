@@ -32,7 +32,7 @@
             <div title="免费车型：" class="labelText">免费车型：</div>
             <div class="inputPart">
               <el-form-item prop="free_type">
-                <el-select size="mini" v-model="dataItem.free_type" @change='onSelectChange' multiple placeholder="请选择">
+                <el-select size="mini" v-model="dataItem.free_type" :popper-append-to-body='false' @change='onSelectChange' multiple placeholder="请选择">
                   <el-option v-for="item in freeTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>

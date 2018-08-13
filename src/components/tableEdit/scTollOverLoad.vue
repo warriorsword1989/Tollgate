@@ -52,7 +52,7 @@
                   <el-input v-model.number="innerDataItem.rato_min" disabled size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
                 <span style="display:block;line-height:28px">-</span>
-                <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex!=dataModels.length-1" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
+                <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex!=dataModels.length-1" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
                   <el-input v-model.number="innerDataItem.rato_max" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
                 <el-form-item v-if="isGuangdong && outerIndex!=4 && outerIndex==dataModels.length-1" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
@@ -62,7 +62,7 @@
                   <el-input v-model.number="innerDataItem.rato_max" :disabled="outerIndex==4" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
                 <!-- 非广东的情况 -->
-                <el-form-item v-if="!isGuangdong && outerIndex!=dataModels.length-1" :rules="[{ validator: validateTunnage1, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
+                <el-form-item v-if="!isGuangdong && outerIndex!=dataModels.length-1" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
                   <el-input v-model.number="innerDataItem.rato_max" @change="setLevelRelate" size="mini"><template slot="append">%</template></el-input>
                 </el-form-item>
                 <el-form-item v-if="!isGuangdong && outerIndex==dataModels.length-1" :rules="[{ validator: validateTunnage2, trigger: 'change' },{ type: 'number', message: '必须为数字'}]" prop="rato_max">
@@ -337,14 +337,14 @@
       changeWeightMin () {
         this._setData('weight_min');
       },
-      // 装载机别数
-      validateTunnage1 (rule, value, callback) {
-        if (value >55 || value < 0) {
-          callback(new Error('装载级别吨数不能大于55'));
-        } else {
-          callback();
-        }
-      },
+      // // 装载机别数
+      // validateTunnage1 (rule, value, callback) {
+      //   if (value >55 || value < 0) {
+      //     callback(new Error('装载级别吨数不能大于55'));
+      //   } else {
+      //     callback();
+      //   }
+      // },
       // 装载机别数
       validateTunnage2 (rule, value, callback) {
         if (value >1000 || value < 0) {

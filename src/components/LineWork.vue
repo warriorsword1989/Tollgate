@@ -27,6 +27,7 @@
 
 <script>
     import { getTollListByRdName, getTollListByTollId,getSearchData } from '../dataService/api';
+    import { getCityNameByCode } from '../config/CityList';
     import '../uikits/controllers/EventController';
     import { appUtil } from '../Application';
     export default {
@@ -53,7 +54,7 @@
           return documentObj.clientHeight - 140;
         },
         showInMap(row, event, column) {
-          getSearchData({type: 1,searchText: row.pid})
+          getSearchData({type: 1,searchText: row.pid, systemId: getCityNameByCode(appUtil.getGolbalData().adminCode).systemId})
             .then(data => {
               if (data.errorCode === 0) {
                 let geometryAlgorithm = new fastmap.mapApi.geometry.GeometryAlgorithm();
@@ -90,6 +91,8 @@
           const self = this;
           let id = [];
           let existToll = [];
+          let notExistToll = [];
+          let actualArray = [];
           for (let i = 0; i < this.multipleSelection.length; i++) {
             id.push(this.multipleSelection[i].pid)
           }
@@ -99,8 +102,10 @@
               for (let j = 0; j < data.data.length; j++) {
                 existToll.push(data.data[j].toll_pid);
               }
-              if (existToll.length > 0) {
-                self.$confirm(existToll.toString() + '已有收费信息, 是否继续?', '提示', {
+              notExistToll = id.filter(item => !existToll.includes(item));
+              actualArray = handleFlag === 'update' ? notExistToll : existToll;
+              if (actualArray.length > 0) {
+                self.$confirm(actualArray.toString() + `${handleFlag === 'update' ? '没有' : '已有'}收费信息, 是否继续?`, '提示', {
                   confirmButtonText: '确定',
                   cancelButtonText: '取消',
                   type: 'warning'
@@ -110,7 +115,7 @@
                 }).catch(() => {
                   self.$message({
                     type: 'info',
-                    message: '已取消新增'
+                    message: `已取消新增${handleFlag === 'update' ? '新增' : '编辑'}`
                   });
                 });
               } else {
