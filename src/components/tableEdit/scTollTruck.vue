@@ -223,8 +223,8 @@
           lane_num: null,
           rate1: null,
           lane_num1: null,
-          name_bt_id: 1,
-          name_bt: '',
+          name_bt_id: null,
+          name_bt: null,
           fix_fee: null,
           source: this.$store.state.source
         },

@@ -179,7 +179,7 @@
  
           setTimeout(()=>{
             this.showDialog = true;
-            let sourceValue = appUtil.getGolbalData().dataSource==1?1:data.sourceFlag;
+            let sourceValue = appUtil.getGolbalData().dataSource == 1 ? 1 : data.sourceFlag;
             this.$store.commit('changeSourceValue',sourceValue);
             if (data.flag=='update') {
               this.$store.commit('changeHandleFlag', 'update');

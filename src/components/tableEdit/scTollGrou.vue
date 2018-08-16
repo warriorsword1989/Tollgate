@@ -416,7 +416,7 @@
            // 验证最小值不能大与最大值
           let alertMessage = '';
           this.dataModels.forEach((item,index) => {
-            if ((item.pre_truck_loadmin && item.pre_truck_loadmax) && item.pre_truck_loadmin >= item.pre_truck_loadmax) {
+            if ((item.pre_truck_loadmin && item.pre_truck_loadmax) && parseFloat(item.pre_truck_loadmin) >= parseFloat(item.pre_truck_loadmax)) {
               validateFlag = false;
               alertMessage += `${index+1}区间优惠吨数最小值必须比最大值小;`;
             }
@@ -438,6 +438,7 @@
                 cloneData.green_path = this.dataModels[0].green_path;
                 cloneData.fee_limit = this.dataModels[0].fee_limit;
                 cloneData.round = this.dataModels[0].round;
+                cloneData.source = this.$store.state.source;
                 delete item.insertFlag;
                 delete cloneData.insertFlag;
                 submitData.push(cloneData);

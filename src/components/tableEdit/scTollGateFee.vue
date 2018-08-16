@@ -90,7 +90,7 @@
         }
       },
       check_local_plate (rule, value, callback) {
-        if (/[a-z]/.test(value)) {
+        if (value && /[a-z]/.test(value)) {
           callback(new Error('车牌范围字母必须大写'));
         } else {
           callback();
@@ -106,6 +106,7 @@
             let submitData = [];
             this.$store.state.editSelectedData.forEach(outer => {
               let cloneData = Object.assign({},_self.dataModels);
+              cloneData.source = this.$store.state.source;
               cloneData.toll_pid = outer;
               submitData.push(cloneData);
             });

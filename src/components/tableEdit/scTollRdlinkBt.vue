@@ -372,6 +372,7 @@
             let submitData = [];
             this.dataModels.forEach(item => {
               let cloneData = Object.assign({},item);
+              cloneData.source = this.$store.state.source;
               delete item.insertFlag;
               delete cloneData.insertFlag;
               submitData.push(cloneData);

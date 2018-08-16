@@ -5,7 +5,7 @@ Vue.use(Vuex)
 let state = {
   handleFlag: 'update',
   editSelectedData: [],
-  btData: {name: '',name_groupid:0},
+  btData: {name: null, name_groupid: null },
   source: 1,
 };
 

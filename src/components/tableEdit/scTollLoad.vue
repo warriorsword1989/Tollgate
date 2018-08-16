@@ -228,8 +228,8 @@
           lane_num: null,
           rate_base1: null,
           lane_num1: null,
-          name_bt_id: 1,
-          name_bt: '',
+          name_bt_id: null,
+          name_bt: null,
           source: this.$store.state.source
         },
         numberTable: ['一','二','三','四','五'],
@@ -445,8 +445,8 @@
         newObj.interval_min = 0;
         newObj.interval_max = newObj.tunnage_max;
         // 设置桥梁隧道;
-        newObj.name_bt = this.dataModels[0]?this.dataModels[0][0].name_bt:this.originModel.name_bt;
-        newObj.name_bt_id = this.dataModels[0]?this.dataModels[0][0].name_bt_id:this.originModel.name_bt_id;
+        newObj.name_bt = this.dataModels[0] ? this.dataModels[0][0].name_bt : this.originModel.name_bt;
+        newObj.name_bt_id = this.dataModels[0] ? this.dataModels[0][0].name_bt_id : this.activeInnerPanel ? 1 : this.originModel.name_bt_id;
         // 如果是广东，自动维护装载费率上线和下限;
         this.isGuangdong && this._setRateMinMax(this.dataModels.length,0,newObj);
         this.$set(this.dataModels, newLoadingClass, []);
@@ -477,6 +477,8 @@
       },
       minusInner(outerIndex, innerIndex) {
         this.dataModels[outerIndex].length > 1 && this.dataModels[outerIndex].pop();
+        const len = this.dataModels[outerIndex].length;
+        this.dataModels[outerIndex][len - 1].interval_max = this.dataModels[outerIndex][0].tunnage_max;
       },
       afterSave() {
         let submitData = [];

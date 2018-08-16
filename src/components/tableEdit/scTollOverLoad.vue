@@ -264,7 +264,7 @@
           lane_num: null,
           sub_rate_base1: null,
           lane_num1: null,
-          name_bt_id: 1,
+          name_bt_id: null,
           name_bt: null,
           ton_limit: null,
           multiple_limit: null,
@@ -460,6 +460,8 @@
       },
       minusInner(outerIndex, innerIndex) {
         this.dataModels[outerIndex].length > 1 && this.dataModels[outerIndex].pop();
+        const len = this.dataModels[outerIndex].length;
+        this.dataModels[outerIndex][len - 1].interval_max = this.dataModels[outerIndex][0].rato_max;
       },
       afterSave() {
         let submitData = [];
