@@ -2,6 +2,7 @@ import ConnectMetaOracle from '../../oracle/connectMetaOracle';
 import connectDynamicOracle from '../../oracle/connectDynamicOracle';
 import connectRenderObj from '../../oracle/connectRenderObj';
 import connetSelfObje from '../../oracle/connectOracle';
+import appConfig from '../../../config/application';
 import logger from '../../config/logs';
 import {changeResult} from '../../Util';
 
@@ -85,8 +86,8 @@ class TollGate {
     //   this.db = new connectDynamicOracle();
     // }
     let dbSql = `create database link gdb_Links
-    connect to fm_gdb_trunk identified by fm_gdb_trunk
-    using '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.3.227)(PORT = 1521 )))(CONNECT_DATA = (SERVICE_NAME = orcl )))'`;
+    connect to ${appConfig.RenderObjUserName} identified by ${appConfig.RenderObjPassword}
+    using '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = ${appConfig.connectRenderObjUrl.split(':')[0]})(PORT = ${appConfig.connectRenderObjUrl.split(':')[1].split('/')[0]} )))(CONNECT_DATA = (SERVICE_NAME = ${appConfig.connectRenderObjUrl.split(':')[1].split('/')[1]} )))'`;
     let dblinkconn = await this.db.executeSql(dbSql);
     let querySql = `SELECT DISTINCT n.NAME_GROUPID,n.NAME FROM rd_link_name@gdb_Links l, rd_name n WHERE l.name_groupId = n.name_groupId AND n. NAME LIKE '%${nameString}%' AND n.lang_code='CHI' AND l.name_type IN (4, 5)`;
     let result = await this.db.executeSql(querySql,'gdb_Links');
