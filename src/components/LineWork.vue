@@ -115,7 +115,7 @@
                 }).catch(() => {
                   self.$message({
                     type: 'info',
-                    message: `已取消新增${handleFlag === 'update' ? '新增' : '编辑'}`
+                    message: `已取消${handleFlag === 'update' ? '编辑' : '新增'}收费站`
                   });
                 });
               } else {

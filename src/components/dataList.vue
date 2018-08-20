@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);" class="dataList">
+    <i @click="closeDataList" class="el-icon-circle-close-outline close"></i>
     <ul>
       <li :index="index" @click="clickPid(item)" v-for="(item, index) in tableData">{{`${item.name} - ${item.pid}`}}</li>
     </ul>
@@ -20,6 +21,9 @@
         methods: {
           clickPid(eData) {
             this.eventController.fire(L.Mixin.EventTypes.OBJECTSELECTED, { features: [eData.pid], systemIds: [eData.system_id], event: event, flag: 'update', sourceFlag: 3, toolType: 'tableList' });
+          },
+          closeDataList () {
+            this.$emit('closeDataList');
           }
         },
         mounted() {
@@ -48,9 +52,17 @@
     z-index: 9;
     box-shadow: 0 0 10px #93bbff;
   }
+  .close {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    color: red;
+    font-size: 14px;
+    cursor: pointer;
+  }
   ul {
     list-style: none;
-    padding: 0;
+    padding: 10px;
     margin: 0
   }
   li {

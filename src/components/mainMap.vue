@@ -12,7 +12,7 @@
       <info-list></info-list>
       <img class="left-panel-hide" @click="hideLeftPanel()" src="../assets/toolIcon/icon/icon-back-left.png"/>
     </div>
-    <data-list :list-data="lists" v-show="dataListShow" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '350px': '50px'}"></data-list>
+    <data-list :list-data="lists" @closeDataList="dataListShow=false" v-show="dataListShow" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '350px': '50px'}"></data-list>
     <!-- 右侧线作业面板 -->
     <div class="fm-layout-container right" style="overflow: hidden" v-if="rightLineWorkFlag">
       <line-work></line-work>
@@ -171,10 +171,6 @@
             this.eventController.fire('moreData', { data: data.features });
             this.dataListShow = true;
             return;
-          }
-          
-          if ((data.toolType === 'point' && data.features.length === 1) || data.toolType === 'box') {
-            this.dataListShow = false;
           }
  
           setTimeout(()=>{

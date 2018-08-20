@@ -90,7 +90,7 @@
               <div title="ETC打折：" class="labelText">ETC打折：</div>
               <div class="inputPart">
                 <el-form-item prop="etc_d">
-                  <el-input type="number" v-model="dataItem.etc_d" size="mini">
+                  <el-input type="number" @change="etcDChange" v-model="dataItem.etc_d" size="mini">
                     <template slot="append">%</template>
                   </el-input>
                 </el-form-item>
@@ -189,7 +189,16 @@
       // 如果存在的换验证数字是否为>=0的数字；
       let validateNum = (rule, value, callback) => {
         if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
+          callback(new Error('输入必须是正数')); 
+        } else {
+          callback();
+        }
+      };
+      let validateNumEtcD = (rule, value, callback) => {
+        if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
           callback(new Error('输入必须是数字')); 
+        } else if (parseFloat(value) < 1 || parseFloat(value) > 100) {
+          callback(new Error('etc打折必须在1-100之间')); 
         } else {
           callback();
         }
@@ -315,7 +324,7 @@
             { validator: validateNum, trigger: 'change'}
           ],
           etc_d: [
-            { validator: validateNum, trigger: 'change'}
+            { validator: validateNumEtcD, trigger: 'change'}
           ]
         }
       }
@@ -344,6 +353,11 @@
       },
       // ETC打折类型改变的事件监听;
       etcTypeChange (value) {
+        this.$refs['dataItem'].forEach(item => {
+          item.validateField('etc_d');
+        });
+      },
+      etcDChange(value) {
         this.$refs['dataItem'].forEach(item => {
           item.validateField('etc_d');
         });
