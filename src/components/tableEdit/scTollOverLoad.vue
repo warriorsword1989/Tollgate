@@ -432,7 +432,7 @@
         newObj.interval_max = newObj.rato_max;
         // 设置桥梁隧道;
         newObj.name_bt = this.dataModels[0] ? this.dataModels[0][0].name_bt : this.originModel.name_bt;
-        newObj.name_bt_id = this.dataModels[0] ? this.dataModels[0][0].name_bt_id : this.originModel.name_bt;
+        newObj.name_bt_id = this.dataModels[0] ? this.dataModels[0][0].name_bt_id : this.activeInnerPanel ? 1 : this.originModel.name_bt_id;
         this.$set(this.dataModels, newLoadingClass, []);
         this.$set(this.dataModels[newLoadingClass], 0, newObj);
       },
