@@ -487,9 +487,11 @@
         this.loading = true;
         updateTollGate(params)
           .then(result => {
-            let {
-              errorCode
-            } = result;
+            let {errorCode} = result;
+            let messageStr = '数据更新成功！'
+            if (result.message) {
+              messageStr = result.message
+            }
             const h = this.$createElement;
             if (errorCode === 0) {
               this.$emit('tabStatusChange', {
@@ -498,7 +500,7 @@
               });
               fastmap.mapApi.scene.SceneController.getInstance().redrawLayerByGeoLiveTypes(['RDTOLLGATE']);
               return this.$message({
-                message: '数据更新成功！',
+                message: messageStr,
                 type: 'success'
               });
             } else {
