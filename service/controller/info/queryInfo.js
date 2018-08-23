@@ -23,7 +23,7 @@ class GetInfoData {
       condition += ` AND INFO_CODE = '${param.infoCode}'`;
     }
     if (param.pushBeforeTime && param.pushAfterTime) {
-      condition += ` AND PUBLIC_TIME BETWEEN ${param.pushBeforeTime} AND ${param.pushAfterTime}`;
+      condition += ` AND TO_DATE(PUBLIC_TIME, 'yyyyMMdd') BETWEEN TO_DATE('${param.pushBeforeTime}', 'yyyy-MM-dd') AND TO_DATE('${param.pushAfterTime}', 'yyyy-MM-dd')`;
     }
     if (param.complete && param.complete.length > 0) {
       condition += ` AND COMPLETE IN (${param.complete.toString()})`;
