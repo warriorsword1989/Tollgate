@@ -124,7 +124,7 @@
 			 */
 			transformData(data) {
 				const result = data.map(item => {
-						item.isAdoptedName = item.complete === 1 ? '未处理' : item.complete === 2 ? '已处理' : '无法处理';
+						item.completeName = item.complete === 1 ? '未处理' : item.complete === 2 ? '已处理' : '无法处理';
 						return item;
 				});
 				return result;
