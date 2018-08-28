@@ -196,9 +196,9 @@
       };
       let validateNumEtcD = (rule, value, callback) => {
         if (value && !/^[0-9]+(\.[0-9]{1,})?$/.test(value)) {
-          callback(new Error('输入必须是数字')); 
-        } else if (parseFloat(value) <= 1 || parseFloat(value) > 100) {
-          callback(new Error('etc打折必须在1-100之间')); 
+          callback(new Error('输入数字不合法')); 
+        } else if (parseFloat(value) < 0 || parseFloat(value) > 100) {
+          callback(new Error('etc打折必须在0-100之间')); 
         } else {
           callback();
         }
