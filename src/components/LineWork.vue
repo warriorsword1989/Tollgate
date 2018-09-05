@@ -133,7 +133,6 @@
         this.feedbackCtrl.add(this.feedback);
       },
       destroyed(e) {
-        console.log(e);
         this.clearFeedBack();
       }
     }

@@ -359,8 +359,8 @@
       // 固定收费站对应次费
       validateFixFee(value) {
         if (this.isClickSave)return;
-        if (value > 10 || value < 0) {
-          this.$alert('固定收费站对应次费值大于10或者小于0!', '提示', {
+        if (value > 100 || value < 0) {
+          this.$alert('固定收费站对应次费值大于100或者小于0!', '提示', {
             confirmButtonText: '确定',
             type: 'warning',
             showClose: false

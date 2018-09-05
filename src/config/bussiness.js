@@ -26,13 +26,15 @@ const tollType = {
   9: '验票领卡',
   10: '交卡不收费'
 };
+
 // 作业类型
 const workType = {
   static: '[静态作业]',
   dynamic: '[动态作业]'
 };
+
 // 情报作业来源；
-const infoSource = ['情报道路对象', '情报点对象', '情报省份对象'];
+const infoSource = ['外业照片', '情报线', '情报点', '情报面'];
 
 const bussinessConfig = {
   tableInfos,

@@ -206,7 +206,7 @@
           if (this.$store.state.source === 1) {
             item.type = this.bussinessConfig.tollType[item.type];
           } else {
-            item.type = this.bussinessConfig.infoSource[this.$store.state.source - 2];
+            item.type = this.bussinessConfig.infoSource[item.source - 1];
           }
           return item;
         }, this);
