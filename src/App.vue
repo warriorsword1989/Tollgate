@@ -54,6 +54,14 @@ export default {
 .dragWindow .el-button {
   border-radius: 0
 }
+
+/****************复写桥隧道tab页新增tab页按钮样式********************/
+.scTollRdlinkBt .el-tabs__new-tab {
+    background: #409EFF
+  }
+.scTollRdlinkBt .el-icon-plus {
+  color: #fff;
+}
 /****************自定义全局滚动条样式********************/
 ::-webkit-scrollbar
 {
@@ -73,6 +81,7 @@ export default {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.4);
     background-color: #ccc;
 }
+
 /****************复写图片浏览工具样式********************/
 .viewer-container .viewer-footer{
   bottom: 20%!important;

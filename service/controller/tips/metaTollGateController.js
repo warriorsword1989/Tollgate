@@ -22,14 +22,22 @@ class TollGate {
    * 根据groupId查询收费站信息;
    */
   async getTollGate() {
+    let sql = '';
     const param = this.req.query;
     const pid = param.pid;
     this.table = param.table;
+
     if (param.workFlag == 'dynamic') {
       this.db = new connectDynamicOracle();
     }
+    
     const primaryKey = this.table === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : this.table === 'SC_TOLL_LIMIT' ? 'SYSTEM_ID' : this.table === 'SC_TOLL_RDLINK_BT' ? 'NAME_BT_ID' : 'GROUP_ID';
-    let sql = "SELECT * FROM " + this.table + " WHERE " + primaryKey + " = '" + pid + "'";
+    
+    if (Array.isArray(pid)) {
+      sql = `SELECT * FROM ${this.table} WHERE ${primaryKey} in (${pid.join(',')})`;
+    } else {
+      sql = `SELECT * FROM ${this.table} WHERE ${primaryKey} = ${pid}`;
+    }
     const result = await this.db.executeSql(sql);
     const resultData = changeResult(result);
     this.res.send({
@@ -116,13 +124,10 @@ class TollGate {
 
   async getPidsBySource (primaryKey,pids,source) {
     let inCondition = '';
-    if (source == 2) {
-      inCondition = '2,4';
-    } else if (source == 3) {
-      inCondition = '2,3,4';
-    } else if (source == 4) {
-      inCondition = '4';
+    if (source != 1) {
+      inCondition = '2, 3, 4';
     }
+    
     let sql1 = `SELECT * FROM ${this.table} WHERE ${primaryKey} IN (${pids.join(',')}) AND source IN (${inCondition})`;
     let updateResult = await this.db.executeSql(sql1);
     let updateResultData = changeResult(updateResult);

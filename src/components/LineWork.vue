@@ -11,10 +11,11 @@
     <!-- 线作业数据列表 -->
     <div v-show="tollData.length">
       <el-table :data="tollData" border :height="getTableHeight()" @row-click="showInMap" @selection-change="handleSelectionChange">
-        <el-table-column width="35" type="selection"></el-table-column>
+        <el-table-column width="30" type="selection"></el-table-column>
         <el-table-column width="50" prop="id" label="序号" type="index" align="center"></el-table-column>
-        <el-table-column width="125" prop="name" label="收费站名称" align="center" ></el-table-column>
-        <el-table-column prop="pid" label="ID" align="center"></el-table-column>
+        <el-table-column width="110" prop="name" label="收费站名称" align="center" ></el-table-column>
+        <el-table-column prop="rate" label="一型客车费率" align="center" ></el-table-column>
+        <el-table-column width="60" prop="pid" label="ID" align="center"></el-table-column>
       </el-table>
     </div>
     <!-- 线作业编辑按钮 -->
@@ -26,7 +27,7 @@
 </template>
 
 <script>
-    import { getTollListByRdName, getTollListByTollId,getSearchData } from '../dataService/api';
+    import { getTollListByRdName, getTollListByTollId,getSearchData, getTollGate } from '../dataService/api';
     import { getCityNameByCode } from '../config/CityList';
     import '../uikits/controllers/EventController';
     import { appUtil } from '../Application';
@@ -78,11 +79,23 @@
             roadName: this.roadName,
             adminCode: appUtil.getGolbalData().adminCode
           };
-          getTollListByRdName(param).then(function (data) {
-            if (data.errorCode === 0) {
-              self.tollData = data.data;
-            }
-          });
+          getTollListByRdName(param)
+            .then(data => {
+              return data;
+            })
+            .then(data => {
+              if (data.errorCode == 0) {
+                const resultDatas = data.data;
+                const pids = data.data.map(item => item.pid);
+                getTollGate({ table: 'SC_TOLL_CAR', pid: pids }).then(res => {
+                  this.tollData = resultDatas.map(item => {
+                    const itemTollGate = res.data.filter(innerItem => innerItem.car_class === 1 && innerItem.group_id === item.pid)[0];
+                    item.rate = (itemTollGate.rate == 0 || itemTollGate.rate) ? itemTollGate.rate : '空';
+                    return item;
+                  });
+                });
+              }
+            });
         },
         addOrEditTollData: function (handleFlag) {
           if (this.multipleSelection.length === 0) {

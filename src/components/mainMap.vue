@@ -21,14 +21,14 @@
     <img class="left-panel-open" @click="showLeftPanelSwitch()" v-if="!leftPanelFlag && dataSource === 2" src="../assets/toolIcon/icon/button-open-left.png"/>
     <!-- 地图 -->
     <div id="editorMap" class="map">
-      <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '390px': '90px'}" v-on:lineWork="onLineWork()"></edit-tool>
-      <div class="mapZoomBar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '360px': '60px'}">
+      <edit-tool class="toolsToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '440px': '90px'}" v-on:lineWork="onLineWork()"></edit-tool>
+      <div class="mapZoomBar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '410px': '60px'}">
         缩放等级：
         <span>{{zoom}}</span>
       </div>
     </div>
-    <user-tool @showList="showDataListFn" class="userToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '350px': '50px'}"></user-tool>
-    <div class="sceneToolbar" @click="openRightPanel()" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '310px': '10px'}"><div></div></div>
+    <user-tool @showList="showDataListFn" class="userToolbar" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '400px': '50px'}"></user-tool>
+    <div class="sceneToolbar" @click="openRightPanel()" v-bind:style="{right: rightPanelFlag || rightLineWorkFlag ? '360px': '10px'}"><div></div></div>
     <div class="fm-layout-container right" v-if="rightPanelFlag" style="overflow: hidden">
       <scene-tool></scene-tool>
       <img class="right-float-close" @click="closeRightPanel()" src="../assets/toolIcon/icon/button-close-normal.png" />
