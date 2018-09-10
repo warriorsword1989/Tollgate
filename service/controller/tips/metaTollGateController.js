@@ -89,6 +89,7 @@ class TollGate {
     const param = this.req.query;
     const nameString = param.bridgeName;
     this.table = param.table;
+    this.adminCode = param.adminCode;
     // 动态库中没有rd_name表;
     // if (param.workFlag == 'dynamic') {
     //   this.db = new connectDynamicOracle();
@@ -97,7 +98,7 @@ class TollGate {
     connect to ${appConfig.RenderObjUserName} identified by ${appConfig.RenderObjPassword}
     using '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = ${appConfig.connectRenderObjUrl.split(':')[0]})(PORT = ${appConfig.connectRenderObjUrl.split(':')[1].split('/')[0]} )))(CONNECT_DATA = (SERVICE_NAME = ${appConfig.connectRenderObjUrl.split(':')[1].split('/')[1]} )))'`;
     let dblinkconn = await this.db.executeSql(dbSql);
-    let querySql = `SELECT DISTINCT n.NAME_GROUPID,n.NAME FROM rd_link_name@gdb_Links l, rd_name n WHERE l.name_groupId = n.name_groupId AND n. NAME LIKE '%${nameString}%' AND n.lang_code='CHI' AND l.name_type IN (4, 5)`;
+    let querySql = `SELECT DISTINCT n.NAME_GROUPID,n.NAME FROM rd_link_name@gdb_Links l, rd_name n WHERE l.name_groupId = n.name_groupId AND n.NAME LIKE '%${nameString}%' AND n.lang_code='CHI' AND l.name_type IN (4, 5) AND n.admin_id=${this.adminCode}`;
     let result = await this.db.executeSql(querySql,'gdb_Links');
     await this.db.executeSql(`drop database link gdb_Links`);
     const resultData = changeResult(result);

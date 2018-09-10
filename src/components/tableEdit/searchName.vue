@@ -47,7 +47,8 @@
           let param = {
             table: 'RD_NAME',
             bridgeName: this.searchValue,
-            workFlag: appUtil.getGolbalData().workType
+            workFlag: appUtil.getGolbalData().workType,
+            adminCode: appUtil.getGolbalData().adminCode
           };
           getBriageName(param)
           .then(result=> {

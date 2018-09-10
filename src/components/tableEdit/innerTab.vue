@@ -30,6 +30,7 @@
       },
 
       innerTabPanelOnClick(e) {
+        // 这样写的原因是为了调换tab页的显示顺序而不改变内部逻辑的处理;
         this.activePanel = parseInt(e.index) === 1 ? 0 : 1;
         // 销毁组建(对于两次同时加载同一个组件只能在第一个加载时执行的解决办法);
         this.currentView = null;
