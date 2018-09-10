@@ -15,7 +15,7 @@
       return {
         editableTabsValue: '1',
         editableTabs: [{
-          title: '桥隧道收费-1',
+          title: '桥隧道收费',
           name: '1'
         }],
         tabIndex: 1,
