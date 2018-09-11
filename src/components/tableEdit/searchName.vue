@@ -10,7 +10,11 @@
       </div>
     </div>
     <div style="margin: 15px;">
-      <el-input size="mini" placeholder="请输入内容" v-model="searchValue">
+      <el-input size="mini" :placeholder="placeHolder" v-model="searchValue" class="input-with-select">
+        <el-select style="width: 70px" v-model="select" slot="prepend" placeholder="请选择">
+          <el-option label="桥梁" value="1"></el-option>
+          <el-option label="隧道" value="2"></el-option>
+        </el-select>
         <el-button slot="append" @click="search" icon="el-icon-search"></el-button>
       </el-input>
     </div>
@@ -38,7 +42,13 @@
         searchValue: '',
         tableData: [],
         loading: false,
-        currentRow: null
+        currentRow: null,
+        select: '1'
+      }
+    },
+    computed: {
+      placeHolder: function() {
+        return this.select === '1' ? '精确查询' : '模糊查询';
       }
     },
     methods: {
@@ -48,7 +58,8 @@
             table: 'RD_NAME',
             bridgeName: this.searchValue,
             workFlag: appUtil.getGolbalData().workType,
-            adminCode: appUtil.getGolbalData().adminCode
+            adminCode: appUtil.getGolbalData().adminCode,
+            type: this.select
           };
           getBriageName(param)
           .then(result=> {

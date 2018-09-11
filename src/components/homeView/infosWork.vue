@@ -81,7 +81,7 @@
 				searchCondition: {
 					adminCode: '110000',
 					infoCode: '',
-					pushBeforeTime: utils.newDateFormat(preDate, 'yyyy-MM-dd'),
+					pushBeforeTime: null,
 					pushAfterTime: utils.newDateFormat(new Date(), 'yyyy-MM-dd'),
 					complete: [1, 2, 3],
 					currentPage: 1,
@@ -201,12 +201,16 @@
 					workType: type,
 					adminCode: this.searchCondition.adminCode,
 					dataSource: 2,
-					infoCode: data.info_code
+					infoCode: data.info_code,
+					startTimeInfo: this.searchCondition.pushBeforeTime,
+					endTimeInfo: this.searchCondition.pushAfterTime
 				});
 			}
     },
 
     mounted() {
+			this.searchCondition.pushBeforeTime = appUtil.getGolbalData().startTimeInfo ? appUtil.getGolbalData().startTimeInfo : null;;
+			this.searchCondition.pushAfterTime = appUtil.getGolbalData().endTimeInfo ? appUtil.getGolbalData().endTimeInfo : utils.newDateFormat(new Date(), 'yyyy-MM-dd');
 			this.showData();
     }
   }

@@ -84,7 +84,7 @@
 				searchCondition: {
 					tipsVersion: '',
 					adminCode: '110000',
-					updateStartTime: utils.newDateFormat(preDate, 'yyyy-MM-dd'),
+					updateStartTime: null,
 					updateEndTime: utils.newDateFormat(new Date(), 'yyyy-MM-dd'),
 					tollName:'',
 					isAdopted: [1, 2, 3],
@@ -200,11 +200,15 @@
 					rowkey: data.rowkey,
 					photo_id: data.photo_id,
 					dataSource: 1,
+					startTimePhoto: this.searchCondition.updateStartTime,
+					endTimePhoto: this.searchCondition.updateEndTime
 				});
 			}
     },
 
     mounted() {
+			this.searchCondition.updateStartTime = appUtil.getGolbalData().startTimePhoto ? appUtil.getGolbalData().startTimePhoto : null;
+			this.searchCondition.updateEndTime = appUtil.getGolbalData().endTimePhoto ? appUtil.getGolbalData().endTimePhoto : utils.newDateFormat(new Date(), 'yyyy-MM-dd');
 			this.showData();
     }
   }

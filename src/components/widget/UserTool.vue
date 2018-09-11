@@ -38,6 +38,7 @@
           logout: function () {
             this.$router.push('/login');
             appUtil.removeTollgateToken();
+            appUtil.removeGolbalData();
           },
 
 					showDataList: function () {
