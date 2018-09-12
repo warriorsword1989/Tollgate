@@ -34,7 +34,7 @@ const workType = {
 };
 
 // 情报作业来源；
-const infoSource = ['外业照片', '情报线', '情报点', '情报面'];
+const infoSource = ['无来源', '外业照片', '情报线', '情报点', '情报面'];
 
 const bussinessConfig = {
   tableInfos,

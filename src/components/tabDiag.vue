@@ -149,6 +149,9 @@
         * 切换tab页的时候并切换路由，显示对应的组件
        */
       tabOnActive(e){
+        const tables = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP_DETAIL', 'SC_TOLL_LIMIT','SC_TOLL_RDLINK_BT'];
+        console.log(tables[parseInt(e.index)])
+        this.transfromSelectedData(this.$store.state.editSelectedData, tables[parseInt(e.index)]);
         // 因为切换tab后组件都会重新加载，所以再次清调之前在激活页面改动给label加的*符号
         this._initTableLabel();
         // 动态显示组件;
@@ -193,10 +196,11 @@
       /**
         * 根据地图上选择的收费站pid查询收费站的概略信息，包括收费站的名称，pid，和收费类型
        */
-      async transfromSelectedData(arr) {
+      async transfromSelectedData(arr, sourceTable) {
         let result = null;
+        this.loading = true;
         try {
-          const param = { table: 'RD_TOLLGATE_NAME', pid: arr };
+          const param = { table: 'RD_TOLLGATE_NAME', pid: arr, sourceTable: sourceTable };
           result = await getTollName(param);
         } catch (err) {
           throw new Error(err);
@@ -206,7 +210,7 @@
           if (this.$store.state.source === 1) {
             item.type = this.bussinessConfig.tollType[item.type];
           } else {
-            item.type = this.bussinessConfig.infoSource[this.$store.state.source - 2];
+            item.type = this.bussinessConfig.infoSource[item.source];
           }
           return item;
         }, this);
@@ -239,7 +243,7 @@
         this.tableHeader[2].label = '信息来源';
       }
       this.originSeleceData = [...this.$store.state.editSelectedData];
-      this.transfromSelectedData(this.$store.state.editSelectedData);
+      this.transfromSelectedData(this.$store.state.editSelectedData, 'SC_TOLL_CAR');
     },
 
     /**

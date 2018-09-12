@@ -18,6 +18,9 @@ import 'vue-dialog-drag/dist/drop-area.css'
 import 'vue-dialog-drag/dist/dialog-styles.css'
 import store from './store/index.js'
 
+import vueBus from './tools/vue-bus'
+// 增加一个vuebus作为数据传递总线，解决各级别组件传递数据的问题;
+Vue.use(vueBus);
 Vue.use(ElementUI);
 Vue.use(Viewer)
 Vue.use(VueAwesomeSwiper);

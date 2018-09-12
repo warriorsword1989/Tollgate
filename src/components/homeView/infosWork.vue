@@ -209,8 +209,8 @@
     },
 
     mounted() {
-			this.searchCondition.pushBeforeTime = appUtil.getGolbalData().startTimeInfo ? appUtil.getGolbalData().startTimeInfo : null;;
-			this.searchCondition.pushAfterTime = appUtil.getGolbalData().endTimeInfo ? appUtil.getGolbalData().endTimeInfo : utils.newDateFormat(new Date(), 'yyyy-MM-dd');
+			this.searchCondition.pushBeforeTime = (appUtil.getGolbalData() && appUtil.getGolbalData().startTimeInfo) ? appUtil.getGolbalData().startTimeInfo : null;;
+			this.searchCondition.pushAfterTime = (appUtil.getGolbalData() && appUtil.getGolbalData().endTimeInfo) ? appUtil.getGolbalData().endTimeInfo : utils.newDateFormat(new Date(), 'yyyy-MM-dd');
 			this.showData();
     }
   }

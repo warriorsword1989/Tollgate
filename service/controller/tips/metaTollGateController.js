@@ -70,10 +70,27 @@ class TollGate {
     const param = this.req.query;
     const pids = param.pid;
     this.table = param.table;
-    let sql = `SELECT b.type, b.pid, a.name, b.system_id FROM ${this.table} a, RD_TOLLGATE b WHERE a.pid=b.pid AND a.pid IN (${pids.join(',')}) AND a.lang_code='CHI'`;
+    let sql = `SELECT b.type, b.pid, a.name, b.system_id FROM ${this.table} a LEFT JOIN RD_TOLLGATE b ON a.pid=b.pid WHERE a.pid IN (${pids.join(',')}) AND a.lang_code='CHI'`;
     const result = await this.originDB.executeSql2(sql);
     const resultData = changeResult(result);
-    console.log(resultData)
+
+    resultData.forEach(element => element.source = 0);
+
+    const allpids = resultData.map(item => item.pid);
+    const relateTable = param.sourceTable ? param.sourceTable : 'SC_TOLL_CAR';
+    if (relateTable != 'SC_TOLL_LIMIT' && relateTable != 'SC_TOLL_RDLINK_BT') {
+      const primaryKey = relateTable === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : 'GROUP_ID';
+      let sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')})`;
+      const result2 = await this.db.executeSql(sql2)
+      const resultData2 = changeResult(result2);
+      resultData.forEach(item => {
+        resultData2.forEach(innerItem => {
+          if (item.pid == innerItem.pid) {
+            item.source = innerItem.source;
+          }
+        });
+      })
+    }
     this.res.send({
       errorCode: 0,
       data: resultData
