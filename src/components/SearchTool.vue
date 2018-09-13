@@ -1,8 +1,8 @@
 <template>
   <div class="searchPanel">
     <div class="inputWrapper">
-      <input class="searchInput" placeholder="请输入道路名称，道路PID" v-if="type === 0" @keyup="searchData($event, 0)" v-model="searchText">
-      <input class="searchInput" placeholder="请输入收费站名称，收费站PID" v-if="type === 1" @keyup="searchData($event, 1)" v-model="searchText">
+      <input class="searchInput" placeholder="请输入道路名称，道路PID" v-if="type === 0" @click="closeList" @keyup="searchData($event, 0)" v-model="searchText">
+      <input class="searchInput" placeholder="请输入收费站名称，收费站PID" v-if="type === 1" @click="closeList" @keyup="searchData($event, 1)" v-model="searchText">
       <div style="display: inline-block;" class="searchType">
         <button class="inputButton searchIcon" @click="showAction($event)"><span class="el-icon-search"></span></button>
         <!--<ul class="typeList">-->
@@ -56,6 +56,11 @@
           }
         },
         methods: {
+          closeList: function () {
+            if (this.advancePanelFlag) {
+              this.advancePanelFlag = false;
+            }
+          },
           toggleAdvancePanel: function () {
             this.advancePanelFlag = true;
           },

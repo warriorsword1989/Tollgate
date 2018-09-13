@@ -6,7 +6,7 @@
       <photo-edit :photo-data="photoModel" slot="dataView"></photo-edit>
     </side-bar>
     <!-- 左侧数据列表 -->
-    <toll-list @closeList="closeDataListFn" v-if="showDataList"></toll-list>
+    <toll-list style="box-shadow: 0 0 10px #93bbff" @closeList="closeDataListFn" v-if="showDataList"></toll-list>
     <!-- 左侧情报面板 -->
     <div class="fm-layout-container left" v-if="leftPanelFlag && dataSource === 2">
       <info-list></info-list>

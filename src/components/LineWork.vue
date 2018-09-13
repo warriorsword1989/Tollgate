@@ -3,7 +3,7 @@
     <div class="header"><div class="title"><span>线作业</span></div></div>
     <!-- 线作业顶部搜索 -->
     <div style="padding: 5px;">
-      <el-input placeholder="请输入内容" size="small" v-model="roadName" class="input-with-select">
+      <el-input placeholder="请输入内容" size="small" v-model="roadName" @keyup.enter.native="searchToll()" class="input-with-select">
         <template slot="prepend">道路名称</template>
         <el-button type="primary" slot="append" icon="el-icon-search" @click="searchToll()"></el-button>
       </el-input>

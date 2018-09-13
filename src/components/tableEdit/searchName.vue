@@ -10,7 +10,7 @@
       </div>
     </div>
     <div style="margin: 15px;">
-      <el-input size="mini" :placeholder="placeHolder" v-model="searchValue" class="input-with-select">
+      <el-input size="mini" :placeholder="placeHolder" @keyup.enter.native="search" v-model="searchValue" class="input-with-select">
         <el-select style="width: 70px" v-model="select" slot="prepend" placeholder="请选择">
           <el-option label="桥梁" value="1"></el-option>
           <el-option label="隧道" value="2"></el-option>

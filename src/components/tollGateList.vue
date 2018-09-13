@@ -5,15 +5,13 @@
 			<div class="headerItem" style="flex: 1"><div><i class="el-icon-tickets"></i> 桥梁隧道列表</div></div>
 			<div class="headerItem" style="width: 50px; text-align: center;font-size: 18px;"><i style="cursor: pointer" @click="closeDataList" class="el-icon-close"></i></div>
 		</div>
-
-		<el-form style="margin-bottom: -22px;padding: 10px;" size="small" :inline="true" class="demo-form-inline">
-			<el-form-item label="桥梁隧道名称">
-				<el-input v-model="searchName" placeholder="桥梁隧道名称"></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="onSubmit">查询</el-button>
-			</el-form-item>
-		</el-form>
+		<!-- 搜索框 -->
+		<div style="padding: 5px;">
+      <el-input placeholder="请输入内容" size="small" v-model="searchName" @keyup.enter.native="searchResult()" class="input-with-select">
+        <template slot="prepend">桥梁隧道名称</template>
+        <el-button type="primary" slot="append" icon="el-icon-search" @click="searchResult()"></el-button>
+      </el-input>
+    </div>
 		<!-- 表格(height属性必须卸载table上，如果写css，固定表头不起作用) -->
 		<div v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8);" style="height:calc(100% - 170px)" class="content">
 			<el-table height="100%" :data="tableData.slice((pagination.currentPage-1)*pagination.pageSize,pagination.currentPage*pagination.pageSize)" border>
@@ -78,7 +76,7 @@
 			handleCurrentChange(val){
 				this.pagination.currentPage = val;
 			},
-			onSubmit() {
+			searchResult() {
 				this.showDataList();
 			},
 			handleClick(param, event) {
