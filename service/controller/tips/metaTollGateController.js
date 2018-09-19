@@ -84,7 +84,7 @@ class TollGate {
       let sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')})`;
       if (relateTable == 'SC_TOLL_OVERLOAD' || relateTable == 'SC_TOLL_LOAD') {
         if (isBridge) {
-          sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt_id NOT NULL`;
+          sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt_id IS NOT NULL`;
         } else {
           sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt_id IS NULL`;
         }
