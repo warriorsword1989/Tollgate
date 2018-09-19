@@ -14,7 +14,7 @@
         <el-table-column width="30" type="selection"></el-table-column>
         <el-table-column width="50" prop="id" label="序号" type="index" align="center"></el-table-column>
         <el-table-column width="110" prop="name" label="收费站名称" align="center" ></el-table-column>
-        <el-table-column prop="rate" label="一型客车费率" align="center" ></el-table-column>
+        <el-table-column prop="rate" label="客车一车型费率" align="center" ></el-table-column>
         <el-table-column width="60" prop="pid" label="ID" align="center"></el-table-column>
       </el-table>
     </div>
@@ -90,7 +90,7 @@
                 getTollGate({ table: 'SC_TOLL_CAR', pid: pids }).then(res => {
                   this.tollData = resultDatas.map(item => {
                     const itemTollGate = res.data.filter(innerItem => innerItem.car_class === 1 && innerItem.group_id === item.pid)[0];
-                    item.rate = (itemTollGate.rate == 0 || itemTollGate.rate) ? itemTollGate.rate : '空';
+                    item.rate = (itemTollGate && (itemTollGate.rate == 0 || itemTollGate.rate)) ? itemTollGate.rate : '空';
                     return item;
                   });
                 });

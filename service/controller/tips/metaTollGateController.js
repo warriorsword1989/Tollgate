@@ -70,6 +70,7 @@ class TollGate {
     const param = this.req.query;
     const pids = param.pid;
     this.table = param.table;
+    const isBridge = param.isBridge
     let sql = `SELECT b.type, b.pid, a.name, b.system_id FROM ${this.table} a LEFT JOIN RD_TOLLGATE b ON a.pid=b.pid WHERE a.pid IN (${pids.join(',')}) AND a.lang_code='CHI'`;
     const result = await this.originDB.executeSql2(sql);
     const resultData = changeResult(result);
@@ -81,6 +82,13 @@ class TollGate {
     if (relateTable != 'SC_TOLL_LIMIT' && relateTable != 'SC_TOLL_RDLINK_BT') {
       const primaryKey = relateTable === 'SC_TOLL_TOLLGATEFEE' ? 'TOLL_PID' : 'GROUP_ID';
       let sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')})`;
+      if (relateTable == 'SC_TOLL_OVERLOAD' || relateTable == 'SC_TOLL_LOAD') {
+        if (isBridge) {
+          sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt_id NOT NULL`;
+        } else {
+          sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt_id IS NULL`;
+        }
+      }
       const result2 = await this.db.executeSql(sql2)
       const resultData2 = changeResult(result2);
       resultData.forEach(item => {

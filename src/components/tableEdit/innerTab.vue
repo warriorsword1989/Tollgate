@@ -38,6 +38,9 @@
           this.currentView = this.copyView;
           this.activePanel = parseInt(e.index) === 1 ? 0 : 1;
         });
+        // 如果是情报作业，发事件给父组件，更新信息来源
+        const isBridge = this.activePanel == 1 ? false : true;
+        this.$emit('refreshInfoSource', isBridge);
       }
     },
 
