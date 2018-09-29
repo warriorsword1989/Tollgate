@@ -70,7 +70,7 @@ class TollGate {
     const param = this.req.query;
     const pids = param.pid;
     this.table = param.table;
-    const isBridge = param.isBridge
+    const isBridge = param.isBridge == 'true' ? true : false;
     let sql = `SELECT b.type, b.pid, a.name, b.system_id FROM ${this.table} a LEFT JOIN RD_TOLLGATE b ON a.pid=b.pid WHERE a.pid IN (${pids.join(',')}) AND a.lang_code='CHI'`;
     const result = await this.originDB.executeSql2(sql);
     const resultData = changeResult(result);
@@ -96,6 +96,7 @@ class TollGate {
       }
       const result2 = await this.db.executeSql(sql2)
       const resultData2 = changeResult(result2);
+      console.log(resultData2)
       resultData.forEach(item => {
         resultData2.forEach(innerItem => {
           if (item.pid == innerItem.pid) {
