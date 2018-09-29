@@ -85,7 +85,7 @@
 					tipsVersion: '',
 					adminCode: '110000',
 					updateStartTime: null,
-					updateEndTime: utils.newDateFormat(new Date(), 'yyyy-MM-dd'),
+					updateEndTime: null,
 					tollName:'',
 					isAdopted: [1, 2, 3],
 					currentPage: 1,
@@ -207,8 +207,8 @@
     },
 
     mounted() {
-			this.searchCondition.updateStartTime = (appUtil.getGolbalData() && appUtil.getGolbalData().startTimePhoto) ? appUtil.getGolbalData().startTimePhoto : null;
-			this.searchCondition.updateEndTime = (appUtil.getGolbalData() && appUtil.getGolbalData().endTimePhoto) ? appUtil.getGolbalData().endTimePhoto : utils.newDateFormat(new Date(), 'yyyy-MM-dd');
+			this.searchCondition.updateStartTime = (appUtil.getGolbalData() && appUtil.getGolbalData().startTimePhoto && this.preRoute != 'infosWork') ? appUtil.getGolbalData().startTimePhoto : null;
+			this.searchCondition.updateEndTime = (appUtil.getGolbalData() && appUtil.getGolbalData().endTimePhoto && this.preRoute != 'infosWork') ? appUtil.getGolbalData().endTimePhoto : null;
 			this.showData();
     }
   }

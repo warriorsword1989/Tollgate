@@ -76,7 +76,12 @@ class TollGate {
     const resultData = changeResult(result);
 
     resultData.forEach(element => element.source = 0);
-
+    if (!resultData.length) {
+      this.res.send({
+        errorCode: 0,
+        data: []
+      });
+    }
     const allpids = resultData.map(item => item.pid);
     const relateTable = param.sourceTable ? param.sourceTable : 'SC_TOLL_CAR';
     if (relateTable != 'SC_TOLL_LIMIT' && relateTable != 'SC_TOLL_RDLINK_BT') {

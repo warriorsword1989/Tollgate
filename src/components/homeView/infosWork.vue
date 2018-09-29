@@ -82,7 +82,7 @@
 					adminCode: '110000',
 					infoCode: '',
 					pushBeforeTime: null,
-					pushAfterTime: utils.newDateFormat(new Date(), 'yyyy-MM-dd'),
+					pushAfterTime: null,
 					complete: [1, 2, 3],
 					currentPage: 1,
 					pageSize: 10
@@ -209,8 +209,8 @@
     },
 
     mounted() {
-			this.searchCondition.pushBeforeTime = (appUtil.getGolbalData() && appUtil.getGolbalData().startTimeInfo) ? appUtil.getGolbalData().startTimeInfo : null;;
-			this.searchCondition.pushAfterTime = (appUtil.getGolbalData() && appUtil.getGolbalData().endTimeInfo) ? appUtil.getGolbalData().endTimeInfo : utils.newDateFormat(new Date(), 'yyyy-MM-dd');
+			this.searchCondition.pushBeforeTime = (appUtil.getGolbalData() && appUtil.getGolbalData().startTimeInfo && this.preRoute != 'photoWork') ? appUtil.getGolbalData().startTimeInfo : null;;
+			this.searchCondition.pushAfterTime = (appUtil.getGolbalData() && appUtil.getGolbalData().endTimeInfo && this.preRoute != 'photoWork') ? appUtil.getGolbalData().endTimeInfo : null;
 			this.showData();
     }
   }

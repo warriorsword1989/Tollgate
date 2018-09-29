@@ -28,6 +28,10 @@ Vue.component(CollapseTransition.name, CollapseTransition)
 Vue.component('vue-draggable-resizable', VueDraggableResizable)
 Vue.config.productionTip = false;
 
+router.afterEach((to, from, next) => {
+    Vue.prototype.preRoute = from.name;
+});
+
 /* eslint-disable no-new */
 new Vue({
     el: '#app',
