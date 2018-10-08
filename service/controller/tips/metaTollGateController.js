@@ -89,9 +89,9 @@ class TollGate {
       let sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')})`;
       if (relateTable == 'SC_TOLL_OVERLOAD' || relateTable == 'SC_TOLL_LOAD') {
         if (isBridge) {
-          sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt_id IS NOT NULL`;
+          sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt IS NOT NULL`;
         } else {
-          sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt_id IS NULL`;
+          sql2 = `SELECT ${primaryKey} as pid, source FROM ${relateTable} WHERE ${primaryKey} IN (${allpids.join(',')}) AND name_bt IS NULL`;
         }
       }
       const result2 = await this.db.executeSql(sql2)
