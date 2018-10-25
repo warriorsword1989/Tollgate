@@ -2,37 +2,37 @@
 	<div class="photoWork">
 		<!-- 头部内容 -->
 		<div class="header">
-			<div class="headerItem">
-				<div>行政区划：</div>
-				<el-select v-model="searchCondition.adminCode" placeholder="请选择">
-					<el-option v-for="item in cityList" :key="item.adminCode" :label="item.cityName" :value="item.adminCode"></el-option>
-				</el-select>
-			</div>
+				<div class="headerItem">
+					<div>行政区划：</div>
+					<el-select @change="hideSelect" ref="selectReference" v-model="searchCondition.adminCode" placeholder="请选择">
+						<el-option v-for="item in cityList" :key="item.adminCode" :label="item.cityName" :value="item.adminCode"></el-option>
+					</el-select>
+				</div>
 
-			<div class="headerItem">
-				<div>版本号：</div>
-				<el-input v-model="searchCondition.tipsVersion" placeholder="请输入内容"></el-input>
-			</div>
+				<div class="headerItem">
+					<div>版本号：</div>
+					<el-input v-model="searchCondition.tipsVersion" placeholder="请输入内容"></el-input>
+				</div>
 
-			<div class="headerItem">
-				<div>更新时间：</div>
-				<el-date-picker v-model="searchCondition.updateStartTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
-				<div style="padding: 0 2px">至</div>
-				<el-date-picker v-model="searchCondition.updateEndTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
-			</div>
+				<div class="headerItem">
+					<div>更新时间：</div>
+					<el-date-picker v-model="searchCondition.updateStartTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
+					<div style="padding: 0 2px">至</div>
+					<el-date-picker v-model="searchCondition.updateEndTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
+				</div>
 
-			<div class="headerItem">
-				<div>收费站名称：</div>
-				<el-input v-model="searchCondition.tollName" placeholder="请输入内容"></el-input>
-			</div>
+				<div class="headerItem">
+					<div>收费站名称：</div>
+					<el-input v-model="searchCondition.tollName" placeholder="请输入内容"></el-input>
+				</div>
 
-			<div class="headerItem">
-				<check-box :is-box='false' @change="checkBoxChanged($event)" type='button' :checked="searchCondition.isAdopted" :data-list="statusArr"></check-box>
-			</div>
+				<div class="headerItem">
+					<check-box :is-box='false' @change="checkBoxChanged($event)" type='button' :checked="searchCondition.isAdopted" :data-list="statusArr"></check-box>
+				</div>
 
-			<div class="headerItem">
-				<el-button :disabled="loading" icon="el-icon-search" @click="showData">查询</el-button>
-			</div>
+				<div class="headerItem">
+					<el-button :disabled="loading" icon="el-icon-search" @click="showData">查询</el-button>
+				</div>
 		</div>
 		<!-- 表格(height属性必须卸载table上，如果写css，固定表头不起作用) -->
 		<div v-loading="loading" element-loading-text="查询中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8);" style="height:calc(100% - 170px)" class="content">
@@ -108,6 +108,11 @@
 		},
 
     methods: {
+			hideSelect() {
+				this.$nextTick(() => {
+					this.$refs.selectReference.blur();
+				})
+			},
 			/**
 				* 计算列表索引;
 			 */
@@ -210,7 +215,16 @@
 			this.searchCondition.updateStartTime = (appUtil.getGolbalData() && appUtil.getGolbalData().startTimePhoto && this.preRoute != 'infosWork') ? appUtil.getGolbalData().startTimePhoto : null;
 			this.searchCondition.updateEndTime = (appUtil.getGolbalData() && appUtil.getGolbalData().endTimePhoto && this.preRoute != 'infosWork') ? appUtil.getGolbalData().endTimePhoto : null;
 			this.showData();
-    }
+    },
+
+		created() {
+			const _self = this;
+			document.onkeydown = function (e) {
+				if (e.keyCode === 13) {
+					_self.showData();
+				}
+			}
+		}
   }
 </script>
 

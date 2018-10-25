@@ -4,7 +4,7 @@
 		<div class="header">
 			<div class="headerItem">
 				<div>行政区划：</div>
-				<el-select v-model="searchCondition.adminCode" placeholder="请选择">
+				<el-select @change="hideSelect" ref="selectReference" v-model="searchCondition.adminCode" placeholder="请选择">
 					<el-option v-for="item in cityList" :key="item.adminCode" :label="item.cityName" :value="item.adminCode"></el-option>
 				</el-select>
 			</div>
@@ -105,6 +105,11 @@
 		},
 
     methods: {
+			hideSelect() {
+				this.$nextTick(() => {
+					this.$refs.selectReference.blur();
+				})
+			},
 			/**
 				* 计算列表索引;
 			 */
@@ -212,7 +217,16 @@
 			this.searchCondition.pushBeforeTime = (appUtil.getGolbalData() && appUtil.getGolbalData().startTimeInfo && this.preRoute != 'photoWork') ? appUtil.getGolbalData().startTimeInfo : null;;
 			this.searchCondition.pushAfterTime = (appUtil.getGolbalData() && appUtil.getGolbalData().endTimeInfo && this.preRoute != 'photoWork') ? appUtil.getGolbalData().endTimeInfo : null;
 			this.showData();
-    }
+    },
+
+		created() {
+			const _self = this;
+			document.onkeydown = function (e) {
+				if (e.keyCode === 13) {
+					_self.showData();
+				}
+			}
+		}
   }
 </script>
 
