@@ -1,5 +1,5 @@
 <template>
-  <div :style="diyStyle" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
+  <div style="height:280px; overflow-y: auto" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(243, 239, 239, 0.5);">
     <div class="grid-content">
       <div style="justify-content: flex-end;" class="grid-wraper">
         <el-button @click="addOuter" style="padding:5px" type="primary" class="btn-icon" icon="el-icon-plus">装载类别添加</el-button>
@@ -272,12 +272,6 @@
       }
     },
     computed: {
-      diyStyle: function () {
-        if (this.isGuangdong) {
-          return 'height:350px; overflow-y: auto';
-        }
-        return 'height:280px; overflow-y: auto';
-      }
     },
     methods: {
       // 如果存在的换验证数字是否为>=0的数字；
@@ -627,21 +621,9 @@
               }
             });
             item.forEach((innerItem,innerIndex) => {
-              if(!innerItem.lane_num1 && this.isGuangdong) {
-                validateFlag = false;
-                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率1车道数不能为空;<br />`;
-              }
-            });
-            item.forEach((innerItem,innerIndex) => {
               if(!innerItem.rate_base && this.isGuangdong) {
                 validateFlag = false;
                 alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率不能为空;<br />`;
-              }
-            });
-            item.forEach((innerItem,innerIndex) => {
-              if(!innerItem.rate_base1 && this.isGuangdong) {
-                validateFlag = false;
-                alertMessage += `在广东省${index+1}类型下的${innerIndex+1}区间费率1不能为空;<br />`;
               }
             });
           });
