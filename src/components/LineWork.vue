@@ -87,7 +87,11 @@
               if (data.errorCode == 0) {
                 const resultDatas = data.data;
                 const pids = data.data.map(item => item.pid);
-                getTollGate({ table: 'SC_TOLL_CAR', pid: pids }).then(res => {
+                if (!pids.length) {
+                  this.tollData = [];
+                  return;
+                }
+                return getTollGate({ table: 'SC_TOLL_CAR', pid: pids }).then(res => {
                   this.tollData = resultDatas.map(item => {
                     const itemTollGate = res.data.filter(innerItem => innerItem.car_class === 1 && innerItem.group_id === item.pid)[0];
                     item.rate = (itemTollGate && (itemTollGate.rate == 0 || itemTollGate.rate)) ? itemTollGate.rate : '空';
@@ -95,6 +99,8 @@
                   });
                 });
               }
+            }).catch(err => {
+              this.tollData = [];
             });
         },
         addOrEditTollData: function (handleFlag) {
