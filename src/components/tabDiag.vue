@@ -153,7 +153,12 @@
       tabOnActive(e){
         this.currentIndex = parseInt(e.index);
         this.tables = ['SC_TOLL_CAR','SC_TOLL_TRUCK','SC_TOLL_LOAD','SC_TOLL_OVERLOAD','SC_TOLL_TOLLGATEFEE','SC_TOLL_GROUP_DETAIL', 'SC_TOLL_LIMIT','SC_TOLL_RDLINK_BT'];
-        this.$route.params.prePage == 'info' && this.transfromSelectedData(this.originSeleceData, this.tables[parseInt(e.index)], false);
+        let tableName = this.tables[parseInt(e.index)];
+        // 如果是广东省则更新广东表明;
+        if (this.isGuangdong) {
+          tableName = 'SC_TOLL_LOAD_GD'
+        }
+        this.$route.params.prePage == 'info' && this.transfromSelectedData(this.originSeleceData, tableName, false);
         // 因为切换tab后组件都会重新加载，所以再次清调之前在激活页面改动给label加的*符号
         this._initTableLabel();
         // 动态显示组件;
